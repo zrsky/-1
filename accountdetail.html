@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>账户明细</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.set_top{
+				margin-top: 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">账户明细</h1>
+		</header>
+
+		<!--<div class="mui-content">-->
+			<!--下拉刷新容器-->
+			<div id="refreshContainer" class="mui-content mui-scroll-wrapper set_top">
+				<div class="mui-scroll">
+					<!--数据列表-->
+					<ul class="mui-table-view mui-table-view-chevron">
+						<li v-if="orderArr.length == 0" class="mui-table-view-cell">
+							<a class="mui-navigate" href="javascript:;">
+								<span>暂无明细</span>
+							</a>
+						</li>
+						<li v-else v-for="item in orderArr" class="mui-table-view-cell">
+							<a class="mui-navigate" href="javascript:;">
+								{{item.title}}
+								<span class="mui-pull-right">{{(item.new-item.old).toFixed(2)}}元</span>
+							</a>
+							<p>{{item.create_time_formated}}</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+		<!--</div>-->
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/base.js"></script>
+		<script src="js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({
+				swipeBack: true, //启用右滑关闭功能
+				pullRefresh: {
+					container: '#refreshContainer',
+					up: {
+						auto: true,
+						contentrefresh: '正在加载...',
+						contentnomore: '没有更多数据了',
+						callback: pullupRefresh
+					}
+				}
+			});
+			mui('.mui-scroll-wrapper').scroll({
+				scrollY: true,
+				scrollX: false,
+				startX: 0,
+				startY: 0,
+				indicators: true,
+				deceleration: 0.001,
+				bounce: true
+			});
+			var userInfo = is_login();
+			var data_details = new Vue({
+				el: '#refreshContainer',
+				data: {
+					orderArr: []
+				}
+			});
+
+			function pullupRefresh() {
+				var page = parseInt(data_details.orderArr.length / 15) + 1;
+				vue_ajaxGet('useraccount/detail.html', {
+					page: page
+				}, function(res) {
+					console.log("res:"+JSON.stringify(res));
+					if(res.code == 1) {
+						if(data_details.orderArr.length < res.data.total) {
+							data_details.orderArr = data_details.orderArr.concat(res.data.data);
+						}
+						//结束下拉刷新 上啦加载
+						mui('#refreshContainer').pullRefresh().endPullupToRefresh(data_details.orderArr.length >= res.data.total);
+					}
+				})
+			}
+
+			//			var page = 1;
+			//			var last_page;
+			//			mui.plusReady(function() {
+			//				var userinfo = is_login();
+			//				var listwrap = document.getElementById('listwrap');
+			//				ajaxGet('useraccount/detail.html', {
+			//					page: page
+			//				}, function(res) {
+			//					console.log("资金明细:" + JSON.stringify(res));
+			//					if(res.code == 1) {
+			//						listwrap.innerHTML = template('beyon', {
+			//							list: res.data
+			//						})
+			//						last_page = res.data.last_page;
+			//						if(res.data.total == 0){
+			//							$('.mui-content-padded').css('display','none');
+			//						}
+			//					}
+			//				}, function(res) {
+			//					console.log("shibai:" + JSON.stringify(res));
+			//				})
+			//
+			//			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>新增地址 报废界面</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<script src="js/template.js"></script>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			form {
+				background-color: #fff;
+			}
+			
+			input {
+				font-size: 0.9rem;
+			}
+			
+			input[name="detail"] {
+				border: none;
+			}
+			
+			button {
+				position: absolute;
+				top: 5px;
+				right: 5px;
+				z-index: 1000;
+				border: none;
+				outline: none;
+				background-color: #f7f7f7;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">新增地址</h1>
+		</header>
+		<form action="">
+			<div class="mui-input-row set_top">
+				<label>收藏地址</label>
+				<input type="text" placeholder="小区/大厦/交叉路口" required="">
+			</div>
+			<div class="mui-input-row">
+				<!--<label></label>-->
+				<input name="detail" type="text" placeholder="请补充具体楼层，门牌号等详细信息" required="">
+			</div>
+			<button>确定</button>
+		</form>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			var userinfo = is_login();
+			mui.plusReady(function() {
+				window.addEventListener('edited', function(event) {
+					var id = event.detail.id;
+					alert(id)
+					//			   mui.ajax({
+					//			   	url:'json/address.json',
+					//			   	type:'get',
+					//			   	data:{id:id},
+					//			   	success:function(res){
+					//			   		
+					//			   	}
+					//			   })
+				})
+			})
+		</script>
+	</body>
+
+</html>

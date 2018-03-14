@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>订单完成</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.status_wrap {
+				padding: 1rem 0;
+				height: 4rem;
+				background-color: #FFFFFF;
+				margin-top: 5px;
+			}
+			
+			.status {
+				display: flex;
+				width: 80%;
+				margin: 0 auto;
+			}
+			
+			.circle {
+				display: block;
+				width: 1rem;
+				height: 1rem;
+				background-color: #E5E5E5;
+				border-radius: 100%;
+			}
+			
+			.circle.active {
+				background-color: #E48920;
+			}
+			
+			.line {
+				display: block;
+				position: relative;
+				top: 0.4rem;
+				width: 10rem;
+				height: 2px;
+				background-color: #E5E5E5;
+			}
+			
+			.line1,
+			.circle1,
+			.line2,
+			.circle2 {
+				background-color: #E48920;
+			}
+			
+			.status_title {
+				display: flex;
+				width: 80%;
+				margin: 0.3rem auto;
+				justify-content: space-between;
+			}
+			
+			.content {
+				margin-top: 10px;
+				padding: 10px;
+				text-align: center;
+				background-color: #FFFFFF;
+			}
+			
+			.eight {
+				margin-top: 10px;
+				background-color: #FFFFFF;
+				padding: 10px 1rem;
+				position: relative;
+			}
+			
+			h4 {
+				color: #E48920;
+			}
+			
+			h4 span {
+				font-size: 0.8rem;
+			}
+			
+			.eight p {
+				color: #000000;
+			}
+			
+			.qrcode {
+				margin-top: 10px;
+				text-align: center;
+			}
+			
+			.qrcode img {
+				width: 200px;
+				height: 200px;
+			}
+			
+			.btn {
+				width: 90%;
+				margin: 0 auto;
+				background-color: #E48920;
+				border-radius: 10px;
+				border: none;
+				margin-top: 10px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">订单详情</h1>
+		</header>
+		<div class="mui-content">
+			<div class="status_wrap">
+				<div class="status">
+					<span class="circle active"></span>
+					<span class="line line1"></span>
+					<span class="circle circle1"></span>
+					<span class="line line2"></span>
+					<span class="circle circle2"></span>
+				</div>
+				<div class="status_title">
+					<span class="qu">取货</span>
+					<span class="song">送货</span>
+					<span class="ok">完成</span>
+				</div>
+			</div>
+			<div class="content">
+				<span>记得对收货人说：欢迎下次继续使用滴滴快送</span>
+			</div>
+			<!--<div class="eight">
+				<h4>推荐用户赚钱<span>(第八步)</span></h4>
+				<p>扫描下方的二维码</p>
+			</div>
+			<div class="qrcode">
+				<img src="../images/qrcode.png" />
+				<br />
+				<span class="tap">
+					点击二维码分享给好友吧
+				</span>
+			</div>-->
+			<button type="button" class="mui-btn mui-btn-blue mui-btn-block btn">继续接单</button>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			mui.plusReady(function(){
+				document.querySelector('.btn').addEventListener('tap',function(){
+				var homePage = plus.webview.getWebviewById('homePage.html');
+				if(homePage){
+					mui.fire(homePage,'pagerefresh');
+				}
+				mui.openWindow({
+					id:"homePage.html",
+					url:"homePage.html"
+				})
+			})
+				
+			})
+			
+		</script>
+	</body>
+
+</html>

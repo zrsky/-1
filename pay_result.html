@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>支付结果</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.logoImg {
+				display: block;
+				margin: 80px auto 30px auto;
+				width: 5rem;
+				height: 5rem;
+			}
+			
+			h3,
+			h4 {
+				margin: 0.5rem;
+				text-align: center;
+			}
+			
+			.title {
+				padding: 1rem 0;
+				color: #E48920;
+				text-align: center;
+				border-top: 1px solid #E5E5E5;
+			}
+			
+			.sin {
+				padding: 0 1rem;
+				display: flex;
+				justify-content: space-between;
+			}
+			
+			.sin span {
+				color: #000;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav backorange">
+			<!--<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left white"></a>-->
+			<h1 class="mui-title white">支付结果</h1>
+			<span class="mui-pull-right white btn" style="line-height: 44px;">完成</span>
+		</header>
+		<div class="mui-content" id="container">
+			<script type="text/html" id="containerData">
+				<img class="logoImg" src="images/logo.png" />
+				<h3 id="notice">支付</h3>
+				<h4>{{data.money}}元</h4>
+				<div class="title">充值方式</div>
+				<div class="sin">
+					<span>{{data.pay.name}}</span>
+					<span>{{data.money}}元</span>
+				</div>
+			</script>
+		</div>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init()
+			mui.plusReady(function() {
+				var userInfo = is_login();
+				var wv = plus.webview.currentWebview();
+				var orderid = wv.infoId;
+				console.log('orderid:' + orderid);
+				/**
+				 * 此页面需要请求订单表，获取订单数据
+				 */
+				var container = document.getElementById('container');
+				var param = {
+					orderid: orderid
+				};
+				ajaxGet('userpay/check_recharge_order_status.html', param, function(res) {
+					console.log("返回数据：" + JSON.stringify(res));
+					//判断是否支付
+					if(res.data.pay_status <= 0) {
+						dingshi = setInterval(get_order_info, 3000);
+					} else {
+						var datas = {
+							data: res.data
+						};
+						container.innerHTML = template('containerData', datas);
+					}
+				})
+				//				//定时器
+				function get_order_info() {
+					var param = {
+						orderid: orderid
+					};
+					ajaxGet("userpay/check_recharge_order_status.html", param, function(res) {
+						if(res.data.pay_status > 0) {
+							clearInterval(dingshi);
+							//下面开始执行赋值操作
+							var datas = {
+								data: res.data
+							};
+							container.innerHTML = template('containerData', datas);
+						} else {
+							//已成功
+						}
+					})
+				}
+				//订单完成之后返回主页面
+				$('.btn').on('tap', function() {
+					mui.openWindow({
+						id: "main.html",
+						url: "main.html"
+					})
+					var mainPage = plus.webview.getWebviewById('main.html');
+					if(mainPage != null) {
+						mui.fire(mainPage, "updateCenter");
+					}
+					plus.webview.currentWebview().close();
+				})
+			})
+		</script>
+	</body>
+
+</html>

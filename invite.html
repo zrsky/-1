@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>邀请好友</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style>
+			.banner {
+				width: 100%;		
+				margin-top: 44px;
+			}
+			
+			h3 {
+				text-align: center;
+				color: #333;
+			}
+			.share-wrap>div{
+				text-align: center;
+				padding: 1rem 0;
+			
+			}
+			.share-wrap p{
+				margin: 0.5rem 0;
+				color: #000;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">邀请好友</h1>
+		</header>
+		<img class="banner" src="images/banner.png" />
+
+		<h3>好东西要和好朋友一起分享</h3>
+		<div class="mui-row share-wrap">
+			<div class="mui-col-xs-4">
+				<a class="jiathis_button_cqq">
+				<span class="mui-icon mui-icon-qq" style="color: #7aaedb;"></span>
+				<p>QQ好友</p>
+				</a>
+			</div>
+			<div class="mui-col-xs-4">
+				<a class="jiathis_button_qzone">
+					<span class="mui-icon mui-icon-star" style="color: #e7994f;"></span>
+					<p>QQ空间</p>
+				</a>
+				
+			</div>
+			<div class="mui-col-xs-4">
+				
+				<a class="jiathis_button_tsina">
+					<span class="mui-icon mui-icon-weibo " style="color: #d57029;"></span>
+					<p>新浪微博</p>
+				</a>
+			</div>
+			<div class="mui-col-xs-4">
+				
+				<a class="jiathis_button_weixin">
+					<span class="mui-icon mui-icon-weixin " style="color:#68b635;"></span>
+					<p>微信</p>
+				</a>
+			</div>
+			<div class="mui-col-xs-4">
+				<span class="iconfont" style="color: #e37a1e;">&#xe649;</span>
+				<p>面对面</p>
+			</div>
+		</div>
+     
+     
+
+
+
+      <script type="text/javascript" src="http://v2.jiathis.com/code/jia.js" charset="utf-8"></script>
+		<script src="js/mui.min.js"></script>
+		<script src="js/base.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			var userinfo=is_login();
+		</script>
+	</body>
+
+</html>

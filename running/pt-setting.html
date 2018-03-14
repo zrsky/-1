@@ -1,0 +1,217 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>设置</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/base.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.outlogin {
+				width: 80%;
+				display: block;
+				margin: 1rem auto;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left black"></a>
+			<h1 class="mui-title">设置</h1>
+		</header>
+		<ul class="mui-table-view" style="margin-top: 45px;">
+			<!--<li class="mui-table-view-cell" id="setSecret">
+				<a class="mui-navigate-right">
+					设置密码
+				</a>
+			</li>-->
+			<li class="mui-table-view-cell" id="loginSecret">
+				<a class="mui-navigate-right" href="javascript:void(0)">
+					设置登录密码
+				</a>
+			</li>
+			<li class="mui-table-view-cell" id="editPhone">
+				<a class="mui-navigate-right" href="javascript:void(0)">
+					修改手机号
+				</a>
+			</li>
+		</ul>
+		<ul class="mui-table-view" style="margin: 1rem 0;">
+			<li class="mui-table-view-cell" id="jiedanSet">
+				<a class="mui-navigate-right" href="javascript:void(0)">
+					接单设置
+				</a>
+			</li>
+			<li class="mui-table-view-cell" id="reflect">
+				<a class="mui-navigate-right" href="javascript:void(0)">
+					提现账户
+				</a>
+			</li>
+		</ul>
+		<!--<ul class="mui-table-view" style="margin: 1rem 0;" id="container">
+			<script type="text/html" id="containerData">
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate">
+						精准定位(设置完毕重启后生效)
+						<div id="pinpoint" class="mui-switch mui-pull-right {{if data.is_pinpoint==1}}mui-active{{/if}}">
+							<div class="mui-switch-handle"></div>
+						</div>
+
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate">
+						保持屏幕常亮(设置完毕重启后生效)
+						<div id="screen_light" class="mui-switch mui-pull-right {{if data.is_screen_light==1}}mui-active{{/if}}">
+							<div class="mui-switch-handle"></div>
+						</div>
+
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate">
+						播报订单是否震动(设置完毕后生效)
+						<div id="shock" class="mui-switch mui-pull-right {{if data.is_shock==1}}mui-active{{/if}}">
+							<div class="mui-switch-handle"></div>
+						</div>
+					</a>
+				</li>
+			</script>
+		</ul>-->
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell">
+				<a>
+					版本号
+					<span class="mui-pull-right" id="version">1.0.7</span>
+				</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a class="mui-navigate-right" href="../aboutus.html">
+					关于我们
+				</a>
+			</li>
+			<!--<li class="mui-table-view-cell">
+				<a class="swutch_login">
+					切换身份
+					<span class="mui-pull-right">进入用户</span>
+				</a>
+			</li>-->
+		</ul>
+		<button class="mui-btn mui-btn-warning outlogin">退出登录</button>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/base.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			var userInfo = is_login();
+			//获取版本号
+			mui.plusReady(function(){
+				plus.runtime.getProperty(plus.runtime.appid,function(wginfo){
+					console.log(wginfo.version);
+					document.getElementById('version').innerHTML = wginfo.version;
+				})
+			})
+			var container = document.getElementById('container');
+			console.log('userinfo:'+JSON.stringify(userInfo));
+//			container.innerHTML = template('containerData', {data:userInfo});
+			//精准定位
+//			mui('#pinpoint')[0].addEventListener('tap', function() {
+//				ajaxPost('express/pinpoint.html', {
+//				}, function(res) {
+//					if(res.code == 1) {
+//						//更新信息
+//						userInfo.is_pinpoint = res.data.is_pinpoint;
+//						setUserInfo(JSON.stringify(userInfo));
+//					} else {
+//						mui.alert('设置失败');
+//					}
+//				})
+//			})
+			/**
+			 * 是否屏幕常亮
+			 */
+//			mui('#screen_light')[0].addEventListener('tap', function() {
+//				ajaxPost('express/screen_light.html', {
+//				}, function(res) {
+//					if(res.code == 1) {
+//						//更新信息
+//						userInfo.is_screen_light = res.data.is_screen_light;
+//						setUserInfo(JSON.stringify(userInfo));
+//					} else {
+//						mui.alert('设置失败');
+//					}
+//				})
+//			})
+
+			/**
+			 * 是否震动播报
+			 */
+//			mui('#shock')[0].addEventListener('tap', function() {
+//				ajaxPost('express/shock.html', {
+//				}, function(res) {
+//					if(res.code == 1) {
+//						//更新信息
+//						userInfo.is_shock = res.data.is_shock;
+//						setUserInfo(JSON.stringify(userInfo));
+//					} else {
+//						mui.alert('设置失败');
+//					}
+//				})
+//			})
+
+//			//设置密码
+//			G('setSecret').addEventListener('tap', function() {
+//				mui.openWindow({
+//					id: 'secretSet.html',
+//					url: "secretSet.html"
+//				})
+//			})
+			//修改登录密码
+			G('loginSecret').addEventListener('tap', function() {
+				mui.openWindow({
+					id: 'secretSet.html',
+					url: "secretSet.html"
+				})
+			})
+			//修改手机号
+			G('editPhone').addEventListener('tap', function() {
+				mui.openWindow({
+					id: 'editPhone.html',
+					url: 'editPhone.html'
+				})
+			})
+			//接单设置
+			G('jiedanSet').addEventListener('tap', function() {
+				mui.openWindow({
+					id: 'jiedanSet.html',
+					url: 'jiedanSet.html'
+				})
+			})
+			//提现账户
+			G('reflect').addEventListener('tap', function() {
+				mui.openWindow({
+					id: "reflect.html",
+					url: "reflect.html"
+				})
+			})
+			/**
+			 * 切换身份
+			 */
+//			mui('.swutch_login')[0].addEventListener('tap', function() {
+//				logout();
+//			})
+			/**
+			 * 退出登录 
+			 */
+			mui('.outlogin')[0].addEventListener('tap', function() {
+				logout();
+			})
+		</script>
+	</body>
+
+</html>

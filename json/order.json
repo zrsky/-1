@@ -1,0 +1,63 @@
+{
+"code":1,
+"data":[
+ {
+ "id":12,
+ "status":1,
+ "create_time":"2017-06-08",
+ "goods_price":56,
+ "from_address":"新乡平原路169号",
+ "to_address":"河南省新乡县",
+ "order_type_id":"1",
+ "type_id":1
+ },
+ {
+ "id":13,
+ "status":2,
+  "create_time":"2017-06-08",
+ "goods_price":56,
+ "from_address":"新乡平原路169号",
+ "to_x":"113.898423",
+ "to_y":"35.323464",
+ "to_address":"人民公园",
+  "order_type_id":"0",
+  "type_id":2
+ },
+ {
+ "id":14,
+ "status":3,
+  "create_time":"2017-06-08",
+ "goods_price":56,
+ "from_address":"新乡平原路699号",
+ "to_address":"河师大",
+ "to_x":"113.900435",
+ "to_y":"35.311447",
+  "order_type_id":"1",
+  "type_id":3
+ },
+ {
+ "id":15,
+ "status":4,
+  "create_time":"2017-06-08",
+ "goods_price":56,
+ "from_address":"新乡平原路169号",
+ "to_x":"113.889946",
+ "to_y":"35.304967",
+ "to_address":"心想火车站",
+  "order_type_id":"预约订单",
+  "type_id":1
+ },
+ {
+ "id":16,
+ "status":1,
+  "create_time":"2017-06-08",
+ "goods_price":56,
+ "from_address":"新乡平原路169号",
+ "to_x":"113.889947",
+ "to_y":"35.304967",
+ "to_address":"不知道",
+  "order_type_id":"0",
+  "type_id":2
+ }
+]
+}

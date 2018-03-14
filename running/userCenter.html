@@ -1,0 +1,349 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>会员中心</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.mui-card {
+				margin: 0;
+			}
+			
+			.wrap {
+				display: flex;
+				justify-content: center;
+				flex-direction: column;
+				align-items: center;
+			}
+			
+			.touxiang {
+				width: 4em;
+				height: 4em;
+				border-radius: 100%;
+				overflow: hidden;
+				margin: 5px auto;
+			}
+			
+			.detail {
+				display: flex;
+				margin-bottom: 50px;
+			}
+			
+			.detail .left,
+			.detail .right {
+				display: flex;
+				justify-content: center;
+				flex-direction: column;
+				align-items: center;
+			}
+			
+			.detail .center {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+			}
+			
+			.detail .center .star {
+				margin-bottom: 10px;
+			}
+			
+			.detail .center img {
+				float: left;
+				width: 1.5em;
+				height: 1.5em;
+			}
+			
+			.bottom {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				display: flex;
+				width: 100%;
+			}
+			
+			.bottom .service,
+			.bottom .order {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				background-color: rgba(0, 0, 0, 0.2);
+				padding: 10px;
+			}
+			
+			.bottom .service p,
+			.bottom .order p {
+				margin: 0;
+			}
+			
+			.bottom .service {
+				margin-right: 1px;
+			}
+			
+			.box {
+				margin-top: 5px;
+			}
+			
+			.box .mui-grid-view.mui-grid-9 {
+				background-color: #FFFFFF;
+			}
+			
+			.box .list {
+				position: relative;
+				line-height: 40px;
+			}
+			
+			.box h3 {
+				padding-top: 5px;
+				margin: 0 auto;
+				text-align: center;
+				background-color: #FFFFFF;
+			}
+			
+			.mui-card-content {
+				background: url(../images/running-bg.png) no-repeat;
+				background-size: 100% 100%;
+				color: #FFFFFF;
+				position: relative;
+			}
+			
+			.mui-card-content p {
+				color: #FFFFFF;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">我</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-card">
+				<div class="mui-card-content">
+					<div class="mui-card-content-inner" id="container">
+						<script type="text/html" id="containerData">
+							<div class="wrap">
+								<div class="touxiang" id="touxiang">
+									<img src="{{data.avatar}}" width="100%" height="100%" />
+								</div>
+								<p class="mui-ellipsos">{{data.name}}</p>
+							</div>
+							<div class="detail">
+								<div class="left" id="balance">
+									<span class="price">
+		    							￥{{data.balance}}
+		    							</span>
+									<p>账户余额</p>
+								</div>
+								<div class="center">
+									<div class="star">
+										<img src="../images/xingxing-select.png" />
+										<img src="../images/xingxing.png" />
+										<img src="../images/xingxing.png" />
+										<img src="../images/xingxing.png" />
+										<img src="../images/xingxing.png" />
+									</div>
+									<p>
+										<!--账号：<span>{{data.username}}</span>-->
+									</p>
+								</div>
+								<div class="right" id="integral">
+									<span>{{data.score}}</span>
+									<p>信用积分</p>
+								</div>
+							</div>
+							<div class="bottom">
+								<div class="service">
+									<span>{{data.avg_star}}</span>
+									<p>服务指数</p>
+								</div>
+								<div class="order">
+									<span>{{data.response_rate}}%</span>
+									<p>订单响应率</p>
+								</div>
+							</div>
+						</script>
+
+					</div>
+				</div>
+			</div>
+			<!--九宫格-->
+			<div class="box">
+				<h3>今日成就</h3>
+				<ul class="mui-table-view mui-grid-view mui-grid-9" id="box">
+					<script type="text/html" id="boxData">
+						<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+							<a href="javascript:;">
+								<span class="list">完成订单</span>
+								<div class="mui-media-body">{{data.day_orders_count}}笔</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+							<a href="javascript:;">
+								<span class="list">奔跑里程</span>
+								<div class="mui-media-body">{{data.day_order_km_sum}}公里</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+							<a href="javascript:;">
+								<span class="list">获取收益</span>
+								<div class="mui-media-body">{{data.day_balance_log_sum}}元</div>
+							</a>
+						</li>
+						<!--<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" id="notice">
+							<a href="javascript:void(0)">
+								<span class="mui-icon mui-icon-chatbubble"></span>
+								<div class="mui-media-body">消息通知</div>
+							</a>
+						</li>-->
+						<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" id="auth">
+							<a href="javascript:void(0)">
+								<span class="mui-icon mui-icon-search"></span>
+								<div class="mui-media-body">身份认证</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" id="kefu">
+							<a href="javascript:void(0)">
+								<span class="mui-icon mui-icon-phone"></span>
+								<div class="mui-media-body">在线客服</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" id="ketang">
+							<a href="javascript:void(0)">
+								<span class="mui-icon mui-icon-paperplane"></span>
+								<div class="mui-media-body">课堂</div>
+							</a>
+						</li>
+						<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3" id="set">
+							<a href="javascript:void(0)">
+								<span class="mui-icon mui-icon-gear"></span>
+								<div class="mui-media-body">设置</div>
+							</a>
+						</li>
+					</script>
+
+				</ul>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/base.js"></script>
+		<script type="text/javascript">
+			mui.init({
+				beforeback: function(){
+				//获得你要前往页面的webview id
+				var Scanner = plus.webview.currentWebview().opener();
+				
+				//触发前往页面的自定义事件（例：AddNew）,从而进行数据刷新
+				mui.fire(Scanner,'pagerefresh');
+				
+				//返回true，继续页面关闭逻辑
+					return true;
+				}
+				});
+			mui.plusReady(function() {
+				var userinfo = is_login();
+				
+				function getData() {
+					var userData = null;
+					ajaxGet('expressrunning/user_Center.html', {
+					}, function(res) {
+						userData = res.data;
+						console.log('1头像'+JSON.stringify(res.data))
+					},function(res){
+						console.log("shibai:"+JSON.stringify(res));
+					},true,false);
+					return userData;
+				};
+				var data = getData();
+				console.log("个人中心数据："+JSON.stringify(data));
+				var container = document.getElementById('container');
+				container.innerHTML = template('containerData', {
+					data: data
+				});
+				G('integral').addEventListener('tap', function() {
+					mui.openWindow({
+						id: "integral.html",
+						url: "integral.html"
+					})
+				})
+				//显示星星数
+				var star = parseInt(data.level_id);
+				console.log(star);
+				var str = '';
+				for(var i = 0; i < star; i++) {
+					str += "<img src='../images/xingxing-select.png'/>";
+				}
+				$('.star').html(str);
+				var box = document.getElementById('box')
+				box.innerHTML = template('boxData', {data:data});
+				//消息通知
+//				G('notice').addEventListener('tap', function() {
+//					mui.openWindow({
+//						id: "notice.html",
+//						url: "notice.html"
+//					})
+//				});
+				G('auth').addEventListener('tap', function() {
+					mui.openWindow({
+						id: "auth_register.html",
+						url: "auth_register.html"
+					})
+				})
+				G('kefu').addEventListener('tap', function() {
+					console.log(default_kefu);
+					//打电话
+					plus.device.dial(default_kefu,false);
+
+				})
+				G('ketang').addEventListener('tap', function() {
+					mui.openWindow({
+						id: "teach.html",
+						url: "teach.html"
+					})
+				})
+				G('set').addEventListener('tap', function() {
+					mui.openWindow({
+						id: "pt-setting.html",
+						url: "pt-setting.html"
+					})
+				})
+				//余额
+				$('#balance').on('tap', function() {
+					mui.openWindow({
+						id: "expressAccount.html",
+						url: "expressAccount.html"
+					})
+					event.stopPropagation();
+				})
+				//上传头像
+				$("#touxiang").on('tap',function(){
+					mui.openWindow({
+						id:'cropImg.html',
+						url:'cropImg.html',
+						extras: {
+							orginalImg: $("#touxiang img").attr("src")
+						}
+					})
+					console.log(11111)
+				})
+				window.addEventListener('update',function(e){
+					console.log(e.detail.avatar_id)
+					console.log(e.detail.imgData)
+					console.log(2222)
+					$("#touxiang img").attr({'src':e.detail.imgData})
+				})
+			})
+		</script>
+	</body>
+
+</html>

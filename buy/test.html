@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script src="../js/common.js" type="text/javascript" charset="utf-8"></script>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<script src="../js/mui.min.js"></script>
+		
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function(){
+				var channel = null;
+				var wxChannel = null;
+				var aliChannel = null;
+				var str;
+				getChannels();
+				function getChannels(){
+					plus.payment.getChannels(function(channels){
+						console.log("channels:"+JSON.stringify(channels));
+						for(var i = 0;i<channels.length;i++){
+							if(channels[i].id == 'wxpay'){
+								wxChannel = channels[i];
+							}
+							if(channels[i].id == 'alipay'){
+								aliChannel = channels[i];
+							}
+						}
+					},function(e){
+						plus.ui.toast('获取支付通道失败！');
+						console.log("获取支付通道失败");
+					})
+				}
+				function pay(id){
+					if(id == 'alipay'){
+						channel = aliChannel;
+					}else if(id == 'wxpay'){
+						channel = wxChannel;
+					}else{
+						plus.ui.toast('不支持此支付通道');
+						return;
+					};
+//					var params = {
+//						id:591,
+//						paytype:id
+//					};
+//					console.log("发送的数据:"+JSON.stringify(params));
+//					console.log('str:'+str);
+//					plus.payment.request(channel,str,function(res){
+//						console.log("result:"+JSON.stringify(res));
+//					},function(err){
+//						console.log('失败原因：'+JSON.stringify(err));
+//							mui.alert("失败原因"+JSON.stringify(err));
+//					});
+
+
+
+					ajaxPost('userpay/pay.html',{
+						id:591,
+						paytype:id
+					},function(res){
+						console.log("这个可以有:"+JSON.stringify(res));
+						var data = JSON.stringify(res.data);
+						console.log('支付数据:'+res.data);
+						var str = res.data;
+						plus.payment.request(channel,str,function(result){
+							console.log("result:"+JSON.stringify(result));
+							plus.ui.alert('支付成功!',function(){
+								back();
+							})
+						},function(error){
+							console.log('失败原因：'+JSON.stringify(error));
+							mui.alert("失败原因"+JSON.stringify(error));
+						})
+					},function(res){
+						console.log("请求失败:"+JSON.stringify(res));
+					})
+				}
+				document.getElementById('wx').addEventListener('tap',function(){
+					console.log('微信支付');
+					pay('wxpay');
+				})
+				
+				document.getElementById('zfb').addEventListener('tap',function(){
+					console.log('点击了支付宝');
+					pay('alipay');
+				})
+				var content = document.getElementById('textarea');
+				document.getElementById('btn-body').addEventListener('tap',function(){
+					console.log('....:'+content.value);
+					str = content.value;
+				});
+				
+				
+			})
+		
+		</script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">测试支付</h1>
+		</header>
+		<div class="mui-content">
+			<button type="button" class="mui-btn mui-btn-blue mui-btn-block" id="wx">微信</button>
+			<button type="button" class="mui-btn mui-btn-blue mui-btn-block" id="zfb">支付宝</button>
+			<div class="mui-content-padded">
+				<div class="mui-input-row" style="margin: 10px 5px;">
+				<textarea name="content" rows="" cols="" id="textarea"></textarea>
+			</div>
+			<button type="button" class="mui-btn mui-btn-blue" id="btn-body">上传内容</button>
+			</div>
+		</div>
+
+		<script src="../js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/immersed.js" type="text/javascript" charset="utf-8"></script>
+		
+	</body>
+
+</html>

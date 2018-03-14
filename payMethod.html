@@ -1,0 +1,285 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			.pay-box .mui-card-header {
+				justify-content: center;
+			}
+			
+			.pay-foot {
+				margin-top: 20px;
+				background-color: #ff8b02;
+				color: #FFFFFF;
+				justify-content: center;
+			}
+			
+			.pay-price p {
+				text-align: center;
+			}
+			
+			.pay-price {
+				border-bottom: 1px solid #c8c7cc;
+			}
+			
+			.pay-price em {
+				color: #FF8B02;
+				font-weight: bold;
+				font-size: 16px;
+			}
+			
+			.pay-warp {
+				display: flex;
+				border-bottom: 1px solid #c8c7cc;
+			}
+			
+			.pay-warp .pay-style {
+				flex: 0 0 220px;
+				margin-left: 5px;
+			}
+			
+			.pay-warp .pay-style p {
+				margin-bottom: 0px;
+			}
+			
+			.pay-warp .pay-select {
+				flex: 1;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			
+			.pay-select img,
+			.logo img {
+				width: 40px;
+				height: 40px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div class="mui-card pay-box">
+				<div class="mui-card-header">
+					付款详情
+				</div>
+				<div class="mui-card-content">
+					<div class="mui-card-content-inner pay-price">
+						<p>
+							需支付金额<br>
+							<em id="money">0.00</em><em>元</em>
+						</p>
+					</div>
+					<div id="paymethod">
+						<div class="mui-card-content-inner pay-warp" v-for="item in items" @tap="pay_select(item)" :id="item.id">
+							<div class="logo">
+								<img :src="item.icon.src" />
+							</div>
+							<div class="pay-style">
+								{{item.name}}
+								<p class="mui-ellipsis">
+									{{item.description}}
+								</p>
+							</div>
+							<div class="pay-select">
+								<img src="./images/pt-error.png" check="0" :select="item.code" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="mui-card-footer pay-foot" onclick="sure()">
+					确认付款
+				</div>
+			</div>
+		</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<script src="js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			//			mui.init()
+			var channel = null;
+				var wxChannel = null;
+				var aliChannel = null;
+			var data_detail = new Vue({
+				el: '#paymethod',
+				data: {
+					items: []
+				}
+			})
+			function getChannels() {
+					plus.payment.getChannels(function(channels) {
+						console.log("channels:" + JSON.stringify(channels));
+						for(var i = 0; i < channels.length; i++) {
+							if(channels[i].id == 'wxpay') {
+								wxChannel = channels[i];
+							}
+							if(channels[i].id == 'alipay') {
+								aliChannel = channels[i];
+							}
+						}
+					}, function(e) {
+						plus.ui.toast('获取支付通道失败！');
+						console.log("获取支付通道失败");
+					})
+				}
+			
+			//确认付款
+			function sure(){
+//				getChannels();
+				var payNum = 0;
+				var warp = document.querySelectorAll('.pay-warp');
+				for (var i = 0;i<warp.length;i++) {
+					var img = warp[i].children[2].firstElementChild;
+					if(img.getAttribute('check') == 1){
+						payNum = img.getAttribute('select');
+					}
+				}
+				if(payNum == 0){
+					plus.nativeUI.toast('请选择支付方式');
+				}else{
+					console.log('支付');
+					pay(payNum);
+//					var ws = plus.webview.currentWebview();
+//					ws.close();
+				}
+			}
+			//选择支付方式
+			function pay_select(item) {
+				var id = item.id;
+				var arr = sibling(G(id));
+				var img = G(id).children[2].firstElementChild;
+				var check = img.getAttribute('check');
+				if(check == 0) {
+					img.setAttribute('src', './images/pt-right.png');
+					img.setAttribute('check', '1');
+					for(var i = 0; i < arr.length; i++) {
+						arr[i].children[2].firstElementChild.setAttribute('src', './images/pt-error.png');
+						arr[i].children[2].firstElementChild.setAttribute('check', '0');
+					}
+				} else {
+					img.setAttribute('src', './images/pt-error.png');
+					img.setAttribute('check', '0');
+				}
+				console.log("check:"+img.getAttribute('check'));
+			}
+			//获取兄弟节点
+			function sibling(elem) {
+				var r = [];
+				var n = elem.parentNode.firstChild;
+				for(; n; n = n.nextSibling) {
+					if(n.nodeType === 1 && n !== elem) {
+						r.push(n);
+					}
+				}
+				return r;
+			}
+
+			function plusReady() {
+				getChannels();
+				var ws = plus.webview.currentWebview();
+				var money = ws.tip;
+				var orderId = ws.orderId
+				console.log(ws.tip);
+				G('money').innerText = money;
+				var geolocation = new BMap.Geolocation();
+				geolocation.getCurrentPosition(function(possition) {
+					var lat = possition.point.latitude;
+					var lng = possition.point.longitude;
+					//获取接口数据
+					var token = localStorage.getItem("access_token");
+					var areaid = localStorage.getItem("areaid");
+					//	生成时间戳
+					var timestamp = new Date().getTime();
+					var headers = {
+						areaid: areaid,
+						version: app_version,
+						timestamp: timestamp,
+						accesstoken: token,
+						devicetype: device_type,
+						deviceversion: device_version,
+						lat: lat,
+						lng: lng
+					}
+					var json = JSON.stringify(headers);
+					headers.sign = encrypt(json);
+					plus.nativeUI.showWaiting('加载中', {
+						width: "100px",
+						height: "100px"
+					});
+					mui.ajax(siteurl + "/api/" + api_version + '/' + 'userpay/getpaylist.html', {
+						data: {},
+						type: 'get',
+						dataType: 'json',
+						async: true,
+						headers: headers,
+						success: function(res) {
+							console.log('支付方式:' + JSON.stringify(res));
+							if(res.code == 1) {
+								data_detail.items = res.data;
+								plus.nativeUI.closeWaiting();
+							}
+						}
+					})
+				})
+			}
+			if(window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener('plusready', plusReady, false);
+			}
+			function pay(id) {
+				var ws = plus.webview.currentWebview();
+				var orderId = ws.orderId
+					if(id == 'alipay') {
+						channel = aliChannel;
+					} else if(id == 'wxpay') {
+						channel = wxChannel;
+					} else {
+						plus.ui.toast('不支持此支付通道');
+						return;
+					};
+					var params = {
+						id: orderId,
+						paytype: id
+					};
+					console.log("params:" + JSON.stringify(params));
+					ajaxPost('userpay/pay.html', params, function(res) {
+						console.log("这个可以有:" + JSON.stringify(res));
+						var data = JSON.stringify(res.data);
+						console.log('支付数据:' + res.data);
+						var str = res.data;
+						plus.payment.request(channel, str, function(result) {
+							console.log("result:" + JSON.stringify(result));
+							//							plus.ui.alert('支付成功!',function(){
+							//								back();
+							//							})
+							mui.openWindow({
+								id: "buy-result.html",
+								url: "buy-result.html",
+								extras: {
+									infoId: listData
+								},
+								createNew: true
+							})
+						}, function(error) {
+							plus.ui.alert('支付失败', function() {
+//								mui.back();
+							})
+							console.log('失败原因：' + JSON.stringify(error));
+							//							mui.alert("失败原因"+JSON.stringify(error));
+						})
+					}, function(res) {
+						console.log("请求失败:" + JSON.stringify(res));
+					})
+				}
+		</script>
+	</body>
+
+</html>

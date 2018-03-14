@@ -1,0 +1,233 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>验证码登录</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/validate.css" />
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" href="css/login_code.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.type {
+				display: flex;
+				margin: 10px auto;
+				padding: 0 10px;
+			}
+			
+			.type .mui-radio {
+				flex: 1;
+			}
+			
+			.mui-radio img {
+				position: absolute;
+				width: 30px;
+				height: 30px;
+				top: 5px;
+			}
+			
+			.type label {
+				padding: 0;
+				padding-left: 36px;
+				line-height: 40px;
+			}
+			
+			.mui-input-row label {
+				width: auto;
+			}
+			
+			.mui-radio input[type=radio] {
+				top: 7px;
+				right: 3px;
+			}
+			
+			.submit {
+				text-align: center;
+			}
+			
+			.submit span {
+				display: block;
+				padding-top: 10px;
+			}
+			
+			.bottomflex {
+				width: 80%;
+				display: flex;
+				margin: 0 auto;
+				justify-content: space-between;
+			}
+			.userimg{
+				border: 2px solid #FFFFFF;
+				border-radius: 100%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<img class="userimg" src="images/logo_round.png" />
+
+		<form id="infoForm" method="post">
+			<div class="greybg">
+				<div class="mui-input-row">
+					<label>+86</label>
+					<input type="text" id="phone" name="phone" data-required="true" data-descriptions="phone" data-pattern="^1[345678]\d{9}$" class="mui-input-clear" placeholder="请输入手机号">
+				</div>
+
+			</div>
+			<div class="greybg">
+				<div class="mui-input-row">
+					<label><img class="phone" src="images/phone.png"/></label>
+					<input type="text" data-required="true" data-descriptions="code" name="code" placeholder="请输入验证码">
+					<button class="mui-pull-right get_code" type="button">获取验证码</button>
+				</div>
+			</div>
+			<div class="greybg type">
+				<div class="mui-input-row mui-radio">
+					<img class="mui-pull-left" src="images/person.png" />
+					<label>我是用户</label>
+					<input name="admin" data-required="true" data-descriptions="admin" type="radio" value="user" checked>
+				</div>
+				<div class="mui-input-row mui-radio">
+					<img src="images/runningman.png" />
+					<label>我是跑男</label>
+					<input name="admin" data-required="true" data-descriptions="admin" type="radio" value="runman">
+				</div>
+			</div>
+			<a href="javascript:;" class="submit"><span>登录</span></a>
+		</form>
+		<div class="bottomflex">
+			<a href="agreement.html"> <i class="iconfont">&#xe602;</i> 用户协议</a><a href="login_secret.html">密码登录</a>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery-mvalidate.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/base.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function() {
+				//默认用户
+				var userType = 1;
+				//判断是跑男还是用户 1代表用户 0 代表跑男
+				mui('input[name="admin"]').each(function(i, ele) {
+					ele.addEventListener('change', function() {
+						if(this.value == 'user') {
+							userType = 1;
+						} else {
+							userType = 0;
+						}
+					})
+				})
+				var userInfo = null;
+				$('#infoForm').mvalidate({
+					type: 1,
+					onKeyup: true,
+					sendForm: true,
+					firstInvalidFocus: false,
+					valid: function(event, options) {
+						var formData = $('#infoForm').serialize();
+						console.log(JSON.stringify(formData));
+						ajaxPost('common/login.html', formData, function(res) {
+							console.log("验证斜杠res:"+JSON.stringify(res));
+							if(res.code == 1) {
+								userInfo = res.data;
+								console.log("保存userid:"+userInfo.id);
+								//用户类型
+								localStorage.setItem("user", userType);
+								//本地缓存登陆信息
+								localStorage.setItem('userinfo', JSON.stringify(userInfo));
+								console.log("userInfo.access:"+userInfo.access_token);
+								localStorage.setItem("access_token",userInfo.access_token);
+								if(userType == 1) {
+									var main = plus.webview.getWebviewById('main.html');
+									mui.fire(main, 'update');
+									mui.openWindow({
+										id: "main.html",
+										url: 'main.html'
+									})
+								} else {
+									console.log(userType + 'paonan')
+									var main = plus.webview.getWebviewById('running/homePage.html');
+									mui.fire(main, 'pagerefresh');
+									mui.openWindow({
+										id: "running/homePage.html",
+										url: "running/homePage.html"
+									})
+								}
+							}else{
+								console.log("执行了这里");
+								mui.alert(res.msg);
+							}
+						}, function(data) {
+							console.log(JSON.stringify(data));
+						})
+						event.preventDefault();
+					},
+					descriptions: {
+						phone: {
+							required: "请输入正确手机号",
+							pattern: "手机号码格式不正确"
+						},
+						code: {
+							required: "请输入验证码"
+						},
+						admin: {
+							required: "请选择用户类型"
+						}
+					}
+				});
+
+				document.querySelector('.submit').addEventListener('tap', function() {
+					$('#infoForm').submit();
+				})
+				var count = 0, tel;
+				document.querySelector('.get_code').addEventListener('tap', function() {
+					var userType = localStorage.getItem('user');
+					var content = $('#phone').val();
+					window.localStorage.setItem("tel",content);
+					tel = window.localStorage.getItem("tel");
+					console.log(tel)
+					if(content != tel){
+						count = 0;
+					}
+					console.log(count)
+					//用正则验证手机号是否正确
+					if(!content.match(/^1[345678]\d{9}$/)) {
+						mui.alert("手机号码格式不正确");
+						//获取焦点
+						$("#phone").focus();
+						return false;
+					}
+					ajaxPost('common/sms.html', {
+						"phone": content,
+						"user": userType
+					}, function(res) {
+						if(res.code == 1) {
+							if(count == 0){
+								var time=60;
+								setInterval(function(){
+									$('.get_code').text(time+'s内填写');
+									time--;
+									if(time<1){
+									   $('.get_code').text('获取验证码');
+									   return;
+									}
+								},1000);
+								console.log('发送验证码成功');
+								count = 1;
+								setTimeout(function(){
+									count=0;
+								},1000*60*10);
+							}
+						} else {
+							mui.alert(res.msg);
+						}
+					})
+				})
+			})
+		</script>
+	</body>
+
+</html>

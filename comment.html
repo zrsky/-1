@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>评论</title>
+		<script src="js/mui.min.js"></script>
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" href="css/comment.css" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.mainwrap {
+				margin: 50px 0;
+			}
+		</style>
+
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">评价</h1>
+		</header>
+		<div class="mainwrap">
+			<div class="starwrap" id="starbox">
+				<div class="grey">
+					<img src="images/commentstar.png" />
+				</div>
+				<div class="red" star="0">
+					<img src="images/commentred.png" />
+				</div>
+			</div>
+			<input type="hidden" name="star" id="star" value="" />
+			<ul class="adlist" id="container">
+				<script type="text/html" id="containerData">
+					{{each data as value}}
+					<li advant='{{value.id}}' class="adli">{{value.name}}</li>
+					{{/each}}
+				</script>
+			</ul>
+			<div class="clear"></div>
+
+			<input type="hidden" name="advantage" id="advantage" value="" />
+		</div>
+		<div class="button-wrap">
+			<button class="mui-btn mui-btn-warning submit">确定</button>
+		</div>
+	</body>
+	<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/base.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" charset="utf-8">
+		mui.init({
+			preloadPages: [{
+				id: "order.html",
+				url: "order.html"
+			}]
+		});
+		mui.plusReady(function() {
+			var wv = plus.webview.currentWebview();
+			var orderid = wv.orderid;
+			window.addEventListener("DIY_DATA", function(event) {
+				orderid = event.detail.orderid;
+			})
+			console.log("orderid:" + orderid);
+			var container = document.getElementById('container');
+			var userinfo = is_login();
+			//获取评论tag值
+			ajaxGet('userorder/get_tags.html', {
+				userid: userinfo.id
+			}, function(res) {
+				console.log(JSON.stringify(res));
+				if(res.code == 1) {
+					var datas = {
+						data: res.data
+					}
+					container.innerHTML = template('containerData', datas);
+				}
+			}, function(res) {
+				console.log(JSON.stringify(res));
+			})
+
+			//星星盒子
+			var starbox = document.getElementById('starbox');
+			//选中的星星
+			var redbox = document.querySelector('.red');
+			//文字评价
+			var adli = document.querySelectorAll('.adli');
+			//隐藏域 记录星星个数
+			var stars = document.getElementById('star');
+			//隐藏域 记录文字评价
+			var advant = document.getElementById('advantage');
+			var widthArr = [34, 68, 102, 136, 170];
+			starbox.addEventListener('touchstart', function(ev) {
+				var e = ev.changedTouches[0];
+				var disX = e.pageX - this.offsetLeft;
+				var reswidth = 0,
+					index = 0;
+				widthArr.some(function(ele, i) {
+
+					if(disX < ele) {
+						reswidth = ele;
+						index = i + 1;
+						return ele;
+					}
+				})
+				redbox.style.width = reswidth + 'px';
+				redbox.setAttribute('star', index)
+				stars.value = index;
+			})
+
+			for(var i = 0; i < adli.length; i++) {
+				adli[i].b = true;
+
+				adli[i].addEventListener('tap', function() {
+
+					if(this.b) {
+						this.classList.add('active')
+					} else {
+						this.classList.remove('active')
+					}
+					this.b = !this.b;
+				})
+			}
+			//确定按钮
+			var advantArr = [];
+			document.querySelector('.submit').addEventListener('tap', function(e) {
+				var star = Number(redbox.getAttribute('star'));
+				console.log(star)
+				if(star == 0) {
+					mui.alert('请打分', '提示', '确定', function() {
+						console.log(advant)
+					})
+
+				}
+
+				mui('.adli').each(function(i, ele) {
+					if(ele.classList.contains('active')) {
+						if(advantArr.indexOf(ele.getAttribute('advant')) == -1) {
+							advantArr.push(ele.getAttribute('advant'))
+						}
+					}
+
+				})
+				console.log("orderid:" + orderid);
+				var formData = {
+					orderid: orderid,
+					star: stars.value,
+					tags: advantArr
+				}
+				console.log("form:" + JSON.stringify(formData));
+				ajaxPost('userorder/comment_order.html', formData, function(res) {
+					console.log(JSON.stringify(res));
+					if(res.code == 1) {
+						mui.toast('评价成功');
+						var taskList = plus.webview.getWebviewById('order_all.html');
+						if(taskList !=null){
+							mui.fire(taskList,'update');
+						}
+						var order_completed = plus.webview.getWebviewById('order_completed.html');
+						if(order_completed !=null){
+							mui.fire(order_completed,'update');
+						}
+						mui.back();
+						//延迟的原因：优先打开启动导航页面，避免资源争夺
+						//						setTimeout(function() {}, 200);
+
+					} else {
+						mui.toast(res.msg);
+					}
+				}, function(res) {
+					console.log("shibai:" + JSON.stringify(res));
+				})
+				e.preventDefault();
+			})
+		})
+	</script>
+
+</html>

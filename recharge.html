@@ -1,0 +1,427 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>充值</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" href="css/recharge.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			#popover {
+				position: fixed;
+				z-index: 20;
+				bottom: 0;
+				right: 0;
+				width: 100%;
+				min-height: 22em;
+				left: 0 !important;
+			}
+			
+			#popover .mui-card {
+				margin: 0;
+				padding: 0;
+			}
+			
+			.pay-box .mui-card-header {
+				justify-content: center;
+			}
+			
+			.pay-foot {
+				margin-top: 20px;
+				background-color: #ff8b02;
+				color: #FFFFFF;
+				justify-content: center;
+			}
+			
+			.pay-price p {
+				text-align: center;
+			}
+			
+			.pay-price {
+				border-bottom: 1px solid #c8c7cc;
+			}
+			
+			.pay-price em {
+				color: #FF8B02;
+				font-weight: bold;
+				font-size: 16px;
+			}
+			
+			.pay-warp {
+				display: flex;
+				border-bottom: 1px solid #c8c7cc;
+			}
+			
+			.pay-warp .pay-style {
+				flex: 0 0 220px;
+				margin-left: 5px;
+			}
+			
+			.pay-warp .pay-style p {
+				margin-bottom: 0px;
+			}
+			
+			.pay-warp .pay-select {
+				flex: 1;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			
+			.logo img {
+				width: 40px;
+				height: 40px;
+			}
+			
+			.pay-select img {
+				width: 40px;
+				height: 40px;
+			}
+			
+			.mui-popover-arrow.mui-bottom {
+				display: none;
+			}
+			
+			.mui-backdrop {
+				z-index: 10;
+			}
+			
+			em {
+				font-style: normal;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">充值</h1>
+			<span class="mui-pull-right bill">账单明细</span>
+		</header>
+		<div class="mui-content">
+			<div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<!--这里放置真实显示的DOM内容-->
+					<img class="bannerImg" src="images/ddbanner.png" />
+
+					<div class="flex-box">
+						<div>
+							<p>余额(元)</p>
+							<span class="balance" id="moneys">0.00</span>
+						</div>
+						<div class="custom" style="display:none;">
+							<input id="money" class="money" name="money" type="text" pattern="^\d$" placeholder="请输入金额" />元
+						</div>
+					</div>
+					<ul class="rechList">
+						<li rech="100">
+							<h4>100元</h4>
+							<p>充值100元</p>
+						</li>
+						<li rech="300">
+							<h4>300元</h4>
+							<p>充值300元</p>
+						</li>
+						<li rech="500">
+							<h4>500元</h4>
+							<p>充值500元</p>
+						</li>
+						<li rech="1000">
+							<h4>1000元</h4>
+							<p>充值1000元</p>
+						</li>
+						<li rech="3000">
+							<h4>3000元</h4>
+							<p>充值3000元</p>
+						</li>
+						<li rech="custom" class="other-money">其他金额</li>
+					</ul>
+					<input type="hidden" name="rechtype" id="rechtype" value="" />
+
+					<a class="go_rech" href="" id="rech">去充值</a>
+
+				</div>
+			</div>
+
+			<div id="popover" class="mui-popover">
+				<div class="mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<div class="mui-card pay-box">
+							<div class="mui-card-header">
+								付款详情
+							</div>
+							<div class="mui-card-content">
+								<div class="mui-card-content-inner pay-price">
+									<p>
+										需支付金额<br>
+										<em class="moneys">0.00</em><em>元</em>
+									</p>
+								</div>
+								<div id="paymethod">
+									<script type="text/html" id="paymethodData">
+										{{each data as value}}
+										<div class="mui-card-content-inner pay-warp">
+											<div class="logo">
+												<img src="{{value.icon.src}}" />
+											</div>
+											<div class="pay-style">
+												{{value.name}}
+												<p class="mui-ellipsis">
+													{{value.description}}
+												</p>
+											</div>
+											<div class="pay-select">
+												<img src="images/pt-error.png" check="0" select="{{value.code}}" />
+											</div>
+										</div>
+										{{/each}}
+									</script>
+								</div>
+							</div>
+							<div class="mui-card-footer pay-foot">
+								确认付款
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/base.js"></script>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				var userInfo = is_login();
+				var rech = document.getElementById('rech');
+				var selectMoney = document.getElementById('rechtype');
+				var customMoney = document.getElementById('money');
+				var custom = document.querySelector('.custom');
+				var recharge_money = document.querySelector('.moneys');
+				var affirmBtn = document.querySelector('.pay-foot');
+				mui.init();
+				//订单id
+				var listData;
+				//支付方式
+				var payNum = 0;
+				var paymethod = document.getElementById("paymethod");
+				ajaxGet( 'userpay/getpaylist.html', {
+					type:"recharge"
+				}, function(res) {
+					var datas = {
+						data: res.data
+					}
+					paymethod.innerHTML = template('paymethodData', datas);
+					//支付方式
+					$('.pay-warp').each(function() {
+						$(this).on('tap', function() {
+							if($(this).children('div:last-child').find('img').attr('check') == '0') {
+								$(this).children('div:last-child').find('img').attr('src', 'images/pt-right.png');
+								$(this).children('div:last-child').find('img').attr('check', '1');
+								payNum = $(this).children('div:last-child').find('img').attr('select');
+								$(this).siblings().children('div:last-child').find('img').attr('check', '0');
+								$(this).siblings().children('div:last-child').find('img').attr('src', 'images/pt-error.png');
+							} else {
+								$(this).children('div:last-child').find('img').attr('src', 'images/pt-error.png');
+								$(this).children('div:last-child').find('img').attr('check', '0');
+								payNum = 0;
+							}
+						})
+					})
+				})
+
+				//更新余额数据
+				ajaxGet('user/get_user_info.html', {
+					userid:userInfo.id
+				}, function(res) {
+					console.log("余额:"+JSON.stringify(res));
+					if(res.code == 1) {
+						mui('#moneys')[0].innerText = res.data.balance;
+					}else{
+						mui.toast(res.msg);
+					}
+				})
+
+				//			mui('.mui-scroll-wrapper').scroll({
+				//				scrollY: true,
+				//				scrollX: false,
+				//				startX: 0,
+				//				startY: 0,
+				//				indicators: true,
+				//				deceleration: 0.001,
+				//				bounce: true
+				//			});
+				//充多少钱
+				mui('.rechList').on('tap', 'li', function() {
+					childrens = this.parentNode.children;
+					for(var i = 0; i < childrens.length; i++) {
+						if(childrens[i] == this) {
+							this.classList.add('active');
+							selectMoney.value = this.getAttribute('rech');
+
+						} else {
+							childrens[i].classList.remove('active')
+						}
+
+					}
+					if(this.getAttribute('rech') == 'custom') {
+						custom.style.display = 'block'
+					} else {
+						custom.style.display = 'none'
+					}
+
+				});
+
+				document.querySelector('.bill').addEventListener('tap', function() {
+					mui.openWindow({
+						url: 'accountdetail.html'
+					})
+				});
+				var price = 0;
+				rech.addEventListener('tap', function() {
+					console.log('点了一下');
+					if(selectMoney.value == '' || selectMoney.value == 'custom') {
+						console.log('执行这里吗额');
+						if(!customMoney.value.match(/(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/)||customMoney.value==0) {
+							console.log(selectMoney.value);
+							mui.alert('请输入金额或选择金额', '提示', '确定', function(){
+								console.log('adasdasdasd');
+							});
+						}else if(customMoney.value>3000){
+							mui.alert("金额不能高于3000");
+						}else if(customMoney.value<0.01){
+							mui.alert("金额不能少于0.01");
+						}
+						else {
+							mui('#popover').popover('show');
+							recharge_money.innerHTML = customMoney.value;
+							getId(customMoney.value);
+						}
+					} else {
+						mui('#popover').popover('show');
+						recharge_money.innerHTML = selectMoney.value;
+						getId(selectMoney.value);
+					}
+				});
+				function getId(m){
+					ajaxPost('userpay/recharge.html',{
+						money:m
+					},function(res){
+						console.log('订单iD：'+JSON.stringify(res));
+						if(res.code == 1){
+							listData = res.data.id
+						}else{
+							mui.toast(res.msg);
+						}
+					},function(res){
+						console.log('失败:'+JSON.stringify(res));
+					})
+				}
+				
+				var channel = null;
+				var wxChannel = null;
+				var aliChannel = null;
+				getChannels();
+				function getChannels(){
+					plus.payment.getChannels(function(channels){
+						console.log("channels:"+JSON.stringify(channels));
+						for(var i = 0;i<channels.length;i++){
+							if(channels[i].id == 'wxpay'){
+								wxChannel = channels[i];
+							}
+							if(channels[i].id == 'alipay'){
+								aliChannel = channels[i];
+							}
+						}
+					},function(e){
+						plus.ui.toast('获取支付通道失败！');
+						console.log("获取支付通道失败");
+					})
+				}
+				function pay(id){
+					if(id == 'alipay'){
+						channel = aliChannel;
+					}else if(id == 'wxpay'){
+						channel = wxChannel;
+					}else{
+						plus.ui.toast('不支持此支付通道');
+						return;
+					};
+					var params = {
+						id:listData,	
+						paytype: payNum
+					};
+					console.log("params:"+JSON.stringify(params));
+					ajaxPost('userpay/recharge_pay.html',params,function(res){
+						console.log("这个可以有:"+JSON.stringify(res));
+						var data = JSON.stringify(res.data);
+						console.log('支付数据:'+res.data);
+						var str = res.data;
+						plus.payment.request(channel,str,function(result){
+							console.log("result:"+JSON.stringify(result));
+//							plus.ui.alert('支付成功!',function(){
+//								back();
+//							})
+							mui.openWindow({
+								id:"pay_result.html",
+								url:"pay_result.html",
+								extras:{
+									infoId:listData,
+									pageId:1
+								},
+								createNew:true
+							})
+						},function(error){
+							plus.ui.alert('支付失败',function(){
+//								mui.back();
+							})
+							console.log('失败原因：'+JSON.stringify(error));
+//							mui.alert("失败原因"+JSON.stringify(error));
+						})
+					},function(res){
+						console.log("请求失败:"+JSON.stringify(res));
+					})
+				}
+				
+				
+				
+				
+				//确认支付
+				affirmBtn.addEventListener('tap', function() {
+					if(payNum == 0) {
+						mui.alert("请选择支付方式");
+					} else {
+						pay(payNum);
+//						var obj = {
+//							money: recharge_money.innerText,
+//							paytype: payNum
+//						};
+//						console.log("obj:"+JSON.stringify(obj));
+						//充值
+//						ajaxPost('userpay/recharge.html', obj, function(res) {
+//							console.log('充值:'+JSON.stringify(res));
+//							if(res.code == 1) {
+//								var payurl = res.url;
+//								console.log(JSON.stringify(res));
+//								setTimeout(function() {
+//									window.location.href = "pay_result.html?orderid="+res.data.orderid;
+//								}, 3000);
+//								mui.openWindow({
+//									url:res.url
+//								})
+//							}
+//						}, function(res) {
+//							console.log(JSON.stringify(res));
+//						})
+					}
+				})
+			})
+		</script>
+	</body>
+
+</html>

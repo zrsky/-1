@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>订单详情</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<script src="js/template.js"></script>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			body {
+				background-color: #fff;
+			}
+			
+			.stateImg {
+				width: 6rem;
+				height: 6rem;
+				display: block;
+				margin: 30px auto 30px auto;
+			}
+			
+			.info {
+				margin: 0 auto 20px auto;
+				width: 80%;
+				padding: 5%;
+				border: 1px dashed #e19646;
+				background-color: #fffef9;
+				font-size: 1rem;
+			}
+			
+			p {
+				width: 80%;
+				margin: 0 auto;
+				font-size: 0.9rem;
+				line-height: 1.5rem;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
+			
+			p span {
+				margin-left: 0.5rem;
+				color: #000;
+			}
+			
+			.baba {
+				padding: 0.3rem 0;
+				display: flex;
+				justify-content: space-around;
+				border: none!important;
+			}
+			
+			.baba button {
+				width: 40%;
+				color: #E19646;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">订单详情</h1>
+		</header>
+		<div class="mui-scroll-wrapper set_top" style="margin-bottom: 50px;">
+			<div class="mui-scroll" id="infowrap">
+				<!--这里放置真实显示的DOM内容-->
+				<script type="text/html" id="info">
+					{{if data.status == 7}}
+					<img class="stateImg" src="images/wc.png" /> {{else if data.status == -1}}
+					<img class="stateImg" src="images/qx.png"> {{/if}}
+					<p>订单编号 <span>{{data.order_sn}}</span></p>
+					<p>发单时间 <span>{{data.create_time_formated}}</span></p>
+					<p>发货地址<span>{{data.from_address}}</span></p>
+					<p>收货地址<span>{{data.to_address}}</span></p>
+					<p>发货电话 <span>{{data.from_mobile}}</span></p>
+					<p>收货电话<span>{{data.to_mobile}}</span></p>
+					<p>订单金额 <span>{{data.payed}}元</span></p>
+					<p>订单里程 <span>约{{data.km}}千米</span></p>
+					{{if data.description !='' && data.description !=null}}
+					<p>备注:{{data.description}}</p>
+					{{/if}}
+				</script>
+
+			</div>
+		</div>
+
+		<nav class="mui-bar mui-bar-tab baba">
+			<button class="gocomment">去评价</button>
+			<button class="again">再来一单</button>
+		</nav>
+		<script src="js/mui.min.js"></script>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			//			mui.init({
+			//				preloadPages: [{
+			//					id: "order.html",
+			//					url: "order.html"
+			//				}]
+			//			});
+			mui.init();
+			var userinfo = is_login();
+			var id = '';
+			mui('.mui-scroll-wrapper').scroll({
+				scrollY: true,
+				scrollX: false,
+				startX: 0,
+				startY: 0,
+				indicators: true,
+				deceleration: 0.001,
+				bounce: true
+			});
+			var infowrap = document.getElementById('infowrap');
+			mui.plusReady(function() {
+				var self = plus.webview.currentWebview();
+				orderid = self.orderid;
+				var typeId;
+				if(orderid == undefined) {
+					window.addEventListener('orderDetail', function(event) {
+						orderid = event.detail.orderid;
+					})
+				}
+				console.log("orderid:" + orderid);
+				ajaxGet('userorder/detail.html', {
+					orderid: orderid
+				}, function(res) {
+					console.log("订单状态:" + JSON.stringify(res));
+					if(res.code == 1) {
+						infowrap.innerHTML = template('info', {
+							data: res.data
+						})
+						typeId = res.data.type_id;
+						if(res.data.status < 7) {
+							$('.gocomment').hide();
+						}
+					}
+				}, function(res) {
+					console.log("shibai:" + JSON.stringify(res));
+				})
+				document.querySelector('.again').addEventListener('tap', function() {
+					if(typeId == 1) {
+						mui.openWindow({
+							id: "send/send.html",
+							url: "./send/send.html"
+						})
+					} else if(typeId == 2) {
+						mui.openWindow({
+							id: "buy/buy.html",
+							url: "./buy/buy.html"
+						})
+					} else if(typeId == 3) {
+						mui.openWindow({
+							id: "take/take.html",
+							url: "./take/take.html"
+						})
+					}
+				})
+			})
+			document.querySelector('.gocomment').addEventListener('tap', function() {
+				var orderPage = null;
+				if(orderPage == null) {
+					orderPage = plus.webview.getWebviewById('comment.html');
+					if(orderPage != null) {
+						mui.fire(orderPage, 'DIY_DATA', {
+							orderid: orderid
+						})
+					}
+				}
+				mui.openWindow({
+					id: 'comment.html',
+					url: 'comment.html',
+					extras: {
+						orderid: orderid
+					}
+				})
+			})
+		</script>
+	</body>
+
+</html>

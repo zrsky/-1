@@ -1,0 +1,18 @@
+.addnew{
+	height: 4rem;
+	text-align: center;
+	color:#e58a21;
+	font-size: 0.8rem;
+	line-height:4rem ;
+	background-color: #fff;
+}
+.operation{
+	border-top: 1px solid #E5E5E5;
+}
+.mui-table-view button{
+	margin: 0.6rem 0.3rem 0 0.3rem;
+	padding:0 5px;
+	font-size: 0.9rem;
+	text-align: center;
+  line-height: 25px;
+}

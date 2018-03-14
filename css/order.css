@@ -1,0 +1,36 @@
+header span{
+	line-height: 44px;
+}
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active{
+	color:#e89b25!important ;
+}
+.menu_nav{
+	margin-top: 44px;
+	background-color: #fff;
+	z-index: 1000;
+}
+.second{
+	margin-top: 85px;
+}
+.sendimg{
+	width: 3rem;
+	display: block;
+}
+.mui-navigate p{
+	color: #000000;
+}
+.mui-table-view-cell button{
+	margin: 0.2rem;
+	border: 1px solid #e89b25;
+}
+.mui-table-view-cell button.active{
+	background-color: #e89b25;
+	color: #fff;
+}
+.stateImg{
+	width: 3.5rem;
+	height: 3.5rem;
+	position: absolute;
+	right: 2rem;
+	top: 1rem;
+}

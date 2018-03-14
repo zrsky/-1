@@ -1,0 +1,61 @@
+.banner{
+	width: 100%;
+	margin-top: 54px;
+}
+.mui-scroll-wrapper{
+	margin-top: 64px;
+}
+.mui-navigate{
+	font-size: 0.9rem!important;
+	line-height: 20px;
+}
+.mui-navigate span{
+   color:#939393 ;
+}
+.mui-navigate i{
+	margin: 0 0.2rem;
+	font-size: 0.9rem;
+}
+.phones{
+	margin: 0 4rem;
+}
+#price{
+	color: #E58620;
+	font-weight: bold;
+}
+.gopay{
+	padding: 0.3rem 0.4rem;
+	margin: 0.3rem 0;
+	background-color: #E58620;
+	color: #fff;
+	font-size: 1rem;
+}
+.title{
+	line-height: 3rem;
+	border-bottom: 1px solid #E5E5E5;
+	text-align: center;
+	font-weight: bold;
+}
+.price-wrap{
+	padding: 1.5rem 0;
+	text-align: center;
+	border-bottom: 1px solid #E5E5E5;
+}
+.price-wrap h2{
+	color: #e48920;
+}
+.mui-radio{
+	height: 30px!important;
+	position: absolute!important;
+	right: 0;
+	top: 1rem;
+	z-index: 1000;
+}
+.affirm-pay{
+	display: block;
+	margin: 0.2rem auto;
+	width: 80%;
+	background-color: #E48920;
+	color: #fff;
+	border: none;
+}

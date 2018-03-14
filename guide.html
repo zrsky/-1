@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>引导页</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<link rel="stylesheet" href="css/mui.min.css">
+		<style>
+			#close {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+			}
+			
+			.item-logo {
+				width: 100%;
+				height: 100%;
+				position: relative;
+			}
+			
+			.item-logo a {
+				width: 200px;
+				height: 200px;
+				display: block;
+				border: 1px solid #FFFFFF;
+				border-color: rgba(255, 255, 255, 0.5);
+				text-align: center;
+				line-height: 200px;
+				border-radius: 50%;
+				font-size: 40px;
+				color: #fff;
+				position: absolute;
+				top: 15%;
+				left: 50%;
+				margin-left: -100px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="slider" class="mui-slider mui-fullscreen" style="background-color: black;">
+			<div class="mui-slider-group">
+				<!--1-->
+				<div class="mui-slider-item">
+					<img src="images/guideone.jpg" />
+				</div>
+				<!--2 -->
+				<div class="mui-slider-item">
+					<img src="images/guidetwo.jpg" />
+				</div>
+				<!-- 3 -->
+				<div class="mui-slider-item">
+					<img src="images/guidethree.jpg" />
+				</div>
+				<!--4-->
+				<div class="mui-slider-item">
+					<div class="item-logo">
+						<img src="images/guidefour.jpg" />
+						<div class="animate" id="close">
+							<!--<button id='close'></button>-->
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="mui-slider-indicator">
+				<div class="mui-indicator mui-active"></div>
+				<div class="mui-indicator"></div>
+				<div class="mui-indicator"></div>
+				<div class="mui-indicator"></div>
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script>
+			mui.back = function() {};
+			mui.plusReady(function() {
+				if(mui.os.ios) {
+					plus.navigator.setFullscreen(true);
+				}
+				//手动关闭启动页
+				plus.navigator.closeSplashscreen();
+			});
+			//立即体验按钮点击事件
+			document.getElementById("close").addEventListener('tap', function(event) {
+				//向本地存储中设置launchFlag的值，即启动标识
+				plus.storage.setItem("launchFlag", "true");
+				plus.navigator.setFullscreen(false);
+				plus.webview.currentWebview().close();
+			}, false);
+		</script>
+	</body>
+
+</html>

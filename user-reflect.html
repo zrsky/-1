@@ -1,0 +1,199 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css"/>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.box>span {
+				display: inline-block;
+				width: 100px;
+			}
+			
+			.box input {
+				border: none;
+			}
+			
+			.btn {
+				background-color: #FF8B02;
+				color: #FFFFFF;
+				width: 95%;
+				margin: 20px auto;
+			}
+			.alertBox{
+				display: none;
+				color: red;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">提现</h1>
+		</header>
+		<div class="mui-content">
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a class="">
+						<div class="mui-media box">
+							<span>持卡人</span><input type="text" id="username" name="username" placeholder="请输入真实姓名" />
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell alertBox nameBox">
+					<a class="">
+						<div class="mui-media">
+							<span>提示：请输入姓名</span>
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="">
+						<div class="mui-media box">
+							<span>卡号</span><input type="text" name="cardNum" id="cardNum" placeholder="请输入银行卡号" />
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell alertBox cardBox">
+					<a class="">
+						<div class="mui-media">
+							<span>提示：请输入正确的卡号</span>
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" id="cardType">
+					<a class="">
+						<div class="mui-media box">
+							<span>卡类型</span><span class="cardType">选择卡类型</span>
+							<input type="hidden" name="cardValue" id="cardTypeValue" />
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell alertBox cardTypeBox">
+					<a class="">
+						<div class="mui-media">
+							<span>提示:请选择卡类型</span>
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="">
+						<div class="mui-media box">
+							<span>提现金额</span><input type="number" name="money" id="money" placeholder="请输入提现金额(元)" />
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell alertBox moneyBox ">
+					<a class="">
+						<div class="mui-media">
+							<span>提示:请输入提现金额</span>
+						</div>
+					</a>
+				</li>
+			</ul>
+			<button type="button" class="mui-btn mui-btn-block btn" id="btn">确认提现</button>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init()
+			mui.plusReady(function() {
+				var userInfo = is_login();
+				//获取卡类型
+				var cardList;
+				var arr = [];
+				ajaxGet('user/get_bank_list.html',{},function(res){
+					console.log("卡类型:"+JSON.stringify(res));
+					if(res.code == 1){
+						cardList = res.data;
+						for(var i = 0;i<cardList.length;i++){
+							var list = {
+								value:cardList[i].id,
+								text:cardList[i].name
+							};
+							arr.push(list);
+						}
+					}
+				})
+				//前端验证 
+				$('#username').blur(function(){
+					if($('#username').val() != ''){
+						$('.nameBox').hide();
+					}else{
+						$('.nameBox').show();
+					}
+				})
+				$('#cardNum').blur(function(){
+					if($('#cardNum').val() != ''){
+						$('.cardBox').hide();
+					}else{
+						$('.cardBox').show();
+					}
+				})
+				$('#money').blur(function(){
+					var money = $('#money').val();
+					if(!money.match(/(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/)||money == 0){
+						$('.moneyBox').show();
+						document.getElementById('money').value = '';
+					}else{
+						$('.moneyBox').hide();
+					}
+					var bank_id = $('#cardTypeValue').val();
+					console.log('bank_id:'+typeof(bank_id));
+					if(bank_id =='' ||bank_id==null||bank_id==undefined){
+						console.log('aaa');
+						$('.cardTypeBox').show();
+					}else{
+						$('.cardTypeBox').hide();
+					}
+				})
+				document.getElementById('cardType').addEventListener('tap', function() {
+					var picker = new mui.PopPicker();
+					picker.setData(arr);
+					picker.show(function(selectItems){
+						$('.cardType').text(selectItems[0].text);
+						$('#cardTypeValue').val(selectItems[0].value);
+					})
+				})
+				document.getElementById('btn').addEventListener('tap',function(){
+					//姓名
+					var username = $('#username').val();
+					//银行卡号
+					var cardNum = $('#cardNum').val();
+					console.log('cardnum:'+cardNum);
+					var bank_no = cardNum;
+					console.log('bank_no:'+bank_no);
+					var bank_id = $('#cardTypeValue').val();
+					var money = $('#money').val();
+					if(username == ''||bank_no ==''||bank_id ==''||money==''){
+						mui.alert('请填写完整信息');
+					}else{
+						var params = {
+							name:username,
+							bank_id:bank_id,
+							bank_no:bank_no,
+							money:money
+						}
+						ajaxPost('user/reflect_add.html',params,function(res){
+							if(res.code == 1){
+								mui.toast('提现成功');
+							}else{
+								mui.toast(res.msg);
+							}
+						})
+					}
+					
+				})
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,30 @@
+.logoImg{
+	display: block;
+	margin: 10rem auto 0.5rem auto;
+	width: 7rem;
+	height: 7rem;
+}
+.name{
+	font-size: 1rem;
+	text-align: center;
+	color: #000;
+}
+.description{
+	width: 90%;
+	margin: 0 auto;
+	padding: 0.5rem;
+	color: #000;
+	text-indent: 2em;
+	background-color: #fff;
+}
+.copyright{
+	margin: 1rem 0;
+	text-align: center;
+	color:#939393 ;
+}
+.company{
+	margin: 1rem 0;
+	font-size: 1.2rem;
+	text-align: center;
+	color: #000;
+}

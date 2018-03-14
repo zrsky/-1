@@ -1,0 +1,18 @@
+{
+	"data":{
+		"id":"1",
+		"logoImg":"../images/logo3.png",
+		"time":"33分钟",
+		"complate":"0",
+		"dayPrice":"0.0",
+		"listNum":"3",
+		"type_id":"3",
+		"juli":"1.2公里",
+		"express_price":"9",
+		"from_address":"河南省新乡市红旗区道清路辅路",
+		"to_address":"金穗大道与新二街交汇处以南宝龙国际社区",
+		"km":"4.6公里",
+		"goods":"五金类",
+		"description":"尽快到达"
+	}
+}

@@ -1,0 +1,507 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>身份认证</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/validate.css"/>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			header a,
+			header .mui-title {
+				color: #FF8B02;
+			}
+			
+			.top-img {
+				background-color: #FFFFFF;
+				padding-top: 10px;
+			}
+			
+			.bg-FF9547 {
+				background-color: #FF8B02;
+				border-radius: 0.5rem;
+				position: relative;
+				margin-bottom: 0.75rem;
+				padding: 0.75rem;
+			}
+			
+			.center_img {
+				position: relative;
+				min-height: 2.2rem;
+				padding: 0.5rem 0.75rem;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			
+			.center_img img {
+				position: absolute;
+				top: 18px;
+				width: 2rem;
+				height: 2rem;
+			}
+			
+			.content {
+				border-radius: 0.5rem;
+				background: #FFFFFF;
+				padding: 2rem 0.75rem 0.75rem 0.75rem;
+				font-size: 0.8rem;
+			}
+			
+			.mui-table-view {
+				font-size: 0.8rem;
+			}
+			
+			.mui-table-view .mui-table-view-cell {
+				padding: 11px 9px;
+			}
+			
+			.mui-table-view-cell:after {
+				left: 0;
+			}
+			
+			.mui-table-view-cell i {
+				color: #FF8B02;
+				font-size: 1rem;
+			}
+			
+			.kefu {
+				margin-left: 10px;
+			}
+			
+			.kefu span {
+				color: #FF8B02;
+			}
+			
+			.mui-media-body span {
+				margin-left: 15px;
+			}
+			
+			.mui-media-body input {
+				border: none;
+				font-size: 0.8em;
+				margin-bottom: 0;
+			}
+			
+			.sex input {
+				margin-left: 15px;
+			}
+			
+			.mui-media-body p {
+				font-size: 0.6rem;
+				width: 100%;
+				white-space: normal;
+			}
+			
+			.sure {
+				width: 200px;
+				height: 50px;
+				border-radius: 1.75rem;
+				border: 1px solid #FFFFFF;
+				margin: 20px auto;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				color: #FFFFFF;
+			}
+			
+			.sure button {
+				background-color: #FF8B02;
+				color: #FFFFFF;
+				border: none;
+			}
+			
+			.mui-media-body {
+				position: relative;
+			}
+			
+			.sfPhoto {
+				display: block;
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				top: 0.5rem;
+				opacity: 0;
+			}
+			
+			.imgwrap .mui-media-body {
+				height: 11rem;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">身份认证</h1>
+		</header>
+		<div class="mui-content">
+			<div class="top-img">
+				<img src="../images/auth_reg.png" width="100%" height="100%" />
+			</div>
+			<div class="bg-FF9547">
+				<div class="center_img">
+					<img src="../images/auth_renzheng.png" />
+				</div>
+				<form name="form" id="form">
+					<div class="bg-FFF content">
+						1.完善个人资料,以便于信息审核<br> 2.认证所需资料不公开任何组织和个人
+						<br> 3.审核通过后，信息无法修改，如需帮助请致电
+
+						<div class="kefu">
+							客服：<span class="text-FF9547">0373-5837288</span>
+						</div>
+						<ul class="mui-table-view">
+							<li class="mui-table-view-cell citybox">
+								<a class="">
+									<div class="mui-media-body">
+										<i>*</i>城市<span class="city">请选择所在城市</span>
+										<input type="hidden" name="cityCode" id="cityCode" value="" data-required="true" data-descriptions="cityCode" />
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a class="">
+									<div class="mui-media-body">
+										<i>*</i>姓名<input type="text" name="name" required="" placeholder="请填写姓名" data-required="true" data-descriptions="name" />
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a class="">
+									<div class="mui-media-body sex">
+										<i>*</i>性别<input name="sex" value="1" checked type="radio" />男
+										<input type="radio" name="sex" value="0" />女
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a class="">
+									<div class="mui-media-body">
+										<i>*</i>身份证
+										<input type="text" name="idnumber" id="" value="" placeholder="请填写身份证号码" data-required="true" data-descriptions="idnumber" data-pattern="^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$"/>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell" id="vehicle_id">
+								<a class="">
+									<div class="mui-media-body">
+										<i>*</i><span class="tool">请选择使用的交通工具</span>
+										<input type="hidden" name="vehicle_id" id="ps_tool" value="" data-required="true" data-descriptions="vehicle_id"/>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a class="">
+									<div class="mui-media-body">
+										<i>*</i>现居地
+										<input required type="text" name="address" id="" value="" placeholder="请填写现居住地的详细地址" data-required="true" data-descriptions="address"/>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a class="">
+									<div class="mui-media-body">
+										<i>*</i>第二联系人
+										<input type="text" data-required="true" data-descriptions="second_contact" data-pattern="^1[345678]\d{9}$" name="second_contact" id="" value="" placeholder="请填写联系人的手机号码" />
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a class="">
+									<div class="mui-media-body">
+										从事职业
+										<input type="text" name="profession" id="" value="" placeholder="请填写您所从事的职业" />
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a class="imgwrap">
+									<div class="mui-media-body">
+										<div class="title">
+											<i>*</i>个人形象照片
+										</div>
+										<img id="userImg" src="../images/auto_xinxiang.png" width="100%" height="100%" />
+										<input class="userImg" type="hidden" name="image_picture" id="" value="" data-required="true" data-descriptions="image_picture" />
+										<p>(请您着便装进行拍照，不得穿其他配送平台工装；)</p>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a class="imgwrap">
+									<div class="mui-media-body">
+										<div class="title">
+											<i>*</i>手持身份证照片
+										</div>
+										<img id="auth_shou" src="../images/auth_shou.png" width="100%" height="100%" />
+										<input class="auth_shou" type="hidden" name="hand_id_picture" id="" value="" data-required="true" data-descriptions="hand_id_picture" />
+										<p>(请手持身份证并进行拍照，确保被拍摄人与身份证的完整性；)</p>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a class="imgwrap">
+									<div class="mui-media-body">
+										<div class="title">
+											<i>*</i>身份证正面
+										</div>
+										<img id="auth_zheng" src="../images/auth_zheng.png" width="100%" height="100%" />
+										<input class="auth_zheng" type="hidden" name="id_up_picture" id="" value="" data-required="true" data-descriptions="id_up_picture"/>
+										<p>(请对身份证正面拍摄，身份证置于照片中间并完全入境，身份证号码清晰可见；)</p>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell">
+								<a class="imgwrap">
+									<div class="mui-media-body">
+										<div class="title">
+											<i>*</i>身份证反面
+										</div>
+										<img id="auth_fan" src="../images/auth_fan.png" width="100%" height="100%" />
+										<input class="auth_fan" type="hidden" name="id_down_picture" id="" value="" data-required="true" data-descriptions="id_down_picture"/>
+										<p>(请对身份证背面拍摄，身份证有效期不得超出当前日期，过期无效；)</p>
+									</div>
+								</a>
+							</li>
+						</ul>
+					</div>
+
+					<div class="sure" id="submit">
+						<span>确认提交</span>
+					</div>
+				</form>
+			</div>
+			<script src="../js/mui.min.js"></script>
+			<script src="../js/base.js"></script>
+			<script src="../js/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+			<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+			<script src="../js/jquery-mvalidate.js" type="text/javascript" charset="utf-8"></script>
+			<script src="../js/template.js" type="text/javascript" charset="utf-8"></script>
+			<script type="text/javascript">
+				mui.init();
+				mui.plusReady(function() {
+					//选择配送工具
+					function getData(){
+						var categoryData = null;
+						ajaxGet('base/getinfo.html',{},function(res){
+							if(res.code == 1){
+								categoryData = res.data;
+							}
+						})
+						return categoryData;
+					}
+					var ps_tool = document.getElementById('vehicle_id');
+					var toolData = getData();
+					var toolPicker = new mui.PopPicker();
+					console.log('toolData:'+JSON.stringify(toolData.tool));
+					toolPicker.setData(toolData.tool);
+					ps_tool.addEventListener('tap',function(event){
+						toolPicker.show(function(items){
+							$('.tool').text(items[0].text);
+							$('#ps_tool').val(items[0].value);
+						});
+					});
+					var userInfo = is_login();
+					window.addEventListener('cityId',function(e){
+						$('.city').text(e.detail.cityText);
+						$('#cityCode').val(e.detail.cityId);
+					})
+					var listPage = null;
+					//选择城市
+					$('.citybox').on('tap', function() {
+						if(listPage == null) {
+							listPage = plus.webview.getWebviewById('list_select.html');
+							if(listPage != null){
+								mui.fire(listPage,'cityCode',{
+									page:2
+								});
+							}
+						}
+						mui.openWindow({
+							id:"list_select.html",
+							url:"../list_select.html",
+							extras:{
+								page:2
+							}
+						})
+					})
+					function authImg(str) {
+						var el = document.getElementById(str);
+						el.addEventListener('tap', function() {
+							if(mui.os.plus) {
+								var a = [{
+									title: '拍照'
+								}, {
+									title: '从手机相册选择'
+								}];
+								plus.nativeUI.actionSheet({
+									title: '个人照片',
+									cancel: '取消',
+									buttons: a
+								}, function(b) {
+									switch(b.index) {
+										case 0:
+											break;
+										case 1:
+											//拍照
+											getImages(str);
+											break;
+										case 2:
+											//打开相册
+											galleryImages(str);
+											break;
+									}
+								}, false);
+							}
+						});
+					}
+					authImg("userImg");
+					authImg("auth_shou");
+					authImg("auth_zheng");
+					authImg("auth_fan");
+					//确认提交
+					document.getElementById('submit').addEventListener('tap', function() {
+						$('#form').submit();
+					})
+					//前端验证
+					$('#form').mvalidate({
+						type:1,
+						onKeyup: true,
+					sendForm: true,
+					firstInvalidFocus: false,
+					valid:function(event,options){
+						var formData = $('#form').serialize();
+						formData += '&userid=' + userInfo.id;
+						console.log("formData:"+JSON.stringify(formData));
+						ajaxPost('express/auth.html', formData, function(res) {
+							console.log("认证返回:"+JSON.stringify(res));
+							if(res.code == 1) {
+								mui.alert(res.msg);
+							}
+						})
+					},
+					descriptions:{
+						cityCode:{
+							required:"请选择所在城市"
+						},
+						name:{
+							required:"请输入姓名"
+						},
+						sex:{
+							required:"请输入性别"
+						},
+						vehicle_id:{
+							required:"请选择配送工具"	
+						},
+						idnumber:{
+							required:"请输入身份证号",
+							pattern:"请输入正确的身份证号"
+						},
+						address:{
+							required:"请输入所在地址"
+						},
+						second_contact:{
+							required:"请输入第二联系人",
+							pattern:"请输入正确的联系方式"
+						},
+						image_picture:{
+							required:"请上传个人形象照片"
+						},
+						hand_id_picture:{
+							required:"请上传手持身份证照片"
+						},
+						id_up_picture:{
+							required:"请上传身份证正面照"
+						},
+						id_down_picture:{
+							required:"请上传身份证反面照片"
+						}
+					}
+					})
+
+					//拍照
+					function getImages(str) {
+						var mobileCamera = plus.camera.getCamera();
+						mobileCamera.captureImage(function(e) {
+							plus.io.resolveLocalFileSystemURL(e, function(entry) {
+								var path = entry.toLocalURL() + '?version=' + new Date().getTime();
+								uploadHeadImg(path, str);
+							}, function(err) {
+								console.log('读取拍照文件错误');
+							});
+						}, function(e) {
+							console.log('er', err);
+						}, function() {
+							filename: '_doc/' + str + '.png';
+						});
+					}
+					//从本地相册选择
+					function galleryImages(str) {
+						console.log('你选择了从相册选择' + str);
+						plus.gallery.pick(function(a) {
+							plus.io.resolveLocalFileSystemURL(a, function(entry) {
+								plus.io.resolveLocalFileSystemURL('_doc/', function(root) {
+									root.getFile(str + '.png', {}, function(file) {
+										//文件已经存在
+										file.remove(function() {
+											entry.copyTo(root, str + '.png', function(e) {
+												var path = e.fullPath + '?version=' + new Date().getTime();
+												uploadHeadImg(path, str);
+											}, function(err) {
+												console.log('copy image fail:', err);
+											});
+										}, function(err) {
+											console.log('删除图片失败:(' + JSON.stringify(err) + ")");
+										});
+									}, function(err) {
+										//打开文件失败
+										entry.copyTo(root, str + '.png', function(e) {
+											var path = e.fullPath + '?version=' + new Date().getTime();
+											uploadHeadImg(path, str);
+										}, function(err) {
+											console.log('上传图片失败：(' + JSON.stringify(err) + ")");
+										});
+									});
+								}, function(e) {
+									console.log("读取文件夹失败：(" + JSON.stringify(err) + ")");
+								});
+							});
+						}, function(err) {
+							console.log("读取拍照文件失败:");
+						}, {
+							filter: 'image'
+						});
+					};
+					//上传图片
+					function uploadHeadImg(imgPath, str) {
+						//选中图片之后，头像当前的照片变为选中的照片
+						var mainImg = document.getElementById(str);
+						mainImg.src = imgPath;
+						var images = new Image();
+						images.src = imgPath;
+						var imgData = '';
+						images.onload = function() {
+							imgData = getBase64Image(images, 800);
+							var params = {
+								'imgDatas': imgData,
+								'userid': userInfo.id
+							};
+							console.log("params:" + JSON.stringify(params));
+							ajaxPost('expressattachment/update_base.html', params, function(data) {
+								if(data.code == 1) {
+									mainImg.nextElementSibling.value = data.data.id;
+								}
+							}, function(res) {
+								console.log("链接服务器超时");
+							},true,true);
+						}
+					}
+				})
+			</script>
+	</body>
+
+</html>

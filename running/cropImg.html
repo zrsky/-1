@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/cropper.min.css" />
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+		.img-preview {
+			float: left;
+			margin-right: 10px;
+			margin-bottom: 10px;
+			overflow: hidden;
+		}
+		.img-preview > img {
+			max-width: 30%;
+		}
+		.preview-lg {
+			width: 120px;
+			height: 120px;
+		}
+		#uploadImg{
+			display: none;
+		}
+		#image{
+			width:100%;
+			max-height: 400px;
+		}
+		.wrapper {
+			text-align: center;
+		}
+  </style>
+	</head>
+
+	<body>
+		<div class="mui-bar mui-bar-nav mui-bar-blue">
+		<span id="user-return-icon"></span>
+		<button class="mui-action-back mui-btn mui-btn-white mui-btn-link mui-btn-nav mui-pull-left" id="user-return">返回</button>
+		<h1 class="mui-title mui-my-title">上传头像</h1>
+	</div>
+	<div class="mui-content">
+		<div class="mui-row">
+			<div class="mui-col-xs-12">
+				<div class="mui-row">
+					<img class="img-responsive" id="image" src="">
+				</div>
+			</div> 
+		</div>
+		<div class="mui-row">
+			<div class="mui-col-xs-12 wrapper">
+				<img id="orginalImg" src=""/>
+				<input type="file" id="inputImage" name="file" accept="image/*" style="display: none;">
+				<button id="chooseImg" type="button" class="mui-btn mui-btn-block">选择图片</button>
+				<button id="uploadImg" type="button" class="mui-btn mui-btn-primary mui-btn-block">上&nbsp;&nbsp;&nbsp;传</button>
+			</div> 
+		</div>
+		
+	</div>
+	</body>
+	
+</html>
+<script src="../js/mui.min.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/cropper.min.js"></script>
+<script src="../js/base.js"></script>
+<script type="text/javascript">
+	mui.init()
+	mui.plusReady(function(){
+			var userInfo = is_login();
+			$("#chooseImg").on("tap",chooseImg)
+			$("#uploadImg").on("tap",doUpdateAvatar)
+			var self = plus.webview.currentWebview();
+			console.log(self.orginalImg);
+			$('#image').attr({"src":self.orginalImg});
+//			$("#orginalImg").attr({"src":self.orginalImg});
+	function doUpdateAvatar()
+		{
+			var canvas=$('#image').cropper('getCroppedCanvas',{width:300,height:300});
+			var imgData = canvas.toDataURL("image/png", 0.8);
+			imgData.replace('data:image/png:base64','');
+			console.log("data:11" + imgData)
+			console.log('id得值'+ userInfo.id)
+			plus.nativeUI.showWaiting();
+			ajaxPost('express/update_avatar.html', {
+				'imgDatas': imgData,
+				'userid': userInfo.id
+			}, function(d) {
+				console.log('00000'+JSON.stringify(d))
+				if (d.code==1) {
+					plus.nativeUI.closeWaiting();
+					$image.cropper('destroy');//销毁
+					console.log("图片id："+d.data.id);
+					var editPage = plus.webview.getWebviewById('userCenter.html');
+					if(editPage != null){
+						console.log("这里有没有："+imgData);
+						mui.fire(editPage,'update',{
+							avatar_id:d.data.id,
+							imgData:imgData
+						});
+						plus.webview.currentWebview().close();
+					}
+				}else{
+					mui.toast(d.msg);
+				}
+			}, function(error) {
+				console.log("error:"+JSON.stringify(error));
+			})
+		}
+		function chooseImg(){
+			$('#inputImage').click();
+		}
+		var $image = $('#image');
+		// Import image
+		$(function(){
+			$image.cropper({
+				aspectRatio : 1,
+				preview: '.img-preview',
+				cropBoxResizable :false,//是否允许拖动 改变裁剪框大小 
+				viewMode:2
+			});
+			var $inputImage = $('#inputImage');
+			var URL = window.URL || window.webkitURL;
+			var blobURL;
+			if (URL) {
+				$inputImage.change(function() {
+					$("#orginalImg").css({"display":'none'});
+					var files = this.files;
+					var file;
+					/* if (!$image.data('cropper')) {
+						return;
+					} */
+					if (files && files.length) {
+						file = files[0];
+						if (/^image\/\w+$/.test(file.type)) {
+							blobURL = URL.createObjectURL(file);
+							$image.one('built.cropper', function() {
+								// Revoke when load complete
+								URL.revokeObjectURL(blobURL);
+							}).cropper('reset').cropper('replace', blobURL);
+							$inputImage.val('');
+							//处理按钮
+							$('#chooseImg').css("display",'none');
+							$('#uploadImg').css("display",'block');
+							$("#image").css("height","400px");
+						} else {
+							window.alert('Please choose an image file.');
+						}
+					}
+				});
+			} else {
+				$inputImage.prop('disabled', true).parent().addClass('disabled');
+			}
+			ajaxGet("user/editData_json.html",{},function(data){
+				var imgSrc = data.data.avatar;
+				$("#image").attr("src",imgSrc);
+			});
+		});
+	})
+</script>

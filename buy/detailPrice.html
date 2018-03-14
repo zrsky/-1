@@ -1,0 +1,279 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>价格明细</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			.wrap {
+				display: flex;
+				border-bottom: 1px solid lightgrey;
+				background-color: #FFFFFF;
+			}
+			
+			.wrap .all,
+			.wrap .expect {
+				flex: 1;
+				text-align: center;
+				padding: 10px;
+			}
+			
+			.wrap .all p,
+			.wrap .expect p {
+				margin: 0;
+			}
+			
+			.wrap .all {
+				border-right: 1px solid lightgrey;
+			}
+			
+			.remind {
+				padding: 10px;
+				background-color: #FFFFFF;
+			}
+			
+			.remind p {
+				margin: 0 auto;
+				text-align: center;
+			}
+			
+			em {
+				font-style: normal;
+			}
+			
+			.mui-card-content-inner {
+				background-color: #FFFFFF;
+			}
+			
+			.price p span em {
+				color: #FF8B02;
+			}
+			
+			.youhui {
+				background-color: #fafae0;
+				margin: 10px 0 0 0;
+			}
+			
+			.youhui p,
+			.price p,
+			.yugu p {
+				margin: 0;
+			}
+			
+			.price p:first-child {
+				margin-bottom: 10px;
+			}
+			
+			.mui-card {
+				background-color: transparent;
+			}
+			
+			.youhui em {
+				color: #FF8B02;
+			}
+			
+			.yugu {
+				background-color: transparent;
+			}
+			
+			#map {
+				height: 20em;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">价格明细</h1>
+			<!--<button type="button" class="mui-btn mui-btn-link mui-pull-right btn">计价标准</button>-->
+		</header>
+		<div class="mui-content">
+			<div class="wrap">
+				<div class="all">
+					<span>合计费用</span>
+					<p>￥<span class="end_price">0.00</span></p>
+				</div>
+				<div class="expect">
+					<span>预计里程</span>
+					<p><span class="km">0.00</span>公里</p>
+				</div>
+			</div>
+			<div class="remind">
+				<p>实际费用可能因实际行驶里程/等候时间等因素而异</p>
+			</div>
+			<div class="mui-card">
+				<div class="mui-card-content">
+					<div class="mui-card-content-inner price">
+						<p>起步价（含<span class="start_km">三</span>公里）<span class="mui-pull-right"><em class="start_price">10.00</em>元</span></p>
+						<p>里程费（<em class="km">0.00</em>公里）<span class="mui-pull-right"><em class="express_price">0.00</em>元</span></p>
+					</div>
+					<div class="mui-card-content-inner youhui">
+						<p>优惠券折扣<span class="mui-pull-right">-<em class="coupon_cut">0.00</em>元<i class="mui-icon mui-icon-forward"></i></span></p>
+					</div>
+					<div class="mui-card-content-inner yugu">
+						<p>注：预估价格根据以下线路进行计算</p>
+					</div>
+					<div class="mui-card-content-inner map">
+						<div id="map">
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/base.js"></script>
+		<script type="text/javascript">
+//			mui.init({
+//				preloadPages: [{
+//						id: "buy/buy.html",
+//						url: 'buy.html'
+//					},
+//					{
+//						id: "take/take.html",
+//						url: "../take/take.html"
+//					},
+//					{
+//						id: "send/send.html",
+//						url: "../send/send.html"
+//					}
+//				]
+//			});
+			mui.init();
+			//			pageId 3send 1buy  2take
+			mui.plusReady(function() {
+				var userInfo = is_login();
+			var id = null;
+			//跑男价 优惠券 最终价 公里 运送工具 物品价格
+			var express_price, coupon_cut, end_price, km,user_vehicle_id,from_address,to_address,goods_budget;
+			var from_point, to_point;
+			//起步价 起步公里数
+			var start_price,start_km;
+				var wv = plus.webview.currentWebview();
+				id = wv.pageId;
+				user_vehicle_id = wv.user_vehicle_id;
+				from_address = wv.from_address;
+				to_address = wv.to_address;
+				from_point = wv.from_point;
+				to_point = wv.to_point;
+				express_price = wv.express_price;
+				coupon_cut = wv.coupon_cut;
+				end_price = wv.end_price;
+				km = wv.km;
+				start_price = wv.start_price;
+				start_km = wv.start_km;
+				goods_budget = wv.goods_budget;
+
+				window.addEventListener('couponId', function(event) {
+					coupon_cut = event.detail.cut;
+					$('.coupon_cut').text(coupon_cut);
+					$('.end_price').text(end_price - coupon_cut);
+				})
+				//添加上一个页面自定义事件监听
+				window.addEventListener('DIY_DATA', function(event) {
+					id = event.detail.pageId;
+					from_address = event.detail.from_address;
+					to_address = event.detail.to_address;
+					user_vehicle_id = event.detail.user_vehicle_id;
+					from_point = event.detail.from_point;
+					to_point = event.detail.to_point;
+					express_price = event.detail.express_price;
+					coupon_cut = event.detail.coupon_cut;
+					end_price = event.detail.end_price;
+					km = event.detail.km;
+					start_price = event.detail.start_price;
+					start_km = event.detail.start_km;
+					goods_budget = event.detail.goods_budget;
+				})
+				console.log("start_price:"+start_price+','+"start_km:"+start_km);
+				$('.start_price').text(start_price);
+				$('.start_km').text(start_km);
+				$('.end_price').text(end_price);
+				$('.km').text(km);
+				$('.coupon_cut').text(coupon_cut);
+				$('.express_price').text(express_price);
+				//创建地图
+				var bm = new BMap.Map('map');
+				var longitude, latitude, point;
+				var geolocation = new BMap.Geolocation();
+				geolocation.getCurrentPosition(function(r) {
+					longitude = r.longitude;
+					latitude = r.latitude;
+					point = new BMap.Point(longitude, latitude);
+					bm.centerAndZoom(point, 15);
+					var p1;
+					if(id == 1){
+						console.log("frompoint:"+JSON.stringify(from_point));
+						if(from_point == undefined){
+							p1 = new BMap.Point(longitude,latitude);
+						}else{
+							p1 = new BMap.Point(from_point.lng,from_point.lat);
+						}
+					}else{
+						p1 = new BMap.Point(from_point.lng, from_point.lat);
+					}
+					 
+					var p2 = new BMap.Point(to_point.lng, to_point.lat);
+					//				bm.addOverlay(new BMap.Marker(point));
+					var driving = new BMap.DrivingRoute(bm, {
+						renderOptions: {
+							map: bm,
+							autoViewport: true
+						}
+					});
+					driving.search(p1, p2);
+				})
+				//优惠券
+				$('.youhui').on('tap', function() {
+					var coupon = null;
+					console.log('goods_budget:'+goods_budget);
+					if(coupon == null) {
+						coupon = plus.webview.getWebviewById('mycoupon.html');
+						if(coupon != null) {
+							mui.fire(coupon, "DIY_DATA", {
+								tag: 1,
+								page: id,
+								user_vehicle_id:user_vehicle_id,
+								from_address:from_address,
+								to_address:to_address,
+								from_point:from_point,
+								to_point:to_point,
+								end_price:end_price,
+								goods_budget:goods_budget
+							});
+						}
+					}
+					mui.openWindow({
+						id: "mycoupon.html",
+						url: "../mycoupon.html",
+						extras: {
+							tag: 1,
+							page: id,
+							user_vehicle_id:user_vehicle_id,
+							from_address:from_address,
+							to_address:to_address,
+							from_point:from_point,
+							to_point:to_point,
+							end_price:end_price,
+							goods_budget:goods_budget
+						}
+					})
+				})
+				//计价标准
+//				$('.btn').on('tap', function() {
+//					mui.openWindow({
+//						id: 'standard.html',
+//						url: 'standard.html'
+//					})
+//				})
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,863 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>等待跑男接单</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/mui.picker.min.css" />
+		<script src="js/common.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="css/common.css" />
+		<style type="text/css">
+			.map {
+				width: 100%;
+				position: absolute;
+				left: 0;
+				top: 0;
+				bottom: 350px;
+			}
+			
+			.box {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				height: 350px;
+				padding: 10px;
+				background-color: #FFFFFF;
+				z-index: 1000;
+			}
+			
+			i {
+				font-style: normal;
+			}
+			
+			.box .title {
+				height: 50px;
+				line-height: 50px;
+				text-align: center;
+			}
+			
+			.box .title .type {
+				display: inline-block;
+				background-color: #ff5900;
+				height: 20px;
+				border-radius: 10px;
+				font-size: 14px;
+				line-height: 10px;
+				padding: 5px 10px;
+				color: #FFFFFF;
+				margin-right: 10px;
+			}
+			
+			.box .title span {
+				font-size: 1.2rem;
+				font-weight: bold;
+			}
+			
+			.mui-table-view .mui-media-object {
+				line-height: 1em;
+				max-width: 1em;
+				height: 1em;
+			}
+			
+			.box .bottom {
+				display: flex;
+				margin-top: 5px;
+			}
+			
+			.box .bottom div {
+				flex: 1;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 50px;
+			}
+			
+			.box .bottom .list-first {
+				border-right: 1px solid lightgrey;
+			}
+			
+			.back {
+				position: relative;
+				left: 10px;
+				top: 10px;
+				width: 100px;
+				height: 100px;
+				background-color: #FFFFFF;
+				z-index: 10000;
+			}
+			
+			.info {
+				margin-top: 10px;
+				padding: 10px;
+				padding-left: 25px;
+				background-color: lightgrey;
+				border-radius: 30px;
+			}
+			
+			.info .type {
+				display: inline-block;
+				border: 1px solid #333333;
+				padding: 5px;
+				margin-right: 5px;
+			}
+			
+			.line {
+				height: 0.5px;
+				width: 100%;
+				background-color: lightgrey;
+				margin: 10px auto;
+			}
+			
+			.warp {
+				display: flex;
+			}
+			
+			.warp {
+				flex: 1;
+			}
+			
+			.code .num {
+				text-align: center;
+				margin-bottom: 5px;
+			}
+			
+			.num span {
+				display: inline-block;
+				background-color: #ff5900;
+				border-radius: 30px;
+				padding-left: 20px;
+				padding-right: 20px;
+				padding-top: 5px;
+				padding-bottom: 5px;
+				color: #FFFFFF;
+			}
+			
+			.code .liuyan {
+				border-top: 1px solid lightgrey;
+				text-align: center;
+				padding: 10px;
+			}
+			
+			.complete {
+				text-align: center;
+				background-color: #FFFFFF;
+			}
+			
+			.complete .warp {
+				display: flex;
+			}
+			
+			.complete .warp div {
+				flex: 1;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 50px;
+			}
+			
+			.comment,
+			.reward {
+				border-right: 1px solid lightgrey;
+			}
+			
+			.express_info a img {
+				max-width: 60px !important;
+				height: 60px !important;
+				border: 1px solid #FFFFFF;
+				border-radius: 50%;
+			}
+			
+			.express_info .mui-media-body i {
+				padding-top: 15px;
+				font-size: 30px;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<div class="mui-content">
+			<div class="map" id="map">
+				地图加载中。。。
+			</div>
+			<div id="box">
+				<div class="box" id="one">
+					<div class="title">
+						<i class="type" v-if="type_id == 1">帮我送</i>
+						<i class="type" v-else-if="type_id == 2">帮我买</i>
+						<i class="type" v-else-if="type_id == 3">帮我取</i>
+						<span>等待跑男抢单</span>
+						<i>></i>
+					</div>
+					<div class="list">
+						<ul class="mui-table-view">
+							<li class="mui-table-view-cell mui-media">
+								<a href="javascript:;">
+									<img class="mui-media-object mui-pull-left" src="images/pt-icon-shijian.png">
+									<div class="mui-media-body" v-if="type_id == 2">
+										购买时间：<span v-if="order_type_id==1">立即前往</span>
+										<span v-else>{{pre_start_time_formated}}</span>
+									</div>
+									<div class="mui-media-body" v-else-if="type_id == 1||type_id==3">
+										取货时间：<span v-if="order_type_id==1">立即前往</span>
+										<span v-else>{{pre_start_time_formated}}</span>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell mui-media">
+								<a href="javascript:;">
+									<img class="mui-media-object mui-pull-left" src="images/pt-icon-dingwei.png">
+									<div class="mui-media-body mui-ellipsis">
+										收货地址：<span>{{to_address}}</span>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell mui-media">
+								<a href="javascript:;">
+									<img class="mui-media-object mui-pull-left" src="images/pt-icon-dianhua.png">
+									<div class="mui-media-body">
+										收货电话： <span>{{to_mobile}}</span>
+									</div>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div class="bottom">
+						<!--<div class="list-first" id="tip">追加小费</div>-->
+						<div id="unOrder">取消订单</div>
+					</div>
+				</div>
+				<div class="box" id="two">
+					<div class="title">
+						<i class="type" v-if="type_id == 1">帮我送</i>
+						<i class="type" v-else-if="type_id == 2">帮我买</i>
+						<i class="type" v-else-if="type_id == 3">帮我取</i>
+						<span id="send_type">跑男配送中</span>
+						<i>></i>
+					</div>
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell mui-media express_info" id="express_info">
+							<a href="javascript:;">
+								<!--<img src="images/logo.png" class="mui-media-object mui-pull-left"/>-->
+								<img class="mui-media-object mui-pull-left" :src="avatar">
+								<div class="mui-media-body">
+									{{expressName}}
+									<i class="mui-icon mui-icon-phone mui-pull-right"></i>
+								</div>
+							</a>
+						</li>
+					</ul>
+					<div class="info">
+						<span class="type" v-if="type_id == 1">帮我送</span>
+						<span class="type" v-else-if="type_id == 2">帮我买</span>
+						<span class="type" v-else-if="type_id == 3">帮我取</span>
+						<span>{{goods}}</span>: <span>{{description}}</span>
+						<span class="money" v-if="type_id == 2&&goods_price==0&&goods_budget>0">{{goods_budget}}元</span>
+						<span class="money" v-else-if="type_id == 2&&goods_price>0">{{goods_price}}元</span>
+						<span class="money" v-else-if="type_id == 2&&goods_budget == 0&&goods_price==0">商品费用未知</span>
+					</div>
+					<div class="line"></div>
+					<div class="bottom" id="secondPay">
+						<!--<div class="list-first" id="tip">追加小费</div>-->
+						<div id="goodsPay">支付商品费</div>
+					</div>
+					<div class="code" id="code">
+						<div class="num">
+							收货验证码：<span>{{code}}</span>
+						</div>
+						<div class="liuyan">
+							请交付商品价格把收到收货验证码告知<span>{{expressName}}</span>
+						</div>
+					</div>
+					<div class="complete" id="complete">
+						<div>如您对我的服务满意，请给我一个好评~</div>
+						<div class="line"></div>
+						<div class="warp">
+							<div class="comment" id="comment">去评价</div>
+							<!--<div class="reward">去打赏</div>-->
+							<div id="again">再来一单</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<script src="js/immersed.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/mui.min.js"></script>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<script src="js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var wv = null,
+				wo = null;
+			var em = null,
+				map = null,
+				point = null; //用户位置
+			var expressPoint, expressMark; //跑男位置
+			var marker, bubble; //用户位置与标记
+			var ws; //websocket实例
+			var lockReconnect = false; //避免重复链接
+			var wsUrl = "ws://"+baseurl+port;
+			var headerStr;
+			var second_pay;
+			var searchObj,from_point,end_point;
+
+			function sendSocket(lat, lng, data, url) {
+				//获取token
+				var token = localStorage.getItem("access_token");
+				var areaid = localStorage.getItem("areaid");
+				//	生成时间戳
+				var timestamp = new Date().getTime();
+				var obj = {
+					areaid: areaid,
+					lng: lng,
+					lat: lat,
+					devicetype: device_type,
+					accesstoken: token,
+					deviceversion: device_version,
+					timestamp: timestamp,
+					api: api_version,
+					controller: 'user',
+					action: 'get_order_status'
+				};
+				var info = {
+					orderId: data
+				}
+				obj.data = info;
+				var json = JSON.stringify(obj);
+				obj.sign = encrypt(json);
+				headerStr = JSON.stringify(obj);
+				//				console.log('发送的数据:' + str);
+				try {
+					ws = new WebSocket(url);
+					initEventHandle(lat, lng, data);
+				} catch(e) {
+					//TODO handle the exception
+					reconnect(lat, lng, data, url);
+				}
+			}
+
+			function initEventHandle(lat, lng, data) {
+				ws.onclose = function() {
+					console.log('关闭');
+					reconnect(lat, lng, data, wsUrl);
+				};
+				ws.onerror = function() {
+					console.log('错误');
+					reconnect(lat, lng, data, wsUrl);
+				};
+				ws.onopen = function() {
+					//心跳检测重置
+					heartCheck.reset().start();
+				};
+				ws.onmessage = function(e) {
+					//如果获取到消息，心跳检测重置
+					//拿到任何消息都说明当前链接是正常的
+					heartCheck.reset().start();
+					console.log('这是个啥：' + e);
+					console.log('message:' + JSON.stringify(e.data));
+					var data = JSON.parse(e.data);
+					var orderStatus;
+					console.log("接收到数据:" + JSON.stringify(data));
+					if(data.action == 'bindUserIdClientId') {
+						ajaxPost('user/bindUserIdClientId', {
+							client_id: data.data.client_id
+						}, function(res) {
+							console.log('res:' + JSON.stringify(res));
+						}, function(res) {
+							console.log('失败:' + JSON.stringify(res));
+						}, true);
+					}
+					if(data.action == "changOrderStatus") {
+						orderStatus = data.data.status;
+					}
+					console.log('orderStatus:' + orderStatus);
+					if(orderStatus != undefined) {
+						second_pay = data.data.second_pay;
+						console.log('执行这里');
+						if(orderStatus >= 2) {
+							data_detail.expressName = data.data.express.name;
+							data_detail.expressMobile = data.data.express.mobile;
+							data_detail.to_x = data.data.express.x;
+							data_detail.to_y = data.data.express.y;
+							data_detail.avatar = data.data.express.avatar_img;
+							//跑男信息在地图上显示
+							console.log("跑男位置："+data_detail.to_x+'，'+data_detail.to_y);
+							expressPoint = new plus.maps.Point(data_detail.to_x, data_detail.to_y);
+							expressMark = new plus.maps.Marker(expressPoint);
+							data_detail.goods_budget = data.data.goods_budget;
+							data_detail.goods_price = data.data.goods_price;
+							//							if(orderStatus == 2){
+							//								bubble = new plus.maps.Bubble('跑男已接单');
+							//								expressMark.setBubble(bubble, true);
+							//								map.addOverlay(expressMark);
+							//							}
+						}
+						if(orderStatus >= 1) {
+							data_detail.code = data.data.code.code;
+						}
+						//显示
+						styleStatus(orderStatus, second_pay);
+					}
+				}
+			}
+
+			function reconnect(lat, lng, data, url) {
+				if(lockReconnect)
+					return;
+				lockReconnect = true;
+				//没连接上会一直重连，设置延迟避免请求过多
+				setTimeout(function() {
+					sendSocket(lat, lng, data, url);
+					lockReconnect = false;
+				}, 2000);
+			}
+			//心跳检测
+			var heartCheck = {
+				timeout: 60000, //60秒
+				timeoutObj: null,
+				serverTimeoutObj: null,
+				reset: function() {
+					clearTimeout(this.timeoutObj);
+					clearTimeout(this.serverTimeoutObj);
+					return this;
+				},
+				start: function() {
+					var self = this;
+					this.timeoutObj = setTimeout(function() {
+						//这里发送一个心跳，后端收到后，返回一个心跳消息，
+						//onmessage拿到返回的心跳就说明连接正常
+						ws.send('meishayong');
+						self.serverTimeoutObj = setTimeout(function() {
+							//如果超过一定时间还没重置，说明后端主动断开了
+							//如果onclose会执行reconnect，我们执行ws.close()就行了.如果直接执行reconnect 会触发onclose导致重连两次
+							ws.close(); //
+						}, self.timeout)
+					}, this.timeout)
+				}
+			}
+			var data_detail = new Vue({
+				el: '#box',
+				data: {
+					order_type_id: '', //实时 预约
+					type_id: '', //类型
+					pre_start_time_formated: '', //购买时间
+					from_address: '', //发货人地址
+					to_address: '', //收货地址
+					to_mobile: '', //收货人手机号
+					from_x:'',//发货位置
+					from_y:'',
+					end_x:'',//终点坐标
+					end_y:'',
+					to_x: '', //跑男实时坐标
+					to_y: '',
+					expressName: '', //跑男名字
+					goods: '', //物品名称
+					expressMobile: '', //跑男电话
+					avatar: '', //跑男头像
+					goods_budget: '', //物品预算价格
+					goods_price: '', //物品价格
+					description: '', //物品描述
+					code: '' //验证码
+				}
+			})
+
+			function plusReady() {
+				var lat, lng;
+				if(!em || wv) {
+					return;
+				}
+				var send_type = document.getElementById('send_type');
+				wv = plus.webview.currentWebview();
+				var orderId = wv.orderId;
+//				wo = self.opener();
+				if('Android' === plus.os.name && navigator.userAgent.indexOf('StreamApp') > 0) {
+					plus.nativeUI.toast('当前环境暂不支持地图插件');
+					return;
+				}
+				//给跑男打电话
+				G('express_info').addEventListener('tap', function() {
+					console.log("跑男电话:" + data_detail.expressMobile);
+					plus.device.dial(data_detail.expressMobile, false);
+				});
+				var geolocation = new BMap.Geolocation();
+				geolocation.getCurrentPosition(function(posstion) {
+					console.log("位置信息：" + JSON.stringify(posstion));
+					lat = posstion.point.lat;
+					lng = posstion.point.lng;
+					console.log(lng + ':' + lat);
+					console.log('orderid:' + orderId);
+					//端口监听
+					sendSocket(lat, lng, orderId, wsUrl);
+					point = new plus.maps.Point(lng, lat);
+					map = new plus.maps.Map('map');
+					map.centerAndZoom(point, 15);
+					searchObj = new plus.maps.Search(map);
+					//					map.onclick = function(point) {
+					//						console.log('用户点击了地图：' + JSON.stringify(point));
+					//						var pusb = plus.webview.getWebviewById('payMethod.html');
+					//						if(pusb != null){
+					//							pusb.close();
+					//						}
+					//					}
+					marker = new plus.maps.Marker(point);
+					marker.setIcon('images/mk.png');
+					//				marker.setLabel('智慧新乡');
+					bubble = new plus.maps.Bubble('正在帮您寻找跑男');
+					marker.setBubble(bubble, true);
+					map.addOverlay(marker);
+					//获取接口数据
+					var token = localStorage.getItem("access_token");
+					var areaid = localStorage.getItem("areaid");
+					//	生成时间戳
+					var timestamp = new Date().getTime();
+					var headers = {
+						areaid: areaid,
+						version: app_version,
+						timestamp: timestamp,
+						accesstoken: token,
+						devicetype: device_type,
+						deviceversion: device_version,
+						lat: lat,
+						lng: lng
+					}
+					var json = JSON.stringify(headers);
+					console.log('头数据:' + json);
+					headers.sign = encrypt(json);
+					mui.ajax(siteurl + "/api/" + api_version + '/' + 'userorder/detail.html', {
+						data: {
+							orderid: orderId
+						},
+						type: 'get',
+						dataType: 'json',
+						async: true,
+						headers: headers,
+						success: function(res) {
+							console.log('订单数据:' + JSON.stringify(res));
+							if(res.code == 1) {
+								var statusId = res.data.status;
+								second_pay = res.data.second_pay;
+								data_detail.type_id = res.data.type_id;
+								data_detail.pre_start_time_formated = res.data.pre_start_time_formated;
+								data_detail.end_x = res.data.to_x;
+								data_detail.end_y = res.data.to_y;
+								//终点坐标
+								end_point = new plus.maps.Point(data_detail.end_x, data_detail.end_y);
+								data_detail.from_x = res.data.from_x;
+								data_detail.from_y = res.data.from_y;
+								from_point = new plus.maps.Point(data_detail.from_x, data_detail.from_y);
+								data_detail.from_address = res.data.from_address;
+								data_detail.to_address = res.data.to_address;
+								data_detail.to_mobile = res.data.to_mobile;
+								data_detail.order_type_id = res.data.order_type_id;
+								if(res.data.express != null) {
+									data_detail.expressName = res.data.express.name; //跑男名字
+									data_detail.expressMobile = res.data.express.mobile; //跑男电话
+									data_detail.avatar = res.data.express.avatar_img; //跑男头像
+									data_detail.to_x = res.data.express.x;
+									data_detail.to_y = res.data.express.y;
+									expressPoint = new plus.maps.Point(data_detail.to_x, data_detail.to_y);
+									expressMark = new plus.maps.Marker(expressPoint);
+									map.addOverlay(expressMark);
+									//订单验证码
+									if(statusId >= 1) {
+										data_detail.code = res.data.code.code;
+									}
+								}
+								//显示内容
+								styleStatus(statusId, second_pay);
+								data_detail.goods = res.data.goods; //物品名称
+								data_detail.description = res.data.description; //物品描述
+								data_detail.goods_budget = res.data.goods_budget;
+								data_detail.goods_price = res.data.goods_price;
+							}
+						},
+						error: function(res) {
+							console.log("失败：" + JSON.stringify(res));
+						}
+					})
+				}, function(e) {
+					console.log("错误信息：" + e.message + ':' + JSON.stringify(e));
+				}, {
+					coordsType: 'bd09ll',
+					provider: 'baidu'
+				});
+				createSubview();
+				wv.show('pop-in');
+				//再来一单
+				G('again').addEventListener('tap', function() {
+					if(data_detail.type_id == 1) {
+						mui.openWindow({
+							id: "send/send.html",
+							url: "./send/send.html"
+						})
+					} else if(data_detail.type_id == 2) {
+						mui.openWindow({
+							id: "buy/buy.html",
+							url: "./buy/buy.html"
+						})
+					} else if(data_detail.type_id == 3) {
+						mui.openWindow({
+							id: "take/take.html",
+							url: "./take/take.html"
+						})
+					}
+					event.stopPropagation();
+				})
+				//评论
+				G('comment').addEventListener('tap', function() {
+					var detail = null;
+					if(detail == null) {
+						detail = plus.webview.getWebviewById("comment.html");
+						if(detail != null) {
+							mui.fire(detail, "DIY_DATA", {
+								orderid: orderId
+							});
+						}
+					}
+					mui.openWindow({
+						id: "comment.html",
+						url: 'comment.html',
+						extras: {
+							orderid: orderId
+						}
+					})
+					event.stopPropagation();
+				})
+				//支付商品费
+				G('goodsPay').addEventListener('tap', function(e) {
+					var psub = plus.webview.create('payMethod.html', 'payMethod.html', {
+						position: 'absolute',
+						bottom: 0,
+						left: 0,
+						scrollIndicator: 'none',
+						background: 'transparent',
+						height: "350px"
+					}, {
+						tip: second_pay,
+						orderId: orderId
+					});
+					wv.append(psub);
+//					psub.show();
+					event.stopPropagation();
+				})
+				//追加小费
+				//				G('tip').addEventListener('tap', function(e) {
+				//					e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+				//					var btnArray = ['取消', '确定'];
+				//					plus.nativeUI.prompt('请输入你要付的小费', function(e) {
+				//						if(e.index == 0) {
+				//							console.log('确定');
+				//							var psub = plus.webview.create('payMethod.html', 'payMethod.html', {
+				//								position: 'absolute',
+				//								bottom: 0,
+				//								left: 0,
+				//								scrollIndicator: 'none',
+				//								background: 'transparent',
+				//								height: "380px"
+				//							}, {
+				//								tip: e.value,
+				//								orderId: orderId
+				//							});
+				//							psub.show();
+				//						} else {
+				//							console.log('取消');
+				//						}
+				//					}, btnArray);
+				//				});
+				//取消订单
+				G('unOrder').addEventListener('tap', function() {
+					plus.nativeUI.confirm('等一会儿，再等一会儿嘛！跑男正在赶来的路上', function(e) {
+						if(e.index == 0) {
+							console.log('不等了');
+							//							var detail = null;
+							//							//获取下一个页面
+							//							if(detail == null) {
+							//								detail = plus.webview.getWebviewById('order_detail.html');
+							//								//第一次他肯定为空，所以，这里面这个fire方法，是不会执行的
+							//								if(detail != null) {
+							//									mui.fire(detail, 'orderDetail', {
+							//										orderid: orderId
+							//									});
+							//								}
+							//							}
+							mui.openWindow({
+								id: 'order_cancel.html',
+								url: 'order_cancel.html',
+								extras: {
+									orderid: orderId
+								}
+							})
+
+						} else {
+							console.log('再等等');
+						}
+					}, '', ['不等了', '再等等']);
+				})
+
+			}
+			if(window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener('plusready', plusReady, false);
+			}
+
+			function createSubview() {
+				var topoffset = '44px';
+				if(plus.navigator.isImmersedStatusbar()) { // 兼容immersed状态栏模式
+					topoffset = (Math.round(plus.navigator.getStatusbarHeight()) + 44) + 'px';
+				}
+				var wsub = plus.webview.create('maps_back.html', 'maps_back.html', {
+					top: topoffset,
+					height: '60px',
+					position: 'absolute',
+					scrollIndicator: 'none',
+					background: 'transparent'
+				});
+				wv.append(wsub);
+			}
+			//DOMContentloaded事件处理
+			document.addEventListener("DOMContentLoaded", function() {
+				em = document.getElementById("map");
+				window.plus && plusReady();
+			}, false);
+
+			function backPage() {
+				back();
+				var sub = plus.webview.getWebviewById('payMethod.html');
+				if(sub != null) {
+					sub.close();
+				}
+			}
+			//返回当前位置
+			function userLocation() {
+				map.showUserLocation(true);
+				map.getUserLocation(function(state, pos) {
+					if(0 == state) {
+						map.setCenter(pos);
+					}
+				});
+			}
+			//元素显示
+			function styleStatus(status, second_pay) {
+				console.log("状态" + status);
+				if(status == 1) {
+					G('one').style.display = 'block';
+					G('two').style.display = 'none';
+				} else if(status == 2) {
+					map.clearOverlays();
+					bubble = new plus.maps.Bubble('跑男已接单');
+					expressMark.setBubble(bubble, true);
+					map.addOverlay(expressMark);
+					searchObj.onRouteSearchComplete = function(state,result){
+						if(state == 0){
+							map.addOverlay(result.getRoute(0));
+						}
+					};
+					searchObj.walkingSearch(expressPoint,"",from_point,"");
+					G('one').style.display = 'none';
+					G('two').style.display = 'block';
+					send_type.innerText = "跑男已接单";
+					G('secondPay').style.display = 'none';
+					G('code').style.display = 'none';
+					G('complete').style.display = 'none';
+				} else if(status == 3) {
+					map.clearOverlays();
+					bubble = new plus.maps.Bubble('跑男到达发货点');
+					expressMark.setBubble(bubble, true);
+					map.addOverlay(expressMark);
+					searchObj.onRouteSearchComplete = function(state,result){
+						if(state == 0){
+							map.addOverlay(result.getRoute(0));
+						}
+					};
+					searchObj.walkingSearch(expressPoint,"",end_point,"");
+					G('one').style.display = 'none';
+					G('two').style.display = 'block';
+					send_type.innerText = "跑男到达发货点";
+					G('secondPay').style.display = 'none';
+					G('code').style.display = 'none';
+					G('complete').style.display = 'none';
+				} else if(status == 4) {
+					map.clearOverlays();
+					bubble = new plus.maps.Bubble('跑男配送中');
+					expressMark.setBubble(bubble, true);
+					map.addOverlay(expressMark);
+					searchObj.onRouteSearchComplete = function(state,result){
+						if(state == 0){
+							map.addOverlay(result.getRoute(0));
+						}
+					};
+					searchObj.walkingSearch(expressPoint,"",end_point,"");
+					G('one').style.display = 'none';
+					G('two').style.display = 'block';
+					send_type.innerText = "跑男配送中";
+					if(second_pay > 0) {
+						G('secondPay').style.display = 'flex';
+					} else {
+						G('secondPay').style.display = 'none';
+					}
+					G('code').style.display = 'none';
+					G('complete').style.display = 'none';
+				} else if(status == 5) {
+					map.clearOverlays();
+					bubble = new plus.maps.Bubble('跑男已送达');
+					expressMark.setBubble(bubble, true);
+					map.addOverlay(expressMark);
+					searchObj.onRouteSearchComplete = function(state,result){
+						if(state == 0){
+							map.addOverlay(result.getRoute(0));
+						}
+					};
+					searchObj.walkingSearch(expressPoint,"",end_point,"");
+					G('one').style.display = 'none';
+					G('two').style.display = 'block';
+					send_type.innerText = "跑男已送达";
+					if(second_pay > 0) {
+						G('secondPay').style.display = 'flex';
+					} else {
+						G('secondPay').style.display = 'none';
+					}
+					G('code').style.display = 'block';
+					G('complete').style.display = 'none';
+				} else if(status == 6) {
+					map.clearOverlays();
+					bubble = new plus.maps.Bubble('跑男已送达');
+					expressMark.setBubble(bubble, true);
+					map.addOverlay(expressMark);
+					map.centerAndZoom(expressPoint,15);
+					G('one').style.display = 'none';
+					G('two').style.display = 'block';
+					send_type.innerText = "跑男已送达";
+					G('secondPay').style.display = 'none';
+					G('code').style.display = 'block';
+					G('complete').style.display = 'none';
+				} else if(status == 7) {
+					map.clearOverlays();
+					bubble = new plus.maps.Bubble('订单完成');
+					expressMark.setBubble(bubble, true);
+					map.addOverlay(expressMark);
+					map.centerAndZoom(expressPoint,15);
+					G('one').style.display = 'none';
+					G('two').style.display = 'block';
+					send_type.innerText = "订单完成";
+					G('secondPay').style.display = 'none';
+					G('code').style.display = 'none';
+					G('complete').style.display = 'block';
+				}
+			}
+			//画线
+//			function routeFun(){
+//				var searchObj = new plus
+//			}
+		</script>
+	</body>
+
+</html>

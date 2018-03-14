@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>使用须知</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">使用须知</h1>
+		</header>
+		<div class="mui-content" id="container">
+			<script type="text/html" id="containerData">
+				<div class="mui-card-content-inner">
+					{{#data}}
+				</div>
+			</script>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/base.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			var userInfo = is_login();
+			var container = document.getElementById('container');
+			mui.plusReady(function() {
+				ajaxGet('system/get_explain.html', null, function(res) {
+					var datas = {
+						data: res.data.info
+					};
+					container.innerHTML = template('containerData', datas);
+				}, function(res) {
+					console.log(JSON.stringify(res));
+				});
+			})
+		</script>
+	</body>
+
+</html>

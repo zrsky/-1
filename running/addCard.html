@@ -1,0 +1,222 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>增加银行卡</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.title {
+				padding: 5px 15px;
+			}
+			
+			.title p {
+				margin-bottom: 0;
+			}
+			
+			.mui-media span {
+				margin-left: 15px;
+			}
+			
+			.mui-media input {
+				border: none;
+				margin-left: 15px;
+				width: 80%;
+				margin-bottom: 0;
+			}
+			
+			.phone {
+				margin-left: 0 !important;
+			}
+			
+			.mui-media i {
+				margin-top: 6px;
+				font-size: 30px;
+			}
+			
+			.secret {
+				padding: 5px 20px 0px;
+			}
+			
+			.foot {
+				padding: 15px 20px 10px;
+			}
+			
+			.btn {
+				background-color: #2AC845;
+				color: #FFFFFF;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">绑定银行卡</h1>
+		</header>
+		<div class="mui-content">
+			<div class="title">
+				<p>请绑定持卡人本人的银行卡</p>
+			</div>
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a class="">
+						<div class="mui-media">
+							持卡人<span class="name">张三</span>
+						</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell">
+					<a class="">
+						<div class="mui-media">
+							卡号<input id="cardNum" type="number" placeholder="请输入银行卡号" />
+							<i class="mui-pull-right"></i>
+						</div>
+					</a>
+				</li>
+			</ul>
+			<div class="title">
+				<p>请选择银行卡类型</p>
+			</div>
+			<ul class="mui-table-view">
+				<li class="mui-table-view-cell" id="cardType">
+					<a class="">
+						<div class="mui-media">
+							卡类型<span class="cardType">选择卡类型</span>
+							<input type="hidden" name="cardValue" id="cardValue" value="" />
+						</div>
+					</a>
+				</li>
+			</ul>
+			<!--<ul class="mui-table-view">
+				<li class="mui-table-view-cell">
+					<a class="">
+						<div class="mui-media">
+							手机号<input class="phone" type="text" name="" id="" value="" placeholder="请输入手机号" />
+							<i class="mui-pull-right">×</i>
+						</div>
+					</a>
+				</li>
+			</ul>-->
+			<!--<div class="secret">
+				<p class="mui-ellipsis">信息加密处理，仅用于银行验证</p>
+			</div>
+			<div class="foot">
+				<input type="checkbox" name="" id="" value="" /> 同意
+				<a href="#">《用户协议》</a>
+			</div>-->
+			<button type="button" class="mui-btn mui-btn-block btn">提交</button>
+
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init()
+			mui.plusReady(function() {
+				var userInfo = is_login();
+				$('.name').text(userInfo.name);
+				//获取卡类型
+				var cardList;
+				var arr = [];
+				$('#cardType').on('tap', function() {
+					console.log('arr:' + JSON.stringify(arr[0]));
+					var picker = new mui.PopPicker();
+					picker.setData(arr);
+					picker.show(function(selectItems) {
+						$('.cardType').text(selectItems[0].text);
+						$('#cardValue').val(selectItems[0].value);
+						console.log('sele:' + $('#cardValue').val());
+					})
+				})
+				ajaxGet('express/get_bank_list.html', {}, function(res) {
+					console.log("卡类型:" + JSON.stringify(res));
+					if(res.code == 1) {
+						cardList = res.data;
+						for(var i = 0; i < cardList.length; i++) {
+							var list = {
+								value: cardList[i].id,
+								text: cardList[i].name
+							};
+							arr.push(list);
+						}
+					}
+				});
+				$('.btn').on('tap', function() {
+					//银行卡号
+					var cardNum = $('#cardNum').val();
+					console.log("cardnum:"+cardNum);
+					var bank_no = cardNum;
+					console.log("bank_no:" + bank_no);
+					var bank_id = $('#cardValue').val();
+					if(bank_no == ''||bank_id==''){
+						mui.alert("请选择银行卡号和类型");						
+					}else{
+						var params = {
+						bank_no: bank_no,
+						bank_id: bank_id
+					}
+					
+					console.log("params:" + JSON.stringify(params));
+					ajaxPost('express/bind_bank.html', params, function(res) {
+						console.log("绑定银行卡:" + JSON.stringify(res));
+						if(res.code == 1) {
+							mui.toast('绑定成功');
+							var reflectPage = plus.webview.getWebviewById('reflect.html');
+							if(reflectPage != null){
+								mui.fire(reflectPage,'update');
+							}
+							mui.openWindow({
+								id:'reflect.html'
+							})
+						}else{
+							mui.toast(res.msg);
+						}
+					})
+					}
+					
+				})
+			})
+			//			$('.btn').on('tap', function() {
+			//				mui.openWindow({
+			//					id: "card.html",
+			//					url: "card.html"
+			//				})
+			//			})
+			// 根据银行卡号获取发卡行名称
+			//			$('.btn').on('tap', function() {
+			//				var bankCard = $('#cardNum').val();
+			//				if(bankCard == null || bankCard == "") {
+			//					return "";
+			//				}
+			//				mui.getJSON("../json/bankData.json", {}, function(data) {
+			//					var bankBin = 0;
+			//					var isFind = false;
+			//					for(var key = 10; key >= 2; key--) {
+			//						bankBin = bankCard.substring(0, key);
+			//						$.each(data, function(i, item) {
+			//							if(item.bin == bankBin) {
+			//								isFind = true;
+			//								console.log(item.bankName);
+			//							}
+			//						});
+			//
+			//						if(isFind) {
+			//							break;
+			//						}
+			//					}
+			//
+			//					if(!isFind) {
+			//						console.log("未知发卡银行");
+			//					}
+			//				});
+			//			})
+		</script>
+	</body>
+
+</html>

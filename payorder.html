@@ -1,0 +1,409 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>支付订单</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" href="css/payorder.css" />
+		<script src="js/template.js"></script>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			#popover {
+				position: fixed;
+				z-index: 20;
+				bottom: 0;
+				right: 0;
+				width: 100%;
+				min-height: 27.5rem;
+				left: 0 !important;
+			}
+			
+			#popover .mui-card {
+				margin: 0;
+				padding: 0;
+			}
+			
+			.pay-box .mui-card-header {
+				justify-content: center;
+			}
+			
+			.pay-foot {
+				margin-top: 20px;
+				background-color: #ff8b02;
+				color: #FFFFFF;
+				justify-content: center;
+			}
+			
+			.pay-price p {
+				text-align: center;
+			}
+			
+			.pay-price {
+				border-bottom: 1px solid #c8c7cc;
+			}
+			
+			.pay-price em {
+				color: #FF8B02;
+				font-weight: bold;
+				font-size: 16px;
+			}
+			
+			.pay-warp {
+				display: flex;
+				border-bottom: 1px solid #c8c7cc;
+			}
+			
+			.pay-warp .pay-style {
+				flex: 0 0 220px;
+				margin-left: 5px;
+			}
+			
+			.pay-warp .pay-style p {
+				margin-bottom: 0px;
+			}
+			
+			.pay-warp .pay-select {
+				flex: 1;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			
+			.logo img {
+				width: 40px;
+				height: 40px;
+			}
+			
+			.pay-select img {
+				width: 40px;
+				height: 40px;
+			}
+			
+			.mui-backdrop {
+				z-index: 10;
+			}
+			
+			.secondPay {
+				display: none;
+			}
+			
+			.list_detail {
+				margin-bottom: 80px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">未支付订单</h1>
+		</header>
+		<img class="banner" src="images/banner1.png" />
+		<div class="mui-scroll-wrapper">
+			<div class="mui-scroll" id="infowrap">
+				<script type="text/html" id="infos">
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell">
+							<a class="mui-navigate mui-icon mui-icon-location">
+								去哪买 {{if data.from_address == 'null'||data.from_address==''}}
+								<span>就近购买</span><br> {{else}}
+								<span>{{data.from_address}}</span><br> {{/if}}
+								<span class="phones">{{data.from_mobile}}</span>
+							</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a class="mui-navigate mui-icon mui-icon-location">
+								送到哪
+								<span>{{data.to_address}}</span><br>
+								<span class="phones">{{data.to_mobile}}</span>
+
+							</a>
+						</li>
+
+					</ul>
+					<ul class="mui-table-view">
+						<li class="mui-table-view-cell">
+							<a class="mui-navigate">
+								<i class="iconfont">&#xe65b;</i>下单时间
+								<span class="go-now mui-pull-right">{{data.create_time_formated}}</span>
+							</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a class="mui-navigate">
+								<i class="iconfont">&#xe634;</i>订单金额
+								<span id="goodprice" orderId="{{data.id}}" endprice="{{data.unpay}}" class="mui-pull-right">{{data.unpay}}</span>
+							</a>
+						</li>
+						<li class="mui-table-view-cell">
+							<a class="mui-navigate">
+								<div class="mui-media-body">
+									<i class="iconfont">&#xe617;</i>备注信息
+									<p class="mui-ellipsis-2">{{data.description}}</p>
+								</div>
+							</a>
+						</li>
+					</ul>
+					{{if data.items}}
+					<div class="mui-card list_detail">
+						<ul class="mui-table-view">
+							<li class="mui-table-view-cell mui-collapse">
+								<a href="#" class="mui-navigate-right">支付明细</a>
+								<div class="mui-collapse-content">
+									<ul class="mui-table-view">
+										{{each data.items as value i}}
+										<li class="mui-table-view-cell">
+											<a class="mui-navigate-right">
+												<div class="mui-media">
+													{{value}}
+												</div>
+											</a>
+										</li>
+										{{/each}}
+									</ul>
+								</div>
+							</li>
+						</ul>
+					</div>
+					{{/if}}
+				</script>
+				<!--这里放置真实显示的DOM内容-->
+			</div>
+		</div>
+
+		<!--<ul class="mui-table-view" id="secondPay" class="secondPay">
+					        <li class="mui-table-view-cell">
+					            <a class="mui-navigate-right">
+					            <div class="mui-media-body">
+									<i class="iconfont">&#xe617;</i>物品价格
+									<img src="images/auth_zheng.png"/>
+								</div>
+					            </a>
+					        </li>
+					    </ul>-->
+		<nav class="mui-bar mui-bar-tab">
+			<span class="mui-icon mui-icon-info"></span> 费用
+			<span id="price"></span>
+			<a class="gopay mui-pull-right">去支付</a>
+			<span class="mui-icon mui-icon-arrowright mui-pull-right"></span>
+		</nav>
+		<div id="popover" class="mui-popover">
+			<div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<div class="mui-card pay-box">
+						<div class="mui-card-header">
+							付款详情
+						</div>
+						<div class="mui-card-content">
+							<div class="mui-card-content-inner pay-price">
+								<p>
+									需支付金额<br>
+									<em id="money">0.00</em><em>元</em>
+								</p>
+							</div>
+							<div id="paymethod">
+								<script type="text/html" id="paymethodData">
+									{{each data as value}}
+									<div class="mui-card-content-inner pay-warp">
+										<div class="logo">
+											<img src="{{value.icon.src}}" />
+										</div>
+										<div class="pay-style">
+											{{value.name}}
+											<p class="mui-ellipsis">
+												{{value.description}}
+											</p>
+										</div>
+										<div class="pay-select">
+											<img src="images/pt-error.png" check="0" select="{{value.code}}" />
+										</div>
+									</div>
+									{{/each}}
+								</script>
+							</div>
+						</div>
+
+						<div class="mui-card-footer pay-foot">
+							确认付款
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui('.mui-scroll-wrapper').scroll({
+				scrollY: true,
+				scrollX: false,
+				startX: 0,
+				startY: 0,
+				indicators: true,
+				deceleration: 0.001,
+				bounce: true
+			});
+			mui.plusReady(function() {
+				var self = plus.webview.currentWebview();
+				var listData = self.listdata;
+				var infowrap = document.getElementById('infowrap');
+				var payBtn = document.querySelector('.affirm-pay');
+				ajaxGet("userorder/detail.html", {
+					orderid: listData
+				}, function(res) {
+					console.log("订单详情：" + JSON.stringify(res));
+					if(res.code == 1) {
+						infowrap.innerHTML = template('infos', {
+							data: res.data
+						});
+						//						if(res.data.status == 5){
+						//							$('.secondPay').show();
+						//							
+						//						}
+					}
+				})
+				var priceEle = document.getElementById('goodprice');
+				document.querySelector('#price').innerHTML = '￥' + priceEle.getAttribute('endprice');
+				document.querySelector('#money').innerHTML = '￥' + priceEle.getAttribute('endprice');
+				//去支付
+				$('.gopay').on('tap', function() {
+					mui('#popover').popover('show');
+				})
+				//支付方式
+				var payNum = 0;
+				var paymethod = document.getElementById("paymethod");
+				ajaxGet('userpay/getpaylist.html', {}, function(res) {
+					var datas = {
+						data: res.data
+					}
+					paymethod.innerHTML = template('paymethodData', datas);
+					//支付方式
+					$('.pay-warp').each(function() {
+						$(this).on('tap', function() {
+							if($(this).children('div:last-child').find('img').attr('check') == '0') {
+								$(this).children('div:last-child').find('img').attr('src', 'images/pt-right.png');
+								$(this).children('div:last-child').find('img').attr('check', '1');
+								payNum = $(this).children('div:last-child').find('img').attr('select');
+								$(this).siblings().children('div:last-child').find('img').attr('check', '0');
+								$(this).siblings().children('div:last-child').find('img').attr('src', 'images/pt-error.png');
+							} else {
+								$(this).children('div:last-child').find('img').attr('src', 'images/pt-error.png');
+								$(this).children('div:last-child').find('img').attr('check', '0');
+								payNum = 0;
+							}
+						})
+					})
+				})
+
+				var channel = null;
+				var wxChannel = null;
+				var aliChannel = null;
+				getChannels();
+
+				function getChannels() {
+					plus.payment.getChannels(function(channels) {
+						console.log("channels:" + JSON.stringify(channels));
+						for(var i = 0; i < channels.length; i++) {
+							if(channels[i].id == 'wxpay') {
+								wxChannel = channels[i];
+							}
+							if(channels[i].id == 'alipay') {
+								aliChannel = channels[i];
+							}
+						}
+					}, function(e) {
+						plus.ui.toast('获取支付通道失败！');
+						console.log("获取支付通道失败");
+					})
+				}
+
+				function pay(id) {
+					if(id == 'alipay') {
+						channel = aliChannel;
+					} else if(id == 'wxpay') {
+						channel = wxChannel;
+					} else {
+						plus.ui.toast('不支持此支付通道');
+						return;
+					};
+					var params = {
+						id: listData,
+						paytype: payNum
+					};
+					console.log("params:" + JSON.stringify(params));
+					ajaxPost('userpay/pay.html', params, function(res) {
+						console.log("这个可以有:" + JSON.stringify(res));
+						var data = JSON.stringify(res.data);
+						console.log('支付数据:' + res.data);
+						var str = res.data;
+						plus.payment.request(channel, str, function(result) {
+							console.log("result:" + JSON.stringify(result));
+							//							plus.ui.alert('支付成功!',function(){
+							//								back();
+							//							})
+							mui.openWindow({
+								id: "buy-result.html",
+								url: "buy/buy-result.html",
+								extras: {
+									infoId: listData
+								},
+								createNew: true
+							});
+//							setTimeout(function() {
+//									plus.webview.currentWebview().close();
+//								}, 100);
+						}, function(error) {
+							plus.ui.alert('支付失败', function() {
+								//								mui.back();
+							})
+							mui.alert("失败原因"+JSON.stringify(error));
+							console.log('失败原因：' + JSON.stringify(error));
+							//							mui.alert("失败原因"+JSON.stringify(error));
+						})
+					}, function(res) {
+						console.log("请求失败:" + JSON.stringify(res));
+					})
+				}
+
+				//确认付款
+				$('.pay-foot').on('tap', function() {
+					console.log(listData);
+					if(payNum == 0) {
+						mui.alert("请选择支付方式");
+					} else if(payNum == 'yue') {
+						var params = {
+							id: listData,
+							paytype: payNum
+						};
+						ajaxPost('userpay/pay.html', params, function(res) {
+							if(res.code == 1) {
+								mui.openWindow({
+									id: "buy-result.html",
+									url: "buy/buy-result.html",
+									extras: {
+										infoId: listData
+									},
+									createNew: true
+								});
+//								setTimeout(function() {
+//									plus.webview.currentWebview().close();
+//								}, 100);
+							}else if(res.code == 0){
+								mui.toast(res.msg);
+								console.log('sasas:'+JSON.stringify(res));
+							}
+						})
+					} else {
+
+						pay(payNum);
+					}
+				})
+			})
+		</script>
+	</body>
+
+</html>

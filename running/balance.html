@@ -1,0 +1,530 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>充值 支付用的原生APP</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/base.css" />
+		<link rel="stylesheet" href="../css/recharge.css" />
+		<script src="../js/common.js" type="text/javascript" charset="utf-8"></script>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.flex-box1 {
+				background: url(../images/running-bg.png) no-repeat;
+				color: #FFFFFF;
+				display: flex;
+				padding: 20px;
+				font-size: 12px;
+			}
+			
+			.flex-box1 .left,
+			.flex-box1 .right {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+			}
+			
+			.flex-box1 .left {
+				border-right: 1px solid #FFFFFF;
+			}
+			
+			.shouyi {
+				display: flex;
+				font-size: 12px;
+				background-color: #FFFFFF;
+			}
+			
+			.shouyi div {
+				flex: 1;
+				padding: 10px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border-bottom: 1px solid #D3D3D3;
+			}
+			
+			.shouyi .all {
+				color: #FF8B02;
+			}
+			
+			.shouyi .allShouYi {
+				border-right: 1px solid #D3D3D3;
+			}
+			
+			h3 {
+				font-size: 14px;
+				padding: 10px 15px 0px;
+				background-color: #FFFFFF;
+			}
+			
+			.mui-card {
+				margin: 0;
+				padding: 0;
+			}
+			
+			.pay-box {
+				margin-top: 10px;
+			}
+			
+			.pay-box .mui-card-header {
+				justify-content: center;
+			}
+			
+			.pay-foot {
+				margin-top: 20px;
+				background-color: #ff8b02;
+				color: #FFFFFF;
+				justify-content: center;
+			}
+			
+			.pay-price p {
+				text-align: center;
+			}
+			
+			.pay-price {
+				border-bottom: 1px solid #c8c7cc;
+			}
+			
+			.pay-price em {
+				color: #FF8B02;
+				font-weight: bold;
+				font-size: 16px;
+			}
+			
+			.pay-warp {
+				display: flex;
+				border-bottom: 1px solid #c8c7cc;
+			}
+			
+			.pay-warp .logo {
+				/*flex: 0 0 60px;
+		   		display: flex;
+		   		justify-content: center;
+		   		align-items: center;*/
+			}
+			
+			.pay-warp .pay-style {
+				flex: 0 0 220px;
+				margin-left: 5px;
+			}
+			
+			.pay-warp .pay-style p {
+				margin-bottom: 0px;
+			}
+			
+			.pay-warp .pay-select {
+				flex: 1;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			
+			.logo img {
+				width: 40px;
+				height: 40px;
+			}
+			
+			.pay-select img {
+				width: 40px;
+				height: 40px;
+			}
+			
+			.mui-content {
+				background-color: #FFFFFF;
+			}
+			
+			ul {
+				background-color: #FFFFFF;
+			}
+		</style>
+
+		<script type="text/javascript">
+			var pays = {};
+
+			function plusReady() {
+				//获取支付通道
+				plus.payment.getChannels(function(channels) {
+					var content = document.getElementById('dcontent');
+					for(var i in channels) {
+						var channel = channels[i];
+						// 过滤掉不支持的支付通道：暂不支持360相关支付
+						if(channel.id == 'qhpay' || channel.id == 'qihoo') {
+							continue;
+						}
+						pays[channel.id] = channel;
+						var de = document.createElement('div');
+						de.setAttribute('class', 'button');
+						de.setAttribute('onclick', 'pay(this.id)');
+						de.id = channel.id;
+						de.innerText = channel.description + '支付';
+						content.appendChild(de);
+						//检测是否安装支付服务
+						checkServices(channel);
+					}
+				}, function(e) {
+					outLine('获取支付通道失败：' + e.message);
+				});
+			}
+			document.addEventListener('plusready', plusReady, false);
+			// 检测是否安装支付服务
+			function checkServices(pc) {
+				if(!pc.serviceReady) {
+					var txt = null;
+					switch(pc.id) {
+						case 'alipay':
+							txt = '检测到系统未安装“支付宝快捷支付服务”，无法完成支付操作，是否立即安装？';
+							break;
+						default:
+							txt = '系统未安装“' + pc.description + '”服务，无法完成支付，是否立即安装？';
+							break;
+					}
+					plus.nativeUI.confirm(txt, function(e) {
+						if(e.index == 0) {
+							pc.installService();
+						}
+					}, pc.description);
+				}
+			}
+			var w = null;
+			var PAYSERVER = 'http://demo.dcloud.net.cn/payment/?payid=';
+			//支付
+			function pay(id) {
+				if(w) {
+					return;
+				} //检查是否请求订单中
+				var url = PAYSERVER;
+				if(id == 'alipay' || id == 'wxpay') {
+					url += id;
+				} else {
+					plus.nativeUI.alert('当前环境不支持此支付通道！', null, '支付');
+					return;
+				}
+				var appid = plus.runtime.appid;
+				if(navigator.userAgent.indexOf('StreamApp') >= 0) {
+					appid = 'Stream';
+				}
+				url += '&appid=' + appid + '&total=';
+				console.log(url);
+				w = plus.nativeUI.showWaiting();
+				//请求支付订单
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function() {
+					switch(xhr.readyState) {
+						case 4:
+							w.close();
+							w = null;
+							if(xhr.status == 200) {
+								outLine('----- 请求订单成功 -----');
+								outLine(xhr.responseText);
+								var order = xhr.responseText;
+								plus.payment.request(pays[id], order, function(result) {
+									console.log(result);
+									outLine('----- 支付成功 -----');
+									outLine(JSON.stringify(result));
+									plus.nativeUI.alert('支付成功：感谢你的支持，我们会继续努力完善产品。', function() {
+										back();
+									}, '支付');
+								}, function(e) {
+									outLine('----- 支付失败 -----');
+									outLine('[' + e.code + ']：' + e.message);
+									plus.nativeUI.alert('更多错误信息请参考支付(Payment)规范文档：http://www.html5plus.org/#specification#/specification/Payment.html', null, '支付失败：' + e.code);
+								});
+							} else {
+								outLine('----- 请求订单失败 -----');
+								outLine(xhr.status);
+								plus.nativeUI.alert('获取订单信息失败！', null, '支付');
+							}
+							break;
+						default:
+							break;
+					}
+				}
+				xhr.open('GET', url + 0.1);
+				outLine('请求支付订单：' + url + 0.1);
+				xhr.send();
+			}
+		</script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">充值</h1>
+			<span class="mui-pull-right bill">账单明细</span>
+		</header>
+		<div class="mui-content">
+			<div id="box">
+				<script type="text/html" id="boxData">
+					<div class="flex-box1">
+						<div class="left">
+							<span>当前账户余额（元）</span>
+							<span>{{data.balance}}</span>
+							<span>(不得低于200.00元余额)</span>
+						</div>
+						<div class="right">
+							<span>可提现金额（元）</span>
+							<span>{{data.tixian}}</span>
+							<span>（最低为50元的整数倍）</span>
+						</div>
+					</div>
+					<div class="shouyi">
+						<div class="allShouYi">
+							<span>今天总收益：<span class="all">{{data.dayshouyi}}元</span></span>
+						</div>
+						<div class="leiji">
+							<span>累计收益：<span class="all">{{data.allshouyi}}元</span></span>
+						</div>
+					</div>
+				</script>
+			</div>
+
+			<h3>请选择充值金额</h3>
+			<ul class="rechList">
+				<li rech="100">
+					<h4>100元</h4>
+					<p>充值100元</p>
+				</li>
+				<li rech="300">
+					<h4>300元</h4>
+					<p>充值300元</p>
+				</li>
+				<li rech="500">
+					<h4>500元</h4>
+					<p>充值500元</p>
+				</li>
+				<li rech="1000">
+					<h4>1000元</h4>
+					<p>充值1000元</p>
+				</li>
+				<li rech="3000">
+					<h4>3000元</h4>
+					<p>充值3000元</p>
+				</li>
+				<li rech="5000">
+					<h4>5000元</h4>
+					<p>充值5000元</p>
+				</li>
+				<li rech="10000">
+					<h4>10000元</h4>
+					<p>充值10000元</p>
+				</li>
+				<li rech="custom" class="other-money">其他金额</li>
+			</ul>
+			<div class="otherMoney">
+				<input type="text" onkeypress="keyPress(this)" onkeyup="keyUp(this)" onblur="onBlur(this)" name="otherMoney" id="otherMoney" value="" placeholder="请输入金额" />
+			</div>
+			<h3>支付方式</h3>
+
+			<div class="mui-card pay-box">
+				<div class="mui-card-content">
+					<div class="mui-card-content-inner pay-warp">
+						<div class="logo">
+							<img src="../images/pt-winxin.jpg" />
+						</div>
+						<div class="pay-style">
+							微信支付
+							<p class="mui-ellipsis">
+								推荐安装微信5.0及以上版本的使用
+							</p>
+						</div>
+						<div class="pay-select">
+							<img src="../images/pt-error.png" check="0" />
+						</div>
+					</div>
+					<div class="mui-card-content-inner pay-warp">
+						<div class="logo">
+							<img src="../images/pt-zhifubao.jpg" />
+						</div>
+						<div class="pay-style">
+							支付宝支付
+							<p class="mui-ellipsis">
+								推荐有支付宝账户的用户使用
+							</p>
+						</div>
+						<div class="pay-select">
+							<img src="../images/pt-error.png" check="0" />
+						</div>
+					</div>
+				</div>
+				<div class="mui-card-footer pay-foot">
+					确认付款
+				</div>
+				<div id="dcontent">
+					先写这里
+				</div>
+			</div>
+
+			<input type="hidden" name="rechtype" id="rechtype" value="" />
+
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/immersed.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var box = document.getElementById('box');
+			mui.getJSON('../json/balance.json', null, function(res) {
+				var datas = {
+					data: res.data
+				};
+				box.innerHTML = template('boxData', datas);
+			})
+
+			//限制otherMoney 只能输入数字 小数
+			function keyPress(ob) {
+				if(!ob.value.match(/^[\+\-]?\d*?\.?\d*?$/)) ob.value = ob.t_value;
+				else ob.t_value = ob.value;
+				if(ob.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?)?$/)) ob.o_value = ob.value;
+			}
+
+			function keyUp(ob) {
+				if(!ob.value.match(/^[\+\-]?\d*?\.?\d*?$/)) ob.value = ob.t_value;
+				else ob.t_value = ob.value;
+				if(ob.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?)?$/)) ob.o_value = ob.value;
+			}
+
+			function onBlur(ob) {
+				if(!ob.value.match(/^(?:[\+\-]?\d+(?:\.\d+)?|\.\d*?)?$/)) ob.value = ob.o_value;
+				else {
+					if(ob.value.match(/^\.\d+$/)) ob.value = 0 + ob.value;
+					if(ob.value.match(/^\.$/)) ob.value = 0;
+					ob.o_value = ob.value
+				};
+			}
+
+			//支付方式
+			$('.pay-warp').each(function() {
+				$(this).on('tap', function() {
+					if($(this).children('div:last-child').find('img').attr('check') == '0') {
+						$(this).children('div:last-child').find('img').attr('src', '../images/pt-right.png');
+						$(this).children('div:last-child').find('img').attr('check', '1');
+						$(this).siblings().children('div:last-child').find('img').attr('check', '0');
+						$(this).siblings().children('div:last-child').find('img').attr('src', '../images/pt-error.png');
+					} else {
+						$(this).children('div:last-child').find('img').attr('src', '../images/pt-error.png');
+						$(this).children('div:last-child').find('img').attr('check', '0');
+					}
+				})
+			})
+
+			//确认付款
+			$('.pay-foot').on('tap', function() {
+				var wxChannel = null; //微信支付
+				var aliChannel = null; //支付宝支付
+				//支付通道
+				var channel = null;
+				//1.获取支付通道
+				function plusReady() {
+					//获取支付通道
+					plus.payment.getChannels(function(channels) {
+						//						channel = channels[0];
+						console.log(channels);
+						for(var i in channels) {
+							if(channels[i].id == "wxpay") {
+								wxChannel = channels[i];
+							} else {
+								aliChannel = channels[i];
+							}
+						}
+					}, function(e) {
+						alert("获取支付通道失败:" + e.message);
+					});
+				}
+				document.addEventListener('plusready', plusReady, false);
+				//				
+				pay('alipay');
+
+				var ALIPAYSERVER = 'http://demo.dcloud.net.cn/helloh5/payment/alipay.php?total=';
+				var WXPAYSERVER = 'http://demo.dcloud.net.cn/helloh5/payment/wxpay.php?total=';
+				//2.发起支付请求
+				function pay(id) {
+					console.log('支付订单');
+					//从服务器请求支付订单
+					var PAYSERVER = '';
+					if(id == 'alipay') {
+						PAYSERVER = ALIPAYSERVER;
+						channel = aliChannel;
+					} else if(id == 'wxpay') {
+						PAYSERVER = WXPAYSERVER;
+						channel = wxChannel;
+					} else {
+						plus.nativeUI.alert("不支持此支付通道！", null, "捐赠");
+						return;
+					}
+					var xhr = new XMLHttpRequest();
+					var amount = document.getElementById('otherMoney').value;
+					xhr.onreadystatechange = function() {
+						console.log(xhr.status);
+						switch(xhr.readyState) {
+							case 4:
+								if(xhr.status == 200) {
+									plus.payment.request(channel, xhr.responseText, function(result) {
+										plus.nativeUI.alert("支付成功！", function() {
+											back();
+										});
+									}, function(error) {
+										plus.nativeUI.alert("支付失败:" + error.code);
+									});
+								} else {
+									alert("获取订单信息失败！");
+								}
+								break;
+							default:
+								break;
+						}
+					}
+					xhr.open('GET', PAYSERVER);
+					xhr.send();
+				}
+
+				//				mui.openWindow({
+				//					id:"../buy/buy-result.html",
+				//					url:"../buy/buy-result.html"
+				//				})
+			})
+
+			var hiddenInput = document.getElementById('rechtype');
+			var rech = document.getElementById('rech');
+			var selectMoney = document.getElementById('rechtype');
+			var customMoney = document.getElementById('money');
+			var otherMoney = document.querySelector('.other-money');
+			mui.init();
+
+			mui('.mui-scroll-wrapper').scroll({
+				scrollY: true,
+				scrollX: false,
+				startX: 0,
+				startY: 0,
+				indicators: true,
+				deceleration: 0.001,
+				bounce: true
+			});
+
+			mui('.rechList').on('tap', 'li', function() {
+				childrens = this.parentNode.children;
+				for(var i = 0; i < childrens.length; i++) {
+					if(childrens[i] == this) {
+						this.classList.add('active');
+						hiddenInput.value = this.getAttribute('rech');
+					} else {
+						childrens[i].classList.remove('active')
+					}
+				}
+
+			});
+
+			document.querySelector('.bill').addEventListener('tap', function() {
+				mui.openWindow({
+					url: '../accountdetail.html'
+				})
+			});
+		</script>
+	</body>
+
+</html>

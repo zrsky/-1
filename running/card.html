@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>银行卡 目前没用</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.cardNum {
+				margin: 20px 30px 30px;
+			}
+			
+			.mui-media a {
+				background-color: #FF5053;
+			}
+			
+			.mui-table-view li {
+				margin-top: 5px;
+			}
+			
+			.mui-media-body,
+			.mui-media-body p,
+			a span {
+				color: #FFFFFF;
+			}
+			
+			.mui-content {
+				margin: 0.75rem;
+				position: relative;
+				word-break: break-all;
+			}
+			
+			.blankcard {
+				display: flex;
+				position: relative;
+				padding: 1rem 0.5rem;
+				margin-bottom: 0.75rem;
+				background: url("../images/bg.png") no-repeat;
+			}
+			
+			.card_logo {
+				width: 2.5rem;
+				height: 2.5rem;
+				border-radius: 50%;
+			}
+			
+			.card_info {
+				margin-left: 0.5rem;
+				color: #FFFFFF;
+			}
+			
+			h1 {
+				font-size: 1.2rem;
+			}
+			
+			.card_info p {
+				color: #FFFFFF;
+			}
+			
+			.cardnum {
+				font-size: 20px;
+			}
+			
+			.footer {
+				border: 1px solid #000000;
+				border-radius: 3px;
+				min-height: 2.2rem;
+				padding: 0.5rem 0.75rem;
+			}
+			
+			.footer a {
+				color: grey;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">银行卡</h1>
+		</header>
+		<div class="mui-content">
+			<div class="blankcard">
+				<img class="card_logo" src="../images/0.jpg" />
+				<div class="card_info">
+					<h1 class="cardtitle">交通银行</h1>
+					<p class="cardtype">信用卡</p>
+					<p class="cardnum">****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp; <span>8207</span></p>
+				</div>
+			</div>
+			<div class="blankcard">
+				<img class="card_logo" src="../images/0.jpg" />
+				<div class="card_info">
+					<h1 class="cardtitle">交通银行</h1>
+					<p class="cardtype">信用卡</p>
+					<p class="cardnum">****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp; <span>8207</span></p>
+				</div>
+			</div>
+			<div class="blankcard">
+				<img class="card_logo" src="../images/0.jpg" />
+				<div class="card_info">
+					<h1 class="cardtitle">交通银行</h1>
+					<p class="cardtype">信用卡</p>
+					<p class="cardnum">****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp;****&nbsp;&nbsp;&nbsp;&nbsp; <span>8207</span></p>
+				</div>
+			</div>
+			<div class="footer" id="addCard">
+				<a href="javascript:void(0)">
+					<i class="mui-icon mui-icon-plusempty"></i> 添加银行卡
+				</a>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			var addCard = document.getElementById('addCard');
+			addCard.addEventListener('tap', function() {
+				mui.openWindow({
+					id: 'addCard.html',
+					url: 'addCard.html'
+				})
+			})
+		</script>
+	</body>
+
+</html>

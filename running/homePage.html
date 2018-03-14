@@ -1,0 +1,1684 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>跑男首页</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="http://at.alicdn.com/t/font_392393_lsko915l36qiwwmi.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.mui-content {
+				background-color: #FFFFFF;
+			}
+			
+			.mui-segmented-control.mui-segmented-control-inverted {
+				width: 70%;
+				margin: 0 auto;
+			}
+			
+			.warp {
+				position: relative;
+				border-bottom: 2px solid #666666;
+			}
+			
+			.warp i {
+				position: absolute;
+				top: 8px;
+				left: 15px;
+				color: #FF8B02;
+			}
+			
+			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+				color: #FF8B02;
+				border: none;
+			}
+			
+			.mui-control-content.mui-actice {
+				display: block;
+			}
+			
+			.time {
+				margin: 0 15px;
+				padding: 5px 0 5px;
+				border-bottom: 1px solid lightgrey;
+			}
+			
+			.flex-box {
+				display: flex;
+				margin-top: 10px;
+				border-bottom: 1px solid lightgrey;
+			}
+			
+			.flex-box .complete,
+			.flex-box .logo {
+				flex: 1;
+				text-align: center;
+			}
+			
+			.flex-box .logo img {
+				width: 80px;
+				height: 80px;
+				border-radius: 100%;
+				border: 1px solid #FFFFFF;
+			}
+			
+			.flex-box .complete {
+				padding-top: 15px;
+			}
+			
+			.num {
+				height: 50px;
+				display: flex;
+				border-bottom: 1px solid lightgrey;
+				color: #FF8B02;
+			}
+			
+			.num span {
+				flex: 1;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			
+			em {
+				font-style: normal;
+			}
+			
+			.address {
+				padding: 0 15px;
+				display: flex;
+				height: 50px;
+				align-items: center;
+				justify-content: center;
+			}
+			
+			.address>span {
+				flex: 80%;
+				display: flex;
+				align-items: center;
+			}
+			
+			.address .update {
+				flex: 20%;
+				display: flex;
+				height: 30px;
+				align-items: center;
+				justify-content: center;
+				background-color: #FF8B02;
+				color: #FFFFFF;
+				border-radius: 30px;
+			}
+			
+			.mapBox {
+				position: relative;
+			}
+			
+			.map {
+				height: 100%;
+			}
+			
+			.mapBox .fun {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 100%;
+				height: 10em;
+			}
+			
+			.fun .moshi,
+			.fun .tingdan {
+				flex: 1;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			
+			.fun .moshi a,
+			.fun .tingdan a {
+				display: flex;
+				width: 60px;
+				height: 60px;
+				border-radius: 100%;
+				color: #FFFFFF;
+				background-color: #FF8B02;
+				align-items: center;
+				justify-content: center;
+				border: 2px solid #c8620b;
+			}
+			
+			.fun .tingdan a {
+				width: 80px;
+				height: 80px;
+				border: 2px solid #FFFFFF;
+			}
+			
+			.oval {
+				position: relative;
+				width: 100px;
+				text-align: center;
+				padding-top: 5px;
+				display: none;
+			}
+			
+			.oval span {
+				position: absolute;
+				top: 32px;
+				right: 20px;
+			}
+			
+			.oval img {
+				width: 76px;
+			}
+			
+			.sendimg {
+				width: 3rem;
+			}
+			
+			.mui-navigate p {
+				color: #000000;
+			}
+			
+			.active {
+				background-color: #E89B25;
+				color: #FFFFFF;
+			}
+			
+			.mui-table-view-cell button {
+				margin: 0.2rem;
+				border: 1px solid #E89B25;
+			}
+			
+			.stateImg {
+				width: 3.5rem;
+				height: 3.5rem;
+				position: absolute;
+				right: 2rem;
+				top: 1rem;
+			}
+			
+			.patternPopover {
+				/*height: 260px;*/
+				height: 50px;
+				width: 80%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			
+			.pattern .title {
+				display: flex;
+				align-items: center;
+				align-content: space-between;
+				padding-left: 10px;
+				height: 50px;
+				background-color: #FF8B02;
+				color: #FFFFFF;
+			}
+			
+			.pattern .title>span {
+				flex: 1;
+			}
+			
+			.pattern .title .mui-switch {
+				flex: 0 0 74px;
+			}
+			
+			.pattern .title .mui-switch {
+				margin-right: 10px;
+			}
+			
+			.mui-popover .mui-scroll-wrapper {
+				margin: 0;
+			}
+			/*.pattern .content {
+				padding: 10px;
+				background-color: #FFFFFF;
+			}
+			
+			.pattern .content p {
+				background-color: lightgrey;
+				padding: 10px;
+			}*/
+			
+			.addressDetail {
+				position: relative;
+			}
+			
+			.rob {
+				position: absolute;
+				bottom: -100px;
+				left: 0;
+				width: 100%;
+			}
+			
+			.rob span {
+				display: block;
+				margin: 0 auto;
+				width: 80px;
+				height: 80px;
+				line-height: 80px;
+				text-align: center;
+				color: #FFFFFF;
+				background-color: #FF8B02;
+				border-radius: 100%;
+			}
+			
+			.addressDetail .top {
+				background-color: #FF8B02;
+				color: #FFFFFF;
+				padding-top: 10px;
+				position: relative;
+				overflow: hidden;
+			}
+			
+			.addressDetail .top>span {
+				display: block;
+				color: #FF8B02;
+				background-color: #FFFFFF;
+				width: 3em;
+				padding: 5px 10px 5px 0;
+				float: left;
+			}
+			
+			.addressDetail .delegate {
+				margin-right: 5px;
+				font-size: 30px;
+				position: relative;
+				top: 30px;
+				right: 30px;
+			}
+			
+			.addressDetail .top .bg {
+				position: absolute;
+				top: -23px;
+				right: -27px;
+				width: 4em;
+				height: 4em;
+				border-radius: 46%;
+				background-color: #fa9e3f;
+			}
+			
+			.distance {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+			}
+			
+			.distance p {
+				color: #FFFFFF;
+			}
+			
+			.addressDetail .actual {
+				height: 40px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background-color: #FA9E3F;
+			}
+			
+			.routeMapBox {
+				height: 14rem;
+				padding: 5px;
+				overflow: hidden;
+			}
+			
+			.routeMap {
+				height: 100%;
+			}
+			
+			#listPopover {
+				width: 85%;
+				height: 27rem;
+				top: 4rem;
+				left: 2rem;
+			}
+			
+			.bottom {
+				display: flex;
+				border-top: 1px solid lightgrey;
+				height: 40px;
+			}
+			
+			.bottom .detail {
+				border-right: 1px solid lightgrey;
+				color: #FF8B02;
+			}
+			
+			.bottom .detail,
+			.bottom .route {
+				flex: 1;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			
+			.mui-popover-arrow {
+				display: none;
+			}
+			
+			.addressBox {
+				display: none;
+			}
+			
+			.info-box {
+				display: flex;
+				padding-top: 10px;
+			}
+			
+			.info-box .position,
+			.info-box .income {
+				flex: 1;
+				text-align: center;
+			}
+			
+			.info-box p {
+				color: #FFFFFF;
+			}
+			
+			.mui-table-view .mui-media-object.mui-pull-left {
+				margin-left: -16px;
+			}
+			
+			.mui-table-view .mui-media-object {
+				max-width: 58px;
+			}
+			
+			.mui-popover .mui-table-view {
+				background-color: #FFFFFF;
+			}
+			
+			.mui-media-body p {
+				color: #000000;
+				font-size: 1em;
+				white-space: normal;
+			}
+			
+			.addressInfo {
+				/*position: absolute;*/
+				height: 16.5rem;
+				overflow: auto;
+				/*height: 16.5rem;*/
+			}
+			
+			.addressInfo li:last-child {
+				/*height: 6rem;*/
+			}
+			
+			.start {
+				display: flex;
+				flex-direction: column;
+			}
+			
+			.address em {
+				flex: 0 0 60px;
+			}
+			
+			.fu {
+				display: none;
+			}
+			
+			.anchorBL {
+				display: none;
+			}
+			
+			.progressbar {
+				position: absolute;
+				top: 45%;
+				left: 30%;
+				width: 40%;
+				display: none;
+				z-index: 1000;
+			}
+			
+			.progressbar div {
+				display: inline-block;
+			}
+			
+			.mui-backdrop {
+				position: fixed;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				z-index: 998;
+				background-color: rgba(0, 0, 0, .5);
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div class="progressbar" id="progressbar">
+				<div>正在下载......</div>
+				<div id="progress" class="mui-progressbar">
+					<span></span>
+				</div>
+			</div>
+			<div class="warp">
+				<i class="iconfont icon-gerenzhongxinzhuyegerenziliao"></i>
+				<!--选项卡-->
+				<div id="segmentedControl" class="mui-segmented-control mui-segmented-control-inverted mui-segmented-control-primary">
+					<a class="mui-control-item mui-active" href="#item1">首页</a>
+					<a class="mui-control-item" href="#item2" id="ready">待完成</a>
+					<a class="mui-control-item" href="#item3" id="completed">已完成</a>
+				</div>
+			</div>
+			<div id="item1" class="mui-control-content mui-active">
+				<div class="fu">
+					<div class="time">
+						<i class="iconfont icon-rili"></i>
+						<span class="riqi"></span>
+					</div>
+					<div class="flex-box">
+						<div class="complete">
+							<span>0</span>
+							<p>今日完成</p>
+						</div>
+						<div class="logo">
+							<img src="../images/logo.png" />
+						</div>
+						<div class="complete">
+							<span>0</span>
+							<p>今日收益</p>
+						</div>
+					</div>
+					<div class="num">
+						<span>未登录不可接单</span>
+					</div>
+				</div>
+				<div id="item1Box">
+					<script type="text/html" id="item1Data">
+						<div class="time">
+							<i class="iconfont icon-rili"></i>
+							<span class="riqi"></span>
+						</div>
+						<div class="flex-box">
+							<div class="complete">
+								<span>{{data.complate}}</span>
+								<p>今日完成</p>
+							</div>
+							<div class="logo">
+								<img src="{{data.logoImg}}" />
+							</div>
+							<div class="complete">
+								<span>{{data.dayPrice}}</span>
+								<p>今日收益</p>
+							</div>
+						</div>
+						<div class="num">
+							<span>当前可同时接单数：<em>{{data.listNum}}</em>单</span>
+						</div>
+					</script>
+				</div>
+
+				<div class="address">
+					<span><em>我在：</em><marquee behavior="scroll" direction="left" align="bottom" onmouseout="this.start()" onmouseover="this.stop()" scrollamount="2" scrolldelay="1">牧野大道南段</marquee></span>
+					<div class="update">
+						<i class="mui-icon mui-icon-refreshempty"></i> 刷新
+					</div>
+				</div>
+				<div class="mapBox">
+					<div class="map" id="map"></div>
+					<div class="fun">
+						<div class="moshi">
+							<a href="#middlePopover">模式</a>
+						</div>
+						<div class="tingdan">
+							<!--<a href="#listPopover">-->
+							<a>
+								<div class="oval">
+									<img src="../images/oval.svg" />
+									<span>听单</span>
+								</div>
+								<div class="start" id="start">
+									<span>开始</span>
+									<span>接单</span>
+								</div>
+
+							</a>
+						</div>
+						<div class="moshi shougong">
+							<a>收工</a>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<!--待完成-->
+			<div class="mui-control-content" id="item2">
+				<!--这里放置真实显示的DOM内容-->
+				<ul class="mui-table-view" id="listwrap">
+					<script type="text/html" id="orders">
+						{{if list.length == 0}}
+						<li class="mui-table-view-cell">
+							<a class="mui-navigate">
+								暂无待完成订单
+							</a>
+						</li>
+						{{else if list.length != 0}} {{each list as value i}} {{if value.status>1&&value.status
+						<7}} <li class="mui-table-view-cell">
+							<a class="mui-navigate">
+
+								{{if value.type.id==1}}
+								<img class="sendimg" src="../images/1.jpg" alt="" /> {{else if value.type.id==2}}
+								<img class="sendimg" src="../images/2.jpg" alt="" /> {{else if value.type.id==3}}
+								<img class="sendimg" src="../images/3.jpg" alt="" /> {{/if}} {{if value.from_address == 'null'||value.from_address == ''}}
+								<p>从:就近购买</p>
+								{{else}}
+								<p>从:{{value.from_address}}</p>
+								{{/if}}
+								<p class="toaddress" xpoint="{{value.to_x}}" ypoint="{{value.to_y}}">到:{{value.to_address}}</p>
+								<p>跑腿费: {{value.real_express_price_total}}元</p>
+								{{if value.order_type_id == 1}}
+								<p>订单类型: 实时订单 <span class="f_r">{{value.create_time}}</span></p>
+								{{else}}
+								<p>订单类型: 预约订单 <span class="f_r">{{value.create_time}}</span></p>
+								{{/if}} {{if value.speech_status ==1}}
+								<p id="player{{i}}">语音备注</p>
+								{{/if}} {{if value.description !='' && value.description !=null}}
+								<p>备注:{{value.description}}</p>
+								{{/if}}
+							</a>
+							<button class="active gopay" orderId="{{value.id}}">去完成</button>
+							</li>
+							{{/if}} {{/each}} {{/if}}
+					</script>
+				</ul>
+			</div>
+			<!--已完成-->
+			<div class="mui-control-content" id="item3">
+				<ul class="mui-table-view" id="container">
+					<script type="text/html" id="containerData">
+						{{if list.length == 0}}
+						<li class="mui-table-view-cell">
+							<a class="mui-navigate">
+								暂无已完成订单
+							</a>
+						</li>
+						{{else if list.length != 0}} {{each list as value i}} {{if value.status == 7}}
+
+						<li class="mui-table-view-cell">
+							<a class="mui-navigate">
+
+								{{if value.type==1}}
+								<img class="sendimg" src="../images/1.jpg" alt="" /> {{else if value.type==2}}
+								<img class="sendimg" src="../images/2.jpg" alt="" /> {{else if value.type==3}}
+								<img class="sendimg" src="../images/3.jpg" alt="" /> {{/if}}
+								<p>从:{{value.from_address}}</p>
+								<p class="toaddress" xpoint="{{value.to_x}}" ypoint="{{value.to_y}}">到:{{value.to_address}}</p>
+								<p>跑腿费: {{value.real_express_price_total}}元</p>
+								{{if value.order_type_id == 1}}
+								<p>订单类型: 实时订单 <span class="f_r">{{value.create_time}}</span></p>
+								{{else}}
+								<p>订单类型: 预约订单 <span class="f_r">{{value.create_time}}</span></p>
+								{{/if}}
+								<img class="stateImg" src="../images/wc.png" />
+							</a>
+						</li>
+						{{/if}} {{/each}}{{/if}}
+					</script>
+				</ul>
+			</div>
+		</div>
+		<!--模式-->
+		<div id="middlePopover" class="mui-popover patternPopover">
+			<div class="mui-popover-arrow"></div>
+			<div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<div class="pattern">
+						<div class="title">
+							<span>接收推荐订单</span>
+							<div class="mui-switch">
+								<div class="mui-switch-handle"></div>
+							</div>
+						</div>
+						<!--<div class="content">
+							<p>
+								<span>说明：</span><br/>
+								<span>选择开启接收强制订单，代表您同意在等待接单时间能将有可能接收到滴滴快速平台指派的订单，该类型订单将直接进入您的待完成订单中，跑男有责任和义务必须完成这笔订单，不得以任何理由拒绝和申诉。</span>
+							</p>
+						</div>-->
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--抢单-->
+		<div id="listPopover" class="mui-popover">
+			<div class="addressDetail">
+				<div class="addressBox">
+					<div class="top" id="address">
+						<script type="text/html" id="addressData">
+							{{if data.order_type_id == 1}}
+							<span>实时订单</span> {{else if data.order_type_id == 2}}
+							<span>预约订单</span> {{/if}}
+							<i class="mui-icon mui-icon-paperplane"></i> {{if data.type_id == 1}}
+							<em>送东西</em> {{else if data.type_id == 2}}
+							<em>买东西</em> {{else if data.type_id == 3}}
+							<em>取东西</em> {{/if}}
+							<div class="bg">
+								<i class="delegate mui-pull-right">×</i>
+							</div>
+							<div class="mui-clearfix"></div>
+							<div class="distance">
+								<span><em>{{data.juli}}公里</em></span>
+								<p>距您位置</p>
+							</div>
+							<div class="actual">
+								订单距离<span>{{data.km}}公里</span>
+							</div>
+						</script>
+
+					</div>
+					<div class="routeMapBox">
+						<div class="routeMap" id="routeMap"></div>
+					</div>
+
+				</div>
+				<div class="routeDetail" id="routeDetail">
+					<script type="text/html" id="routeDetailData">
+						<div class="top">
+							{{if data.order_type_id == 1}}
+							<span>实时订单</span> {{else if data.order_type_id == 2}}
+							<span>预约订单</span> {{/if}}
+							<i class="mui-icon mui-icon-paperplane"></i> {{if data.type_id == 1}}
+							<em>送东西</em> {{else if data.type_id == 2}}
+							<em>买东西</em> {{else if data.type_id == 3}}
+							<em>取东西</em> {{/if}}
+							<div class="bg">
+								<i class="delegate mui-pull-right">×</i>
+							</div>
+							<div class="mui-clearfix"></div>
+							<div class="info-box">
+								<div class="position">
+									<span><em>{{data.juli}}公里</em></span>
+									<p>距您位置</p>
+								</div>
+								<div class="income">
+									<span><em>{{data.express_price}}</em>元</span>
+									<p>本单收入</p>
+								</div>
+							</div>
+						</div>
+						<ul class="mui-table-view addressInfo">
+							{{if data.type_id == 2}}
+							<li class="mui-table-view-cell mui-media">
+								<a href="javascript:;">
+									<div class="mui-media-body">
+										{{if data.goods_budget>0}}
+										<p class="mui-ellipsis">商品费用已支付{{data.goods_budget}}元</p>
+										{{else}}
+										<p class="mui-ellipsis">商品费用未支付</p>
+										{{/if}}
+									</div>
+								</a>
+							</li>
+							{{/if}} {{if data.type_id != 2}}
+							<li class="mui-table-view-cell mui-media">
+								<a href="javascript:;">
+									<img class="mui-media-object mui-pull-left" src="../images/icon-yu.png">
+									<div class="mui-media-body">
+										<p class="mui-ellipsis">预计到达时间：{{data.pre_end_time_formated}}</p>
+									</div>
+								</a>
+							</li>
+							{{/if}}
+							<li class="mui-table-view-cell mui-media">
+								<a href="javascript:;">
+									<img class="mui-media-object mui-pull-left" src="../images/icon-fa.png">
+									<div class="mui-media-body">
+										{{if data.from_address == "" || data.from_address=="null"}}
+										<p>就近购买</p>
+										{{else}}
+										<p>{{data.from_address}}</p>
+										<p class="mui-ellipsis"></p>
+										{{/if}}
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell mui-media">
+								<a href="javascript:;">
+									<img class="mui-media-object mui-pull-left" src="../images/icon-shou.png">
+									<div class="mui-media-body">
+										<p>{{data.to_address}}</p>
+										<p class="mui-ellipsis">订单距离：{{data.km}}公里</p>
+									</div>
+								</a>
+							</li>
+							<li class="mui-table-view-cell mui-media goods-element">
+								<a href="javascript:;">
+									<img class="mui-media-object mui-pull-left" src="../images/icon-wu.png">
+									<div class="mui-media-body">
+										<p>物品名称：{{data.goods}}</p>
+										{{if data.speech !=''&&data.speech!=null}}
+										<p id="player">语音备注</p>
+										{{/if}}
+										<p class="mui-ellipsis-2">备注：{{data.description}}</p>
+									</div>
+								</a>
+							</li>
+						</ul>
+					</script>
+
+				</div>
+				<div class="bottom">
+					<div class="detail">
+						订单详情
+					</div>
+					<div class="route">
+						订单地图
+					</div>
+				</div>
+			</div>
+			<div class="rob" id="rob">
+				<span>抢单</span>
+			</div>
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/base.js"></script>
+		<script type="text/javascript">
+			mui.init()
+			mui.plusReady(function() {
+				wainshow();
+
+				function wainshow() {
+					if(plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE) {
+						mui.toast("网络异常，请检查网络设置！");
+
+					}
+				}
+				typeUpdate();
+				var n = null; //语音播放器
+				//语音播报
+				function speckText(str) {
+					console.log('语音播报执行几次');
+					var url = "http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=4&text=" + encodeURI(str);
+					if(n != null) {
+						n = null
+					}
+					n = new Audio(url);
+					n.src = url;
+					n.play();
+				}
+				//播报内容
+				function speckContent(data) {
+					var str = '';
+					if(data.order_type_id == 1) {
+						str += "实时，";
+					} else {
+						str += "预约，";
+					}
+					if(data.type_id == 1) {
+						str += "帮我送，";
+					} else if(data.type_id == 2) {
+						str += "帮我买，";
+					} else if(data.type_id == 3) {
+						str += "帮我取，";
+					}
+					str += "从" + data.from_address + "到" + data.to_address + "，";
+					str += "本单收入" + data.express_price + "元" + ",";
+					str += "距您位置" + data.juli + "公里" + ",";
+					if(data.type_id == 2) {
+						if(data.goods_budget > 0) {
+							str += "商品费用已支付" + data.goods_budget + "元" + "，"
+						} else {
+							str += "商品费用未支付" + "，"
+						}
+					}
+					str += "出行注意安全"
+					return str;
+				}
+
+				var self = plus.webview.currentWebview();
+				//获取手机屏幕的高
+				var bodyHeight = parseInt(plus.display.resolutionHeight);
+				var offHeight = parseInt($('.address').css('height')) + parseInt($('.warp').css('height')) + 178;
+				$('.mapBox').css('height', bodyHeight - offHeight);
+				//获取日期
+				function getDate() {
+					//获取时间
+					var myDate = new Date();
+					var month = myDate.getMonth() + 1;
+					var day = myDate.getDate();
+					var week = myDate.getDay();
+					if(week == 0) {
+						week = '天';
+					} else if(week == 1) {
+						week = '一';
+					} else if(week == 2) {
+						week = '二';
+					} else if(week == 3) {
+						week = '三';
+					} else if(week == 4) {
+						week = '四';
+					} else if(week == 5) {
+						week = '五';
+					} else if(week == 6) {
+						week = '六';
+					}
+
+					$('.riqi').text(month + '月' + day + '日' + ' ' + '星期' + week);
+				}
+				//刷新页面
+				window.addEventListener('pagerefresh', function(e) {
+					plus.webview.currentWebview().reload();
+				})
+				var userinfo = is_login();
+				$('#ready').on("tap", function() {
+					//待完成
+					var listwrap = document.getElementById('listwrap');
+					ajaxGet('expressrunning/order.html', {}, function(res) {
+						console.log("待完成:" + JSON.stringify(res));
+						if(res.code == 1) {
+							listwrap.innerHTML = template('orders', {
+								list: res.data.data
+							});
+							console.log("speech:" + res.data.data.length);
+							for(var i = 0; i < res.data.data.length; i++) {
+								if(res.data.data[i].speech_status == 1) {
+									var orderid = res.data.data[i].id;
+									document.getElementById("player" + i).addEventListener('tap', function(e) {
+										ajaxGet("expressrunning/getValueByField.html", {
+											orderid: orderid
+										}, function(res) {
+											console.log('res:' + JSON.stringify(res));
+											dataURL2Audio(res.data, function(entry) {
+												var toURL = entry.toURL();
+												playAudio(toURL);
+											})
+										})
+
+										e.stopPropagation();
+									})
+								}
+							}
+							//需要写点击完成后跳转
+							$('.gopay').on('tap', function() {
+								console.log("点击了去完成");
+								var k = $(this).attr('orderId');
+								console.log("k:" + k);
+								//待完成订单数据
+								var arr = res.data.data;
+								console.log("arr长度:" + arr.length);
+								var detail = null;
+								for(var i = 0; i < arr.length; i++) {
+									if(arr[i].id == k) {
+										//1帮我送 2帮我买 3帮我取
+										if(arr[i].type.id == 1 || arr[i].type_id == 3) {
+											if(detail == null) {
+												detail = plus.webview.getWebviewById('detail.html');
+												if(detail != null) {
+													mui.fire(detail, "DIY_DATA", {
+														orderinfo: arr[i],
+														address: arr[i].from_address,
+														phone: arr[i].from_mobile,
+														shphone: arr[i].to_mobile,
+														xpoint: arr[i].from_x,
+														ypoint: arr[i].from_y,
+														to_x: arr[i].to_x,
+														to_y: arr[i].to_y,
+														to_address: arr[i].to_address,
+														status: arr[i].status
+													});
+												}
+											}
+											mui.openWindow({
+												id: "detail.html",
+												url: "detail.html",
+												extras: {
+													orderinfo: arr[i],
+													address: arr[i].from_address,
+													phone: arr[i].from_mobile,
+													shphone: arr[i].to_mobile,
+													xpoint: arr[i].from_x,
+													ypoint: arr[i].from_y,
+													to_x: arr[i].to_x,
+													to_y: arr[i].to_y,
+													to_address: arr[i].to_address,
+													status: arr[i].status
+												}
+												//												createNew:true
+											})
+										} else {
+											if(detail == null) {
+												detail = plus.webview.getWebviewById('buydetail.html');
+												if(detail != null) {
+													mui.fire(detail, "DIY_DATA", {
+														orderinfo: arr[i],
+														address: arr[i].from_address,
+														phone: arr[i].from_mobile,
+														xpoint: arr[i].from_x,
+														ypoint: arr[i].from_y,
+														to_x: arr[i].to_x,
+														to_y: arr[i].to_y,
+														to_address: arr[i].to_address,
+														status: arr[i].status
+													});
+												}
+											}
+											mui.openWindow({
+												id: "buydetail.html",
+												url: "buydetail.html",
+												extras: {
+													orderinfo: arr[i],
+													address: arr[i].from_address,
+													phone: arr[i].from_mobile,
+													xpoint: arr[i].from_x,
+													ypoint: arr[i].from_y,
+													to_x: arr[i].to_x,
+													to_y: arr[i].to_y,
+													to_address: arr[i].to_address,
+													status: arr[i].status
+												}
+												//												createNew:true
+											})
+										}
+									}
+								}
+							})
+						}
+					}, function(res) {
+						console.log('bbb');
+					});
+				})
+				//已完成
+				$('#completed').on('tap', function() {
+					//已完成
+					var container = document.getElementById('container');
+					ajaxGet('expressrunning/order.html', {
+						status: 7
+					}, function(res) {
+						console.log("已完成:" + JSON.stringify(res));
+						if(res.code == 1) {
+							container.innerHTML = template('containerData', {
+								list: res.data.data
+							});
+						}
+					}, function(res) {
+						console.log("shibai:" + JSON.stringify(res));
+					})
+				})
+				//认证状态
+				var status;
+
+				function auth(status) {
+					if(status == 1) {
+						//已认证
+					} else if(status == 0) {
+						mui.confirm("未认证", "", ['现在去认证', '先看看'], function(res) {
+							if(res.index == 0) {
+								mui.openWindow({
+									id: "auth_register.html",
+									url: "auth_register.html"
+								})
+							}
+						})
+					} else if(status == -2) {
+						localStorage.removeItem("userinfo");
+						//清除token
+						localStorage.removeItem("access_token");
+						mui.confirm("", "请登录", ['现在去登录'], function(res) {
+							mui.openWindow({
+								id: 'login_code.html',
+								url: '/login_code.html'
+							});
+						}, 'div');
+					} else if(status == -3) {
+						mui.toast('请等待审核');
+					}
+				}
+
+				//首页
+				var item1Box = document.getElementById('item1Box');
+				console.log("userinfo:" + JSON.stringify(userinfo));
+				//判断登录状态 如果登录显示登录信息 如果未登录 显示默认信息
+				function getIndexData() {
+					var indexData = null;
+					ajaxGet('expressrunning/index.html', {}, function(res) {
+						console.log('这是个啥:' + JSON.stringify(res));
+						if(res.code == 1) {
+							indexData = res.data;
+						} else if(res.code == -1 || res.code == -2) {
+							$('.fu').show();
+							mui.confirm('', "你还没有登录请登录", ['现在去登录'], function(res) {
+								console.log('关闭了页面');
+								mui.openWindow({
+									id: 'login_code.html',
+									url: '/login_code.html'
+								});
+							}, 'div');
+						} else {
+							mui.toast(res.msg);
+						}
+					});
+					return indexData;
+				}
+				var data = getIndexData();
+				status = data.express_status;
+				console.log('status:' + status);
+				if(status == 1) {
+					//已认证
+				} else if(status == 0) {
+					mui.confirm("未认证", "", ['现在去认证', '先看看'], function(res) {
+						if(res.index == 0) {
+							mui.openWindow({
+								id: "auth_register.html",
+								url: "auth_register.html"
+							})
+						}
+					})
+				} else if(status == -1) {
+					mui.alert(res.data.express_status_msg);
+				} else if(status == -2) {
+					localStorage.removeItem("userinfo");
+					//清除token
+					localStorage.removeItem("access_token");
+					mui.confirm("", "请登录", ['现在去登录'], function(res) {
+						mui.openWindow({
+							id: 'login_code.html',
+							url: '/login_code.html'
+						});
+					}, 'div');
+				} else if(status == -3) {
+					mui.toast('请等待审核');
+				}
+				var datas = {
+					data: data
+				};
+				item1Box.innerHTML = template('item1Data', datas);
+				getDate();
+				var setId = null; //定时器
+
+				//收工
+				$('.shougong').on('tap', function() {
+					console.log('orderStatus:' + orderStatus);
+					if(orderStatus) {
+						mui.confirm('也许...下一分钟 就会有订单哦！', '', ['狠心收工', '继续听单'], function(e) {
+							if(e.index == 1) {
+								speckText('继续听单');
+							} else {
+								speckText('休息一会吧！');
+								$('.start').show();
+								$('.oval').hide();
+								if(setId != null) {
+									clearInterval(setId);
+								}
+								ajaxPost('expressrunning/off_day.html', null, function(res) {
+									console.log("收工:" + JSON.stringify(res));
+									if(res.code == 1) {
+										console.log("收工成功");
+										orderStatus = false;
+									}
+								})
+							}
+						});
+					} else {
+						mui.toast('请先开始接单!');
+					}
+
+					event.stopPropagation();
+				})
+
+				//隐藏弹出框
+				//is_push是否后台推送
+				var is_push, listId;
+				mui('body').on('hidden', '#listPopover', function(e) {
+					//监听抢单弹出框状态 如果隐藏 停止播放
+					if(n != null) {
+						n.pause();
+					}
+					console.log('执行这里' + is_push + listId);
+					if(is_push == 1) {
+						mui.confirm('系统派送订单，拒绝将会扣信用分', '', ['狠心拒绝', '完成订单'], function(e) {
+							if(e.index == 1) {
+								mui('#listPopover').popover('show');
+							} else {
+								$('.start').show();
+								$('.oval').hide();
+								if(setId != null) {
+									clearInterval(setId);
+								}
+								ajaxPost('expressrunning/deny_order.html ', {
+									orderid: listId
+								}, function(res) {
+									if(res.code == 1) {
+										mui('#listPopover').popover('hidden');
+										console.log("拒绝接单");
+									} else {
+										mui.toast(res.msg);
+									}
+								})
+							}
+						});
+					}
+					event.stopPropagation(); //阻止冒泡
+				});
+
+				//抢单按钮
+				var rob_btn = document.getElementById('rob');
+				//接单状态
+				var orderStatus = false;
+				//开始接单
+				$('.start').on('tap', function() {
+					console.log("status:" + status);
+					orderStatus = true;
+					speckText('开始接单了');
+					if(setId != null) {
+						clearInterval(setId);
+					}
+					if(userinfo) {
+						if(status == 1) {
+							$('.start').hide();
+							$('.oval').show();
+							var address, routeDetail;
+							setId = setInterval(cycleOrder, 6000);
+							console.log('看看定时器是个啥:' + setId);
+							event.stopPropagation(); //阻止冒泡
+						} else {
+							//认证状态
+							auth(status);
+						}
+					} else {
+						mui.confirm('', '您还未登录，请先登录', ['我知道了', '现在去登录'], function(res) {
+							if(res.index == 1) {
+								mui.openWindow({
+									id: "../login_code.html",
+									url: "../login_code.html"
+								})
+							}
+						}, 'div');
+					}
+					return false;
+					event.stopPropagation(); //阻止冒泡
+
+				})
+				//发送消息
+
+				//订单信息；
+				var orderinfo;
+				var geolocation = new BMap.Geolocation();
+
+				function cycleOrder() {
+					var param = null;
+					console.time('a');
+					geolocation.getCurrentPosition(function(p) {
+
+						longitude = p.longitude;
+						latitude = p.latitude;
+						param = {
+							ypoint: p.latitude,
+							xpoint: p.longitude
+						};
+						ajaxGet('expressrunning/listening_list.html', param, function(data) {
+							console.timeEnd('a');
+							console.log("订单信息11：" + JSON.stringify(data));
+							if(data.code == 1) {
+								console.log('看看定时器还在不：' + setId);
+								//轮训停止 准备接单
+								if(setId != null) {
+									clearInterval(setId);
+								}
+								var str = speckContent(data.data);
+								speckText(str);
+								$('.start').show();
+								$('.oval').hide();
+								//订单信息
+								orderinfo = data.data;
+								is_push = orderinfo.is_push;
+								listId = orderinfo.id;
+								//点击抢单
+								rob(orderinfo);
+							} else if(data.code <= 0) {
+								//无可抢单子，继续听单
+								if(setId != null) {
+									clearInterval(setId);
+								}
+								$('.start').show();
+								$('.oval').hide();
+								mui.alert(data.msg);
+							}
+						}, function(res) {
+							console.log(JSON.stringify(res));
+						}, true);
+					}, function(e) {
+						console.log("失败:" + JSON.stringify(e));
+					}, {
+						coordsType: 'bd09ll',
+						provider: 'baidu'
+					})
+				}
+				//点击抢单
+				function rob(orderinfo) {
+					console.log('这里执行了多少次');
+					address = document.getElementById('address');
+					routeDetail = document.getElementById('routeDetail');
+					var datas = {
+						data: orderinfo
+					};
+					console.log("抢单信息测试:" + JSON.stringify(orderinfo));
+					address.innerHTML = template('addressData', datas);
+					routeDetail.innerHTML = template('routeDetailData', datas);
+					//播放语音
+					if(orderinfo.speech != '' && orderinfo.speech != null) {
+						document.getElementById('player').addEventListener('tap', function(e) {
+							dataURL2Audio(orderinfo.speech, function(entry) {
+								var toURL = entry.toURL();
+								playAudio(toURL);
+							})
+							e.stopPropagation();
+						})
+					}
+
+					//有可抢单子
+					mui('#listPopover').popover('show');
+					//订单详情 detail 订单地图 route
+					$('.detail').on('tap', function() {
+						$('.routeDetail').show();
+						$('.addressBox').hide();
+						$(this).css('color', '#FF8B02');
+						$('.route').css('color', '#000000');
+					})
+					$('.route').on('tap', function() {
+						$('.addressBox').show();
+						$('.routeDetail').hide();
+						$(this).css('color', '#FF8B02');
+						$('.detail').css('color', '#000000');
+						var rm = new BMap.Map('routeMap');
+						var from_x = orderinfo.from_x;
+						var from_y = orderinfo.from_y;
+						var to_x = orderinfo.to_x;
+						var to_y = orderinfo.to_y;
+						var point = new BMap.Point(from_x, from_y);
+						//路线地图
+						rm.centerAndZoom(point, 15);
+						rm.disableDragging(); //禁止拖拽
+						var p1 = new BMap.Point(from_x, from_y);
+						var p2 = new BMap.Point(to_x, to_y);
+						var driving = new BMap.DrivingRoute(rm, {
+							renderOptions: {
+								map: rm,
+								autoViewport: true
+							}
+						});
+						driving.search(p1, p2);
+						event.stopPropagation();
+					})
+					//隐藏弹出框
+					$('.bg').on('tap', function() {
+						if(setId != null) {
+							clearInterval(setId);
+						}
+						if(n != null) {
+							//暂停播放
+							n.pause();
+						}
+						mui('#listPopover').popover('hide');
+					})
+					//					$('.mui-backdrop').on('tap', function() {
+					//						setId = setInterval(cycleOrder, 3000);
+					//					})
+				}
+				//点击抢单
+				rob_btn.addEventListener('tap', function(event) {
+					//					$('#rob').on('tap', function(event) {
+					geolocation.getCurrentPosition(function(p) {
+						longitude = p.longitude;
+						latitude = p.latitude;
+						var mask = mui.createMask(); //遮罩层
+						if(setId != null) {
+							clearInterval(setId);
+						}
+						console.log('点击了抢单');
+						var params = {
+							orderid: orderinfo.id,
+							lng: longitude,
+							lat: latitude
+						}
+						console.log('params:' + JSON.stringify(params));
+						plus.nativeUI.showWaiting();
+						mask.show(); //显示遮罩层
+						//发送订单编号 跑男所在位置
+						ajaxPost('expressrunning/grab_single.html', {
+								orderid: orderinfo.id,
+								lng: longitude,
+								lat: latitude
+							},
+							function(res) {
+								console.log("抢单数据：" + JSON.stringify(res));
+								if(res.code == 1) {
+									plus.nativeUI.closeWaiting();
+									mask.close(); //关闭遮罩层
+									mui('#listPopover').popover('hide');
+									var detail = null;
+									//1帮我送 2帮我买 3帮我取
+									console.log("Type_id:" + res.data.type_id);
+									if(res.data.type_id == 1 || res.data.type_id == 3) {
+										if(detail == null) {
+											detail = plus.webview.getWebviewById('detail.html');
+											if(detail != null) {
+												mui.fire(detail, "DIY_DATA", {
+													orderinfo: res.data,
+													address: res.data.from_address,
+													to_address: res.data.to_address,
+													phone: res.data.from_mobile,
+													shphone: res.data.to_mobile,
+													xpoint: res.data.from_x,
+													ypoint: res.data.from_y,
+													to_x: res.data.to_x,
+													to_y: res.data.to_y,
+													status: res.data.status
+												});
+											}
+										}
+										mui.openWindow({
+											id: "detail.html",
+											url: "detail.html",
+											extras: {
+												orderinfo: res.data,
+												address: res.data.from_address,
+												to_address: res.data.to_address,
+												phone: res.data.from_mobile,
+												shphone: res.data.to_mobile,
+												xpoint: res.data.from_x,
+												ypoint: res.data.from_y,
+												to_x: res.data.to_x,
+												to_y: res.data.to_y,
+												status: res.data.status
+											},
+											createNew: true
+										})
+									} else if(res.data.type_id == 2) {
+										if(detail == null) {
+											detail = plus.webview.getWebviewById('buydetail.html');
+											if(detail != null) {
+												mui.fire(detail, "DIY_DATA", {
+													orderinfo: res.data,
+													address: res.data.from_address,
+													to_address: res.data.to_address,
+													phone: res.data.from_mobile,
+													xpoint: res.data.from_x,
+													ypoint: res.data.from_y,
+													to_x: res.data.to_x,
+													to_y: res.data.to_y,
+													status: res.data.status
+												});
+											}
+										}
+										mui.openWindow({
+											id: "buydetail.html",
+											url: "buydetail.html",
+											extras: {
+												orderinfo: res.data,
+												address: res.data.from_address,
+												to_address: res.data.to_address,
+												phone: res.data.from_mobile,
+												xpoint: res.data.from_x,
+												ypoint: res.data.from_y,
+												to_x: res.data.to_x,
+												to_y: res.data.to_y,
+												status: res.data.status
+											},
+											createNew: true
+										})
+									}
+								} else {
+									console.log("执行这里么");
+									plus.nativeUI.closeWaiting();
+									mask.close(); //关闭遮罩层
+									mui.toast(res.msg);
+								}
+								return false;
+							},
+							function(res) {
+								console.log("shibai:" + JSON.stringify(res));
+							}
+						);
+						event.stopPropagation();
+					}, function(e) {
+						console.log("失败：" + JSON.stringify(e));
+					}, {
+						coordsType: 'bd09ll',
+						provider: 'baidu'
+					})
+
+					//					geolocation.getCurrentPosition(function(p) {
+					//						longitude = p.longitude;
+					//						latitude = p.latitude;
+					//						var mask = mui.createMask(); //遮罩层
+					//						if(setId != null) {
+					//							clearInterval(setId);
+					//						}
+					//						console.log('点击了抢单');
+					//						var params = {
+					//							orderid: orderinfo.id,
+					//							lng: longitude,
+					//							lat: latitude
+					//						}
+					//						console.log('params:' + JSON.stringify(params));
+					//						plus.nativeUI.showWaiting();
+					//						mask.show(); //显示遮罩层
+					//						//发送订单编号 跑男所在位置
+					//						ajaxPost('expressrunning/grab_single.html', {
+					//								orderid: orderinfo.id,
+					//								lng: longitude,
+					//								lat: latitude
+					//							},
+					//							function(res) {
+					//								console.log("抢单数据：" + JSON.stringify(res));
+					//								if(res.code == 1) {
+					//									plus.nativeUI.closeWaiting();
+					//									mask.close(); //关闭遮罩层
+					//									mui('#listPopover').popover('hide');
+					//									var detail = null;
+					//									//1帮我送 2帮我买 3帮我取
+					//									console.log("Type_id:" + res.data.type_id);
+					//									if(res.data.type_id == 1 || res.data.type_id == 3) {
+					//										if(detail == null) {
+					//											detail = plus.webview.getWebviewById('detail.html');
+					//											if(detail != null) {
+					//												mui.fire(detail, "DIY_DATA", {
+					//													orderinfo: res.data,
+					//													address: res.data.from_address,
+					//													to_address: res.data.to_address,
+					//													phone: res.data.from_mobile,
+					//													shphone: res.data.to_mobile,
+					//													xpoint: res.data.from_x,
+					//													ypoint: res.data.from_y,
+					//													to_x: res.data.to_x,
+					//													to_y: res.data.to_y,
+					//													status:res.data.status
+					//												});
+					//											}
+					//										}
+					//										mui.openWindow({
+					//											id: "detail.html",
+					//											url: "detail.html",
+					//											extras: {
+					//												orderinfo: res.data,
+					//												address: res.data.from_address,
+					//												to_address: res.data.to_address,
+					//												phone: res.data.from_mobile,
+					//												shphone: res.data.to_mobile,
+					//												xpoint: res.data.from_x,
+					//												ypoint: res.data.from_y,
+					//												to_x: res.data.to_x,
+					//												to_y: res.data.to_y,
+					//												status:res.data.status
+					//											},
+					//											createNew: true
+					//										})
+					//									} else if(res.data.type_id == 2) {
+					//										if(detail == null) {
+					//											detail = plus.webview.getWebviewById('buydetail.html');
+					//											if(detail != null) {
+					//												mui.fire(detail, "DIY_DATA", {
+					//													orderinfo: res.data,
+					//													address: res.data.from_address,
+					//													to_address: res.data.to_address,
+					//													phone: res.data.from_mobile,
+					//													xpoint: res.data.from_x,
+					//													ypoint: res.data.from_y,
+					//													to_x: res.data.to_x,
+					//													to_y: res.data.to_y,
+					//													status:res.data.status
+					//												});
+					//											}
+					//										}
+					//										mui.openWindow({
+					//											id: "buydetail.html",
+					//											url: "buydetail.html",
+					//											extras: {
+					//												orderinfo: res.data,
+					//												address: res.data.from_address,
+					//												to_address: res.data.to_address,
+					//												phone: res.data.from_mobile,
+					//												xpoint: res.data.from_x,
+					//												ypoint: res.data.from_y,
+					//												to_x: res.data.to_x,
+					//												to_y: res.data.to_y,
+					//												status:res.data.status
+					//											},
+					//											createNew: true
+					//										})
+					//									}
+					//								} else {
+					//									console.log("执行这里么");
+					//									plus.nativeUI.closeWaiting();
+					//									mask.close(); //关闭遮罩层
+					//									mui.toast(res.msg);
+					//								}
+					//								return false;
+					//							},
+					//							function(res) {
+					//								console.log("shibai:" + JSON.stringify(res));
+					//							}
+					//						);
+					//						event.stopPropagation();
+					//					})
+
+				});
+
+				var longitude, latitude, point, marker2;
+				var geolocation = new BMap.Geolocation();
+				var bm = new BMap.Map('map'); //创建地图
+				geolocation.getCurrentPosition(function(r) {
+					longitude = r.longitude;
+					latitude = r.latitude;
+					point = new BMap.Point(longitude, latitude);
+					$('marquee').text(r.address.city + r.address.district + r.address.street + ' ' + '坐标：' + '(' + longitude + ',' + latitude + ')');
+					bm.centerAndZoom(point, 15)
+					var myIcon = new BMap.Icon('../images/icon3.png', new BMap.Size(80, 80));
+					marker2 = new BMap.Marker(point, {
+						icon: myIcon
+					});
+					bm.addOverlay(marker2);
+				}, function(e) {
+					console.log('定位失败:' + JSON.stringify(e));
+				}, {
+					coordsType: 'bd09ll',
+					provider: 'baidu'
+				});
+				//				geolocation.getCurrentPosition(function(r) {
+				//					longitude = r.longitude;
+				//					latitude = r.latitude;
+				//					point = new BMap.Point(longitude, latitude);
+				//					var geoc = new BMap.Geocoder();
+				//					geoc.getLocation(point, function(rs) {
+				//						var addComp = rs.addressComponents;
+				//						$('marquee').text(addComp.city + addComp.district + addComp.street + ' ' + '坐标：' + '(' + longitude + ',' + latitude + ')');
+				//					})
+				//
+				//					bm.centerAndZoom(point, 15)
+				//					var myIcon = new BMap.Icon('../images/icon3.png', new BMap.Size(80, 80));
+				//					marker2 = new BMap.Marker(point, {
+				//						icon: myIcon
+				//					});
+				//					bm.addOverlay(marker2);
+				//				})
+				//刷新
+				$('.update').on('tap', function() {
+					geolocation.getCurrentPosition(function(r) {
+						bm.removeOverlay(marker2);
+						longitude = r.longitude;
+						latitude = r.latitude;
+						point = new BMap.Point(longitude, latitude);
+						$('marquee').text(r.address.city + r.address.district + r.address.street + ' ' + '坐标：' + '(' + longitude + ',' + latitude + ')');
+						bm.centerAndZoom(point, 15)
+						var myIcon = new BMap.Icon('../images/icon3.png', new BMap.Size(80, 80));
+						marker2 = new BMap.Marker(point, {
+							icon: myIcon
+						});
+						bm.addOverlay(marker2);
+					}, function(e) {
+						console.log('定位失败:' + JSON.stringify(e));
+					}, {
+						coordsType: 'bd09ll',
+						provider: 'baidu'
+					});
+				})
+				mui('.second').scroll({
+					scrollY: true,
+					scrollX: false,
+					startX: 0,
+					startY: 0,
+					indicators: true,
+					deceleration: 0.001,
+					bounce: true
+				})
+
+				//个人中心
+				$('.warp i').on('tap', function() {
+					if(userinfo) {
+						mui.openWindow({
+							id: "userCenter.html",
+							url: "userCenter.html"
+						})
+					} else {
+						mui.confirm('', '您还未登录，请先登录', ['我知道了', '现在去登录'], function(res) {
+							if(res.index == 1) {
+								mui.openWindow({
+									id: "../login_code.html",
+									url: "../login_code.html"
+								})
+							}
+						}, 'div');
+					}
+
+				}) //模式
+				mui('.pattern .mui-switch')[0].addEventListener('toggle', function(e) {
+					if(e.detail.isActive) {
+						ajaxPost('expressrunning/set_force.html', {
+							state: 1
+						}, function(data) {
+							if(data.code == 1) {
+								console.log('发送成功');
+							} else {
+								console.log('发送失败')
+							}
+						})
+					} else {
+						ajaxPost('expressrunning/set_force.html', {
+							state: 0
+						}, function(data) {
+							if(data.code == 1) {
+								console.log('发送成功');
+							} else {
+								console.log('发送失败');
+							}
+						})
+					}
+				});
+			})
+		</script>
+	</body>
+
+</html>

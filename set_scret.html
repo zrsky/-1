@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>用户设置登录密码</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/base.css" />
+		<link rel="stylesheet" type="text/css" href="css/validate.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			body {
+				background-color: #fff;
+			}
+			
+			form {
+				width: 80%;
+				margin: 100px auto 0 auto!important;
+			}
+			
+			form label {
+				padding: 10px 0!important;
+				display: block;
+				float: none!important;
+			}
+			
+			input {
+				padding-left: 1rem!important;
+				float: none!important;
+				border: 1px solid #000!important;
+			}
+			
+			.widall {
+				width: 100%!important;
+			}
+			
+			.submit {
+				display: block;
+				padding: 6px;
+				text-align: center;
+				border-radius: 3px;
+				width: 100%;
+				margin: 2rem 0;
+				background-color: #E58620;
+				color: #fff;
+				border: none;
+				outline: none;
+			}
+			
+			.sendcode {
+				margin: 0 2px;
+				width: 5rem;
+				height: 40px;
+				font-size: 0.6rem;
+				background-color: #E58620;
+				color: #fff;
+				border: none;
+				outline: none;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">设置密码</h1>
+		</header>
+		<form class="set_top" id="infoForm" action="" method="post">
+
+			<div class="mui-input-row">
+				<label>密码</label>
+				<input class="widall" id="secret" type="password" placeholder="6-18位数字与字母组合" name="psd" required="" pattern="^[A-Za-z0-9]{6,18}$">
+			</div>
+			<div class="mui-input-row">
+				<label>验证码</label>
+				<input type="text" class="code" name="code" required="" placeholder="请输入验证码"><button class="sendcode" id="sendcode">获取验证码</button>
+			</div>
+
+			<button class="submit" id="btn" type="submit">提交</button>
+		</form>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/base.js"></script>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function() {
+				var userinfo = is_login();
+
+				/**
+				 * 点击提交
+				 */
+				document.getElementById("btn").addEventListener('tap', function() {
+					var psd = $('.widall').val();
+					var code = $('.code').val();
+					var forminfo = {
+						password: psd,
+						code: code
+					};
+					console.log("forminfo:" + JSON.stringify(forminfo));
+					console.log(forminfo.password.length);
+					if(forminfo.password.length < 6) {
+						mui.alert('密码最低为6位');
+						return false;
+					}
+					if(forminfo.code.length != 6) {
+						mui.alert('验证码为6位数据，请正确填写');
+						return false;
+					}
+					//				forminfo['phone']=userinfo.mobile;
+					ajaxPost('user/password', forminfo, function(res) {
+						console.log(JSON.stringify(res));
+						if(res.code == 1) {
+							mui.toast(res.msg);
+							mui.back();
+						} else {
+							mui.alert(res.msg);
+						}
+					}, function(res) {
+						console.log(res.msg);
+					})
+				})
+				/**
+				 * 发送验证码
+				 */
+				var count = 0;
+				document.getElementById('sendcode').addEventListener('tap', function(event) {
+					console.log("点击了这里");
+					var secret = document.getElementById('secret').value;
+					if(secret == '') {
+						mui.toast("密码不能为空");
+						return false;
+					}
+					ajaxPost('user/sms.html', {}, function(res) {
+						console.log("这是个什么玩意:" + JSON.stringify(res));
+						if(res.code == 1) {
+							if(count == 0) {
+								var time = 60;
+								setInterval(function() {
+									$('.sendcode').text(time + 's内填写');
+									time--;
+									if(time < 1) {
+										$('.sendcode').text('获取验证码');
+										return;
+									}
+								}, 1000);
+								mui.alert(res.msg);
+								count = 1;
+							}
+						} else {
+														mui.alert(res.msg);
+						}
+					}, function(xhr, type, errorThrown) {
+						console.log("是这里么:" + JSON.stringify(xhr));
+						console.log("是这里么:" + JSON.stringify(type));
+						console.log("是这里么:" + JSON.stringify(errorThrown));
+					})
+					return false;
+				})
+			})
+		</script>
+	</body>
+
+</html>

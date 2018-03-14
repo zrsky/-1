@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>设置</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.outlogin {
+				width: 80%;
+				display: block;
+				margin: 1rem auto;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left black"></a>
+			<h1 class="mui-title">设置</h1>
+		</header>
+		<ul class="mui-table-view" style="margin-top: 45px;">
+			<!--<li class="mui-table-view-cell">
+				<a class="mui-navigate-right">
+					设置密码
+				</a>
+			</li>-->
+			<li class="mui-table-view-cell">
+				<a class="mui-navigate-right" href="set_scret.html">
+					设置登录密码
+				</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a class="mui-navigate-right" href="editmobile.html">
+					修改手机号
+				</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a class="mui-navigate-right" href="user-reflect.html">
+					提现账户
+				</a>
+			</li>
+		</ul>
+
+		<ul class="mui-table-view" style="margin: 1rem 0;" id="container">
+			<script type="text/html" id="containerData">
+				<li class="mui-table-view-cell">
+					<a class="mui-navigate">
+						精准定位(设置完毕重启后生效)
+						<div id="pinpoint" class="mui-switch mui-pull-right {{if is_pinpoint==1}}mui-active{{/if}}">
+							<div class="mui-switch-handle"></div>
+						</div>
+					</a>
+				</li>
+				<!--<li class="mui-table-view-cell">
+					<a class="mui-navigate">
+						取货时配备保温箱
+						<div id="incubator" class="mui-switch mui-pull-right {{if is_incubator==1}}mui-active{{/if}}">
+							<div class="mui-switch-handle"></div>
+						</div>
+					</a>
+				</li>-->
+			</script>
+		</ul>
+
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell">
+				<a class="">
+					版本号
+					<span class="mui-pull-right" id="version">1.7</span>
+				</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a class="mui-navigate-right" href="aboutus.html">
+					关于我们
+				</a>
+			</li>
+			<!--<li class="mui-table-view-cell">
+				<a class="mui-navigate-right">
+					切换身份
+					<span class="mui-pull-right">进入跑男</span>
+				</a>
+			</li>-->
+		</ul>
+		<button class="mui-btn mui-btn-warning outlogin">退出登录</button>
+		<script src="js/mui.min.js"></script>
+		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/base.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			var userInfo = is_login();
+			//获取版本号
+			mui.plusReady(function(){
+				plus.runtime.getProperty(plus.runtime.appid,function(wginfo){
+					console.log(wginfo.version);
+					document.getElementById('version').innerHTML = wginfo.version;
+				})
+			})
+			var container = document.getElementById('container');
+			container.innerHTML = template('containerData', userInfo);
+			//精准定位
+			mui('#pinpoint')[0].addEventListener('tap', function() {
+				ajaxPost('user/pinpoint.html', {
+				}, function(res) {
+					if(res.code == 1) {
+						//更新信息
+						userInfo.is_pinpoint=res.data.is_pinpoint;
+						setUserInfo(JSON.stringify(userInfo));
+					}else{
+						mui.alert('设置失败');
+					}
+				})
+			})
+			/**
+			 * 是否配备保温箱 
+			 */
+//			mui('#incubator')[0].addEventListener('tap', function() {
+//				ajaxPost('user/incubator.html', {
+//				}, function(res) {
+//					if(res.code == 1) {
+//						//更新信息
+//						userInfo.is_incubator=res.data.is_incubator;
+//						setUserInfo(JSON.stringify(userInfo));
+//					}else{
+//						mui.alert('设置失败');
+//					}
+//				})
+//			})
+
+			/**
+			 * 退出登录 
+			 */
+			mui('.outlogin')[0].addEventListener('tap', function() {
+				logout();
+			})
+		</script>
+	</body>
+
+</html>

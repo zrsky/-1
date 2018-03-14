@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>接单设置</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" href="css/recOrder.css" />
+		<link rel="stylesheet" href="css/mui.picker.min.css" />
+	  	<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+	</head>
+
+	<body>
+		
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left black"></a>
+		    <h1 class="mui-title">接单设置</h1>
+		</header>
+		<div class="mui-scroll-wrapper" style="margin-top: 45px;">
+		    <div class="mui-scroll">
+		    	<form action="" method="post">
+		    		
+		    	
+		        <!--这里放置真实显示的DOM内容-->
+		      <p class="noFull title">我的接单时间</p>
+		        <div class="timewrap">
+		        	<div class="time" data-options='{"type":"time"}'>
+		        		<span class="beginhour">08</span> : <span class="benginmin">00</span>
+		        		<input type="hidden" name="bengin" id="" value="08:00" />
+		        	</div>
+		        	-
+		        	<div class="time" data-options='{"type":"time"}'>
+		        		<span class="endhour">22</span> : <span class="endmin">12</span>
+		        		<input type="hidden" name="end" id="end" value="22:12" />
+		        	</div>
+		        </div>
+		        <p class="title noFull"><i class="iconfont">&#xe60e;</i>星期</p>
+		        <ul class="weekwrap">
+		        	<li>一</li>
+		        	<li>二</li>
+		        	<li>三</li>
+		        	<li>四</li>
+		        	<li>五</li>
+		        	<li>六</li>
+		        	<li>日</li>  
+		        </ul>
+		        <input type="hidden" name="week" id="week" value="" />
+		        <div class="blank"></div>
+		      
+		        
+		        <p class="title mytop noFull">我的装备</p>
+		        <div class="equip noFull">
+		        	<div class="bag">
+		        		<img src="images/bag.png" alt="" />
+		        		保温箱
+		        	</div>
+		        	<div class="bag">
+		        		<img src="images/bag.png" alt="" />
+		        		保温箱
+		        	</div>
+		        </div>
+		        
+		        <button id="save">保存</button>
+		        </form>
+		    </div>
+		</div>
+		
+		<script src="js/mui.min.js"></script>
+		<script src="js/mui.picker.min.js"></script>
+		<script type="text/javascript">
+			var lis=document.querySelectorAll('.weekwrap li');
+			var week=document.getElementById('week');
+			mui.init();
+			mui('.mui-scroll-wrapper').scroll({
+				scrollY: true,
+				scrollX: false,
+				startX: 0,
+				startY: 0,
+				indicators: true,
+				deceleration: 0.001,
+				bounce: true
+			});
+			var times=document.querySelectorAll('.time');
+			for(var i=0;i<times.length;i++){
+				times[i].addEventListener('tap',function(){
+					var s=this.children;
+					var options=this.getAttribute('data-options');
+					options=JSON.parse(options);
+					var dtPicker = new mui.DtPicker(options); 
+				 dtPicker.show(function(selectItems){
+				 	s[0].innerHTML=selectItems.h.text;
+				 	s[1].innerHTML=selectItems.i.text;
+				    s[2].value=selectItems.h.text+':'+selectItems.i.text;
+				    
+				 })
+				})
+			}
+		 var weekArr=[];
+           for(var i=0;i<lis.length;i++){
+           	lis[i].b=true;
+           	lis[i].addEventListener('tap',function(){
+           		if(this.b){
+           			this.classList.add('active');
+           			weekArr.push(this.innerText);
+           		}else{
+           			this.classList.remove('active');
+           			var count=weekArr.indexOf(this.innerText);
+           			if(count>-1){
+           			    weekArr.splice(count,1)     
+           			}
+           		}
+           		week.value=JSON.stringify(weekArr);
+           		console.log(week)
+           		this.b=!this.b;
+           	})
+           }
+		</script>
+	</body>
+
+</html>

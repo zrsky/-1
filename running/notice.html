@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>消息通知</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/base.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style>
+			.infowrap {
+				margin: 0.8rem 0;
+				padding: 0.5rem 5%;
+				background-color: #fff;
+			}
+			
+			.infowrap h4 {
+				color: #db8326;
+				font-size: 1rem;
+			}
+			
+			.infowrap p {
+				padding: 0.5rem 0;
+				height: 55px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				border-bottom: 1px solid #e5e5e5;
+			}
+			
+			.infowrap span {
+				line-height: 1.8rem;
+				color: #c8c8c8;
+			}
+			
+			.infowrap .look {
+				font-size: 1rem;
+				color: #db8326;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">消息通知</h1>
+		</header>
+		<div class="mui-scroll-wrapper set_top">
+			<div class="mui-scroll">
+				<div id="container">
+					<script type="text/html" id="containerData">
+						{{each data as value i}}
+						<div class="infowrap">
+							<h4><i class="iconfont">&#xe66c;</i>{{value.title}}</h4>
+							<p class="mui-ellipsis-2">{{value.content}}</p>
+							<span>{{value.create_time_formated}}</span>
+							<a href="javascript:;" class="detail" select="{{value.id}}"><span class="mui-pull-right look">查看详情</span></a>
+						</div>
+						{{/each}}
+					</script>
+				</div>
+
+			</div>
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/base.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			var userInfo = is_login();
+			mui('.mui-scroll-wrapper').scroll({
+				scrollY: true,
+				scrollX: false,
+				startX: 0,
+				startY: 0,
+				indicators: true,
+				deceleration: 0.001,
+				bounce: true
+			});
+			var container = document.getElementById('container');
+			ajaxGet('express/infos.html', {
+			}, function(res) {
+				var datas = {
+					data: res.data.data
+				};
+				var a = res;
+				container.innerHTML = template('containerData', datas);
+				$('.detail').on('tap', function() {
+					var detail = null;
+					var id = $(this).attr('select');
+					var content = null;
+					for(var i = 0; i < a.data.length; i++) {
+						if(a.data[i].id == id) {
+							content = a.data[i];
+							console.log(content.update_time_formated);
+						}
+					}
+					if(detail == null) {
+						detail = plus.webview.getWebviewById('info_detail.html');
+						if(detail != null) {
+							mui.fire(detail, "DIY_DATA", {
+								content: content
+							});
+						}
+					}
+					mui.openWindow({
+						id: "info_detail.html",
+						url: "info_detail.html",
+						extras: {
+							content: content
+						}
+					})
+				})
+			})
+		</script>
+	</body>
+
+</html>

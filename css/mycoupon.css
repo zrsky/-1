@@ -1,0 +1,51 @@
+.coupon-wrap{
+	margin: 1rem auto;
+	width: 90%;
+	height: 7rem;
+	display: flex;
+	background-color: #fff;
+	border-left: 2px solid #e58620;
+}
+.coupon-left{
+	width: 30%;
+	height: 100%;
+	border-right: 1px dashed #e3e3e3;
+	text-align: center;
+   
+}
+.coupon-left .money{
+	margin-top: 1.2rem;
+	font-size: 20px;
+	color: #E58620;
+	font-weight: bold;
+}
+.money span{
+	font-size: 0.8rem;
+}
+.coupon-left p{
+	margin: 0.2rem 0;
+	font-size: 0.6rem;
+}
+.coupon-right{
+	padding-top: 1rem;
+	width: 70%;
+	height: 100%;
+	text-align: center;
+}
+.coupon-right h4 span{
+	
+	font-size: 0.6rem;
+}
+.coupon-right ul{
+	width: 70%;
+	margin: 0 auto;
+}
+.coupon-right ul li{
+	margin: 0 auto;
+	font-size: 0.6rem;
+}
+
+
+
+
+

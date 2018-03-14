@@ -1,0 +1,691 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>帮我送帮我取订单详情</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/base.css" />
+		<link rel="stylesheet" href="../css/detail.css" />
+		<style type="text/css">
+			.anchorBL {
+				display: none;
+			}
+			
+			em {
+				font-style: normal;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left black"></a>
+			<h1 class="mui-title">订单详情</h1>
+		</header>
+		<div class="mui-scroll-wrapper set_top" style="margin-bottom: 50px;">
+			<div class="mui-scroll">
+				<!--这里放置真实显示的DOM内容-->
+				<div class="status_wrap">
+					<div class="status">
+						<span class="circle active"></span>
+						<span class="line line1"></span>
+						<span class="circle circle1"></span>
+						<span class="line line2"></span>
+						<span class="circle circle2"></span>
+					</div>
+					<div class="status_title">
+						<span class="qu">取货</span>
+						<span class="song">送货</span>
+						<span class="ok">完成</span>
+					</div>
+				</div>
+
+				<div class="to_address"><span>请前往:</span><em id="address">地址信息加载中</em></div>
+				<!--<div class="sytime">
+					<div class="sy">
+						请在<span class="rog">13分钟</span>内到达取货地点<span class="rog">(剩余时间00:12:11)</span>
+					</div>
+				</div>-->
+				<ul class="stepwrap">
+					<li class="active">
+						<h4>致电发货人<span>(第一步)</span></h4>
+						<p>请先致电发货人确定地址和时间</p>
+						<a href="javascript:;" class="callsender call">联系发货人</a>
+					</li>
+					<li step='2'>
+						<h4>我已达到<span>(第二步)</span></h4>
+						<p>到达取货地点后点击"我已到达"</p>
+						<button class="toget">我已到达</button>
+					</li>
+					<li step='3'>
+						<h4>拍照<span>(第三步)</span></h4>
+						<p>为了避免货物纠纷请在取货的时候拍照存证</p>
+						<button class="camera">去拍照</button>
+					</li>
+					<li step='4'>
+						<h4>我已取货<span>(第四步)</span></h4>
+						<p>取货后点击"已取货"</p>
+						<button class="hadget">我已取货</button>
+					</li>
+					<li>
+						<h4>致电收货人<span>(第五步)</span></h4>
+						<p>请先致电收货人确定地址和时间</p>
+						<a href="javascript:;" class="callgeter call">联系收货人</a>
+					</li>
+					<li step='6'>
+						<h4>我已送达<span>(第六步)</span></h4>
+						<p>到达收货地址后点击"我已送达"</p>
+						<button class="tosend">我已送达</button>
+					</li>
+					<li step='7'>
+						<h4>输入验证码<span>(第七步)</span></h4>
+						<p>完成订单后"输入验证码"</p>
+						<button class="sendcode">输入验证码</button>
+					</li>
+				</ul>
+
+			</div>
+		</div>
+		<nav class="mui-bar mui-bar-tab tabottom">
+			<a class="mui-pull-right" href="javascript:;"><i class="iconfont">&#xe62c;</i>查看导航</a>
+		</nav>
+
+		<style type="text/css">
+			#popover {
+				height: 400px;
+				width: 100%;
+				top: 212px;
+			}
+		</style>
+		<div id="popover" class="mui-popover">
+			<div class="smap" id="smap"></div>
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery.min.js"></script>
+		<script src="../js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=gQaPqDsmLkslvAiDCWYozxCS0dHy3BRa"></script>
+		<script type="text/javascript">
+			//			mui.init({
+			//				preloadPages: [{
+			//					id: "homePage.html",
+			//					url: "homePage.html"
+			//				}]
+			//			});
+			mui.init();
+			mui.plusReady(function() {
+				//已取货
+				var toget = false;
+				//地址 联系电话 经纬度
+				var address = null;
+				var phone = null;
+				var shphone = null;
+				var xpoint = null;
+				var ypoint = null;
+				var orderinfo = null;
+				var status;
+				var to_x, to_y, to_address;
+				var self = plus.webview.currentWebview();
+				orderinfo = self.orderinfo;
+				address = self.address;
+				phone = self.phone;
+				shphone = self.shphone;
+				xpoint = self.xpoint;
+				ypoint = self.ypoint;
+				to_x = self.to_x;
+				to_y = self.to_y;
+				to_address = self.to_address;
+				status = self.status;
+				console.log('status:'+status);
+				if(status<3){
+					console.log('这句是啥：'+address);
+					$('#address').text(address);
+				}else if(status>=3){
+					$('#address').text(to_address);
+				}
+
+				//添加上一个页面自定义事件监听
+				window.addEventListener('DIY_DATA', function(event) {
+					address = event.detail.address;
+					phone = event.detail.phone;
+					shphone = event.detail.shphone;
+					xpoint = event.detail.xpoint;
+					ypoint = event.detail.ypoint;
+					to_x = event.detail.to_x;
+					to_y = event.detail.to_y;
+					to_address = event.detail.to_address;
+					orderinfo = event.detail.orderinfo;
+					status = event.detail.status;
+					console.log('aaa:'+status);
+					if(status<3){
+					$('#address').text(address);
+				}else if(status>=3){
+					$('#address').text(to_address);
+				}
+				});
+				//判断步骤完成到哪里
+				ajaxGet('expressorder/get_order_status.html', {
+					orderid: orderinfo.id
+				}, function(res) {
+					console.log("步骤：" + JSON.stringify(res));
+					if(res.code == 1) {
+						status = res.data;
+						$('[step]').each(function() {
+							if($(this).attr('step') == status - 1) {
+								$(this).attr('class', 'active');
+								$(this).siblings().attr('class', '');
+							}
+						})
+					} else {
+						mui.toast(res.msg);
+					}
+				})
+				console.log('订单id：' + orderinfo.id);
+				//检查拍照状态
+				var isPush;
+				ajaxGet('expressorder/get_order_ticket_status.html', {
+					orderid: orderinfo.id
+				}, function(res) {
+					console.log('拍照状态:' + JSON.stringify(res));
+					if(res.code == 1) {
+						isPush = true;
+						console.log('执行了这里:' + isPush);
+					}
+				})
+				var geolocation = new BMap.Geolocation();
+				//查看导航
+				$('.tabottom a').on('tap', function() {
+					mui('#popover').popover('show');
+					var lon, lat;
+					geolocation.getCurrentPosition(function(r){
+						lon = r.point.lng;
+						lat = r.point.lat;
+						var p1 = new BMap.Point(lon, lat);
+						var p2;
+						if(toget) {
+							//收货地址
+							p2 = new BMap.Point(to_x, to_y);
+						} else {
+							//取货地址
+							p2 = new BMap.Point(xpoint, ypoint);
+						}
+						//清楚覆盖物
+						map.clearOverlays();
+						var driving = new BMap.DrivingRoute(map, {
+							renderOptions: {
+								map: map,
+								autoViewport: true
+							}
+						});
+						driving.search(p1, p2);
+					},function(e){
+						console.log("失败：" + JSON.stringify(e));
+					},{
+						coordsType: 'bd09ll',
+						provider: 'baidu'
+					})
+//					geolocation.getCurrentPosition(function(r) {
+//						lon = r.longitude;
+//						lat = r.latitude;
+//						var p1 = new BMap.Point(lon, lat);
+//						var p2;
+//						if(toget) {
+//							//收货地址
+//							p2 = new BMap.Point(to_x, to_y);
+//						} else {
+//							//取货地址
+//							p2 = new BMap.Point(xpoint, ypoint);
+//						}
+//						//清楚覆盖物
+//						map.clearOverlays();
+//						var driving = new BMap.DrivingRoute(map, {
+//							renderOptions: {
+//								map: map,
+//								autoViewport: true
+//							}
+//						});
+//						driving.search(p1, p2);
+//					})
+				})
+
+				//联系发货人
+				$('.callsender').on('tap', function() {
+					//打电话
+					plus.device.dial(phone, false);
+				})
+				//我已到达
+				$('.toget').on('tap', function() {
+					console.log("我已到达");
+					if(status == 4 || status == 5 || status == 6) {
+						mui.toast("请勿重复操作");
+						return false;
+					}
+					var that = this;
+					var lng, lat;
+//					geolocation.getCurrentPosition(function(r){
+//						lng = r.point.lng;
+//						lat = r.point.lat;
+//						console.log("orderid:" + orderinfo.id + " lng:" + lng + " lat:" + lat);
+//						ajaxPost("expressorder/reach.html", {
+//							orderid: orderinfo.id,
+//							lng: lng,
+//							lat: lat
+//						}, function(res) {
+//							console.log("我已到达:" + JSON.stringify(res));
+//							if(res.code == 1) {
+//								toget = true;
+//								$('#address').text(to_address);
+//								tonext(that);
+//							} else {
+//								mui.toast(res.msg);
+//							}
+//						}, function(res) {
+//							console.log("shibai:" + JSON.stringify(res));
+//						})
+//					},function(e){
+//						console.log("失败：" + JSON.stringify(e));
+//					},{
+//						coordsType: 'bd09ll',
+//						provider: 'baidu'
+//					})
+					var geolocation = new BMap.Geolocation();
+					geolocation.getCurrentPosition(function(r) {
+						lng = r.longitude;
+						lat = r.latitude;
+						console.log("orderid:" + orderinfo.id + " lng:" + lng + " lat:" + lat);
+						ajaxPost("expressorder/reach.html", {
+							orderid: orderinfo.id,
+							lng: lng,
+							lat: lat
+						}, function(res) {
+							console.log("我已到达:" + JSON.stringify(res));
+							if(res.code == 1) {
+								toget = true;
+								$('#address').text(to_address);
+								tonext(that);
+							} else {
+								mui.toast(res.msg);
+							}
+						}, function(res) {
+							console.log("shibai:" + JSON.stringify(res));
+						})
+					})
+				})
+				//拍照
+				$('.camera').on('tap', function() {
+					if(status == 4 || status == 5 || status == 6) {
+						mui.toast("请勿重复操作");
+						return false;
+					};
+					var that = this;
+					if(mui.os.plus) {
+						var a = [{
+							title: "拍照"
+						}, {
+							title: "从手机相册选择"
+						}];
+						plus.nativeUI.actionSheet({
+							title: "物品照片",
+							cancel: "取消",
+							buttons: a
+						}, function(b) {
+							switch(b.index) {
+								case 0:
+									break;
+								case 1:
+									//拍照
+									getImages();
+									break;
+								case 2:
+									//打开相册
+									galleryImages();
+									break;
+							}
+						}, false);
+					}
+				});
+				//已取货
+				$('.hadget').on('tap', function() {
+					console.log("push:" + isPush);
+					if(!isPush) {
+						mui.toast('请完成第三步 上传凭证');
+						return false;
+					}
+					var that = this;
+					var lng, lat;
+//					plus.geolocation.getCurrentPosition(function(r){
+//						lng = r.coords.longitude;
+//						lat = r.coords.latitude;
+//						var params = {
+//							orderid: orderinfo.id,
+//							lng: lng,
+//							lat: lat
+//						}
+//						console.log("取货params:"+JSON.stringify(params));
+//						ajaxPost('expressorder/pickup.html', {
+//							orderid: orderinfo.id,
+//							lng: lng,
+//							lat: lat
+//						}, function(res) {
+//							console.log('已取货：' + JSON.stringify(res));
+//							if(res.code == 1) {
+//								tonext(that);
+//								$('.line1').css('background-color', '#E48920');
+//								$('.song').css('color', '#E48920');
+//							} else {
+//								mui.toast(res.msg);
+//							}
+//						})
+//					},function(e){
+//						console.log("失败：" + JSON.stringify(e));
+//					},{
+//						coordsType: 'bd09ll',
+//						provider: 'baidu'
+//					})
+					var geolocation = new BMap.Geolocation();
+					geolocation.getCurrentPosition(function(r) {
+						lng = r.longitude;
+						lat = r.latitude;
+						ajaxPost('expressorder/pickup.html', {
+							orderid: orderinfo.id,
+							lng: lng,
+							lat: lat
+						}, function(res) {
+							console.log('已取货：' + JSON.stringify(res));
+							if(res.code == 1) {
+								tonext(that);
+								$('.line1').css('background-color', '#E48920');
+								$('.song').css('color', '#E48920');
+							} else {
+								mui.toast(res.msg);
+							}
+						})
+					})
+				})
+				//致电收货人
+				$('.callgeter').on('tap', function() {
+					if(!isPush) {
+						mui.toast('请完成第三步 上传凭证');
+						return false;
+					}
+					var that = this;
+					console.log('联系收货人：'+shphone);
+					//打电话
+					plus.device.dial(shphone, false);
+					tonext(that);
+				})
+				//已送达
+				$('.tosend').on('tap', function() {
+					if(!isPush) {
+						mui.toast('请完成第三步 上传凭证');
+						return false;
+					}
+					if(status == 6) {
+						mui.toast("请勿重复操作");
+						return false;
+					};
+					var that = this;
+					var lng, lat;
+//					plus.geolocation.getCurrentPosition(function(r){
+//						lng = r.coords.longitude;
+//						lat = r.coords.latitude;
+//						var params = {
+//							orderid: orderinfo.id,
+//							lng: lng,
+//							lat: lat
+//						};
+//						console.log("params:" + JSON.stringify(params));
+//						ajaxPost('expressorder/arrive.html', {
+//							orderid: orderinfo.id,
+//							lng: lng,
+//							lat: lat
+//						}, function(res) {
+//							if(res.code == 1) {
+//								tonext(that);
+//							} else {
+//								mui.toast(res.msg);
+//							}
+//						})
+//					},function(e){
+//						console.log("失败：" + JSON.stringify(e));
+//					},{
+//						coordsType: 'bd09ll',
+//						provider: 'baidu'
+//					})
+					var geolocation = new BMap.Geolocation();
+					geolocation.getCurrentPosition(function(r) {
+						lng = r.longitude;
+						lat = r.latitude;
+						var params = {
+							orderid: orderinfo.id,
+							lng: lng,
+							lat: lat
+						};
+						console.log("params:" + JSON.stringify(params));
+						ajaxPost('expressorder/arrive.html', {
+							orderid: orderinfo.id,
+							lng: lng,
+							lat: lat
+						}, function(res) {
+							if(res.code == 1) {
+								tonext(that);
+							} else {
+								mui.toast(res.msg);
+							}
+						})
+					})
+				})
+				//发送验证码
+				$('.sendcode').on('tap', function(e) {
+					if(!isPush) {
+						mui.toast('请完成第三步 上传凭证');
+						return false;
+					}
+					var that = this;
+					e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+					var btnArray = ['取消', '确定'];
+//					plus.geolocation.getCurrentPosition(function(r){
+//						var lng = r.coords.longitude;
+//						var lat = r.coords.latitude;
+//						mui.prompt('请输入验证码', '', '', btnArray, function(e) {
+//							if(e.index == 1) {
+//								var str = e.value;
+//								ajaxPost('expressorder/end.html', {
+//									code: str,
+//									orderid: orderinfo.id,
+//									lng: lng,
+//									lat: lat
+//								}, function(data) {
+//									console.log("aaa:" + JSON.stringify(data));
+//									if(data.code == 1) {
+//										tonext(that);
+//										mui.openWindow({
+//											id: "complete.html",
+//											url: "complete.html"
+//										})
+//									} else {
+//										mui.toast(data.msg);
+//									}
+//								})
+//							}
+//						})
+//					},function(e){
+//						console.log("失败：" + JSON.stringify(e));
+//					}, {
+//						coordsType: 'bd09ll',
+//						provider: 'baidu'
+//					})
+					var geolocation = new BMap.Geolocation();
+					geolocation.getCurrentPosition(function(r) {
+						var lng = r.longitude;
+						var lat = r.latitude;
+						mui.prompt('请输入验证码', '', '', btnArray, function(e) {
+							if(e.index == 1) {
+								var str = e.value;
+								ajaxPost('expressorder/end.html', {
+									code: str,
+									orderid: orderinfo.id,
+									lng: lng,
+									lat: lat
+								}, function(data) {
+									console.log("aaa:" + JSON.stringify(data));
+									if(data.code == 1) {
+										tonext(that);
+										mui.openWindow({
+											id: "complete.html",
+											url: "complete.html"
+										})
+									} else {
+										mui.toast(data.msg);
+									}
+								})
+							}
+						})
+					})
+
+				})
+				mui('.mui-scroll-wrapper').scroll({
+					scrollY: true,
+					scrollX: false,
+					startX: 0,
+					startY: 0,
+					indicators: true,
+					deceleration: 0.001,
+					bounce: true
+				});
+				//显示元素
+				function tonext(that) {
+					$(that).parent().attr('class', 'active');
+					$(that).parent().siblings().attr('class', '');
+				}
+
+				var map = new BMap.Map('smap');
+				map.enableScrollWheelZoom();
+//				plus.geolocation.getCurrentPosition(function(r){
+//					var lng = r.coords.longitude;
+//					var lat = r.coords.latitude;
+//					map.centerAndZoom(new BMap.Point(lng, lat), 13);
+//				},function(e){
+//					console.log("失败：" + JSON.stringify(e));
+//				},{
+//						coordsType: 'bd09ll',
+//						provider: 'baidu'
+//					})
+				var geolocation = new BMap.Geolocation();
+				geolocation.getCurrentPosition(function(r) {
+					var lng = r.longitude;
+					var lat = r.latitude;
+					map.centerAndZoom(new BMap.Point(lng, lat), 13);
+				})
+
+				//去拍照
+
+				//拍照
+				function getImages() {
+					var mobileCamera = plus.camera.getCamera();
+					mobileCamera.captureImage(function(e) {
+						plus.io.resolveLocalFileSystemURL(e, function(entry) {
+							var path = entry.toLocalURL() + '?version=' + new Date().getTime();
+							uploadHeadImg(path);
+						}, function(err) {
+							console.log('读取拍照文件错误');
+						});
+					}, function(e) {
+						console.log('er', err);
+					}, function() {
+						filename: '_doc_head.png';
+					})
+				}
+				//从本地相册选择
+				function galleryImages() {
+					console.log('你选择了从相册选择');
+					plus.gallery.pick(function(a) {
+							plus.io.resolveLocalFileSystemURL(a, function(entry) {
+								plus.io.resolveLocalFileSystemURL('_doc/', function(root) {
+									root.getFile('head.png', {}, function(file) {
+										//文件已经存在
+										file.remove(function() {
+											console.log("文件移除成功");
+											entry.copyTo(root, 'head.png', function(e) {
+												var path = e.fullPath + '?version=' + new Date().getTime();
+												uploadHeadImg(path);
+											}, function(err) {
+												console.log('copy image fail:', err);
+											});
+										}, function(err) {
+											console.log('删除图片失败:(' + JSON.stringify(err) + ")");
+										});
+									}, function(err) {
+										//打开文件失败
+										entry.copyTo(root, 'head.png', function(e) {
+											var path = e.fullPath + '?version=' + new Date().getTime();
+											uploadHeadImg(path);
+										}, function(err) {
+											console.log('上传图片失败：(' + JSON.stringify(err) + ")");
+										});
+									});
+								}, function(e) {
+									console.log("读取文件夹失败：(" + JSON.stringify(err) + ")");
+								});
+							},function(error){
+								console.log('error:'+JSON.stringify(error));
+							});
+						},
+
+						function(err) {
+							console.log("读取拍照文件失败:");
+						}, {
+							filter: 'image'
+						});
+				};
+				//上传图片
+				function uploadHeadImg(imgPath) {
+					console.log('执行这里么：');
+					var images = new Image();
+					images.src = imgPath;
+					images.onload = function() {
+						var imgData = getBase64Image(images, 800);
+						console.log("imgData:" + imgData + " orderid:" + orderinfo.id);
+						var lng, lat;
+						geolocation.getCurrentPosition(function(r){
+							lng = r.point.lng;
+							lat = r.point.lat;
+							ajaxPost('expressorder/goods_photos.html', {
+							"imgDatas": imgData,
+							'orderid': orderinfo.id,
+							lat: lat,
+							lng: lng
+						}, function(data) {
+							console.log('执行这里么：'+JSON.stringify(data));
+							if(data.code == 1) {
+								isPush = true;
+								console.log("照片:" + JSON.stringify(data));
+								console.log("上传成功!");
+								$('.camera').parent().attr('class', 'active');
+								$('.camera').parent().siblings().attr('class', '');
+							}else{
+								mui.toast(data.msg);
+							}
+						}, function(res) {
+							console.log("shibai:" + JSON.stringify(res));
+						})
+						},function(e){
+							console.log("失败：" + JSON.stringify(e));
+						},{
+						coordsType: 'bd09ll',
+						provider: 'baidu'
+					})
+//						var geolocation = new BMap.Geolocation();
+//						geolocation.getCurrentPosition(function(r) {
+//							lng = r.longitude;
+//							lat = r.latitude;
+//						})
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

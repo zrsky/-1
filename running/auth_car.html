@@ -1,0 +1,331 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>注册认证 改版界面</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+		<!--<link rel="stylesheet" type="text/css" href="../css/validate.css" />-->
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.mui-bar {
+				background-color: #FA7809;
+			}
+			
+			.mui-bar a {
+				color: #FFFFFF;
+			}
+			
+			.mui-bar .mui-title {
+				color: #FFFFFF;
+			}
+			
+			.status_wrap {
+				padding: 1rem 0;
+				height: 4rem;
+				background-color: #FFFFFF;
+				margin-top: 5px;
+			}
+			
+			.status {
+				display: flex;
+				margin: 0 auto;
+			}
+			
+			.status .line {
+				display: block;
+				width: 30%;
+				height: 2px;
+				background-color: #D4D5D6;
+				position: relative;
+				top: 0.4rem;
+			}
+			
+			.status .line.small {
+				width: 20%;
+			}
+			
+			.status .active {
+				background-color: #E7501D;
+			}
+			
+			.status .circle {
+				display: block;
+				width: 0.8rem;
+				height: 0.8rem;
+				border-radius: 100%;
+				background-color: #D4D5D6;
+			}
+			
+			.status .circle.active {
+				background-color: #E7501D;
+				box-shadow: 0px 0px 0px 10px #FBEADF;
+			}
+			
+			.status_title {
+				display: flex;
+				width: 80%;
+				margin: 1rem auto;
+				justify-content: space-between;
+			}
+			
+			.mui-media-body {
+				display: flex;
+			}
+			
+			.title {
+				flex: 0 0 60px;
+				font-size: 14px;
+			}
+			
+			.mui-input-row {
+				width: 100%;
+				margin-left: 10px;
+			}
+			
+			.mui-input-row input {
+				position: absolute;
+				top: 2px;
+				border: none;
+				margin: 0;
+				padding: 0 5px;
+				font-size: 14px;
+			}
+			input[type=text] {
+				line-height: 16px;
+				height: 16px;
+			}
+			
+			.next {
+				bottom: 40px;
+				width: 100%;
+				position: fixed;
+			}
+			
+			.next a {
+				display: block;
+				color: #FFFFFF;
+				width: 90%;
+				border-radius: 3px;
+				margin: 0 auto;
+				padding: 10px;
+				text-align: center;
+				background-color: #E9501C;
+			}
+			
+			.right {
+				text-align: right;
+			}
+			
+			.right input {
+				right: 40px;
+			}
+			
+			#carPopover {
+				margin-left: -140px;
+				left: 50%;
+				top: 50%;
+				margin-top: -140px;
+				padding: 10px;
+			}
+			
+			#carPopover .title {
+				text-align: center;
+			}
+			
+			#carPopover ul {
+				list-style: none;
+				padding-left: 0px;
+			}
+			
+			#carPopover ul li {
+				margin: 0 auto;
+				text-align: center;
+				padding: 0 10px;
+			}
+			
+			#carPopover ul li img {
+				width: 100px;
+			}
+			
+			.alert {
+				color: red;
+				width: 100%;
+				text-align: center;
+			}
+			
+			.toolBox {
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">注册认证</h1>
+		</header>
+		<div class="next" style="height: 50px;">
+			<a class="btn">下一步</a>
+		</div>
+		<div class="mui-content">
+			<form action="" id="infoForm" method="post">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell">
+						<div class="status_wrap">
+							<div class="status">
+								<span class="line small active"></span>
+								<span class="circle active"></span>
+								<span class="line active"></span>
+								<span class="circle active"></span>
+								<span class="line"></span>
+								<span class="circle"></span>
+								<span class="line small"></span>
+							</div>
+							<div class="status_title">
+								<span>个人信息</span>
+								<span>车辆信息</span>
+								<span>照片信息</span>
+							</div>
+						</div>
+					</li>
+					<li class="mui-table-view-cell" id="vehicle_id">
+						<a class="">
+							<div class="mui-media-body">
+								<div class="title">
+									交通工具：
+								</div>
+								<div class="mui-input-row">
+									<span class="tool">请选择使用的交通工具</span>
+									<input type="hidden" name="vehicle_id" id="ps_tool" value="" data-required="true" data-descriptions="vehicle_id" />
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell toolBox">
+						<a class="">
+							<div class="mui-media-body">
+								<p class="alert">请选择使用的交通工具</p>
+							</div>
+						</a>
+					</li>
+					<!--<li class="mui-table-view-cell">
+						<a class="">
+							<div class="mui-media-body">
+								<div class="title">
+									特殊规格：
+								</div>
+								<div class="mui-input-row right">
+									<input type="checkbox" name="gaoding" value="0"></input>
+									<span>高顶</span>
+								</div>
+							</div>
+						</a>
+					</li>-->
+				</ul>
+			</form>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<!--<script src="../js/jquery-mvalidate.js" type="text/javascript" charset="utf-8"></script>-->
+		<script type="text/javascript">
+			mui.init()
+			//显示弹出框
+			mui.plusReady(function() {
+				var userInfo = is_login();
+				$('.carColor').on('tap', function() {
+					mui('#carPopover').popover('show');
+				})
+				//选择交通工具
+				var formData;
+
+				function getData() {
+					var categoryData = null;
+					ajaxGet('base/getinfo.html', {}, function(res) {
+						if(res.code == 1) {
+							categoryData = res.data;
+						}
+					})
+					return categoryData;
+				}
+				var ps_tool = document.getElementById('vehicle_id');
+				var toolData = getData();
+				var toolPicker = new mui.PopPicker();
+				console.log('toolData:' + JSON.stringify(toolData.tool));
+				toolPicker.setData(toolData.tool);
+				ps_tool.addEventListener('tap', function(event) {
+					toolPicker.show(function(items) {
+						$('.tool').text(items[0].text);
+						$('#ps_tool').val(items[0].value);
+						formData = self.formData;
+						if($(".tool").text() != "请选择使用的交通工具") {
+							$(".toolBox").fadeOut();
+						}
+					});
+				});
+				var userInfo = is_login();
+				window.addEventListener('cityId', function(e) {
+					$('.city').text(e.detail.cityText);
+					$('#cityCode').val(e.detail.cityId);
+				})
+				var listPage = null;
+				//表单验证
+				var carId;
+				//				$("#carId").blur(function() {
+				//					carId = $("#carId").val();
+				//					if(carId == "") {
+				//						$(".carBox").fadeOut();
+				//				})
+				var self = plus.webview.currentWebview();
+
+				console.log(formData)
+
+				function validate() {
+					var carData = formData + '&' + $('#infoForm').serialize();
+					console.log(carData)
+					//					var page = mui.preload({
+					//						id: 'auth_photoMessage.html',
+					//						url: 'auth_photoMessage.html',
+					//						extras: {
+					//							carData: carData
+					//						}
+					//					})
+					if($(".tool").text() == "请选择使用的交通工具") {
+						$(".toolBox").fadeIn();
+						return false;
+					}
+					var toolId = carData.split("&")[6].split("=")[1];
+					if(toolId == 1) {
+						mui.openWindow({
+							id: 'auth_photoMessage1.html',
+							url: 'auth_photoMessage1.html',
+							extras: {
+								carData: carData
+							},
+							createNew: true
+						})
+					} else {
+						mui.openWindow({
+							id: 'auth_photoMessage.html',
+							url: 'auth_photoMessage.html',
+							extras: {
+								carData: carData
+							},
+							createNew:true
+						})
+					}
+				}
+				//点击下一步
+				$('.btn').on('tap', function() {
+					validate();
+				})
+			})
+		</script>
+	</body>
+
+</html>

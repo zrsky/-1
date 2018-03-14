@@ -1,0 +1,224 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>我的地址</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" href="css/myaddress.css" />
+		<script src="js/template.js"></script>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">我的地址</h1>
+		</header>
+		<div class="mui-scroll-wrapper set_top">
+			<div class="mui-scroll">
+				<!--这里放置真实显示的DOM内容-->
+				<div class="addnew">
+					<a class="mui-icon mui-icon-plus" href="javascript:;">新增地址</a>
+				</div>
+				<ul class="mui-table-view" id="listwrap">
+					<script type="text/html" id="sike">
+						{{each list as value i}}
+						<li class="mui-table-view-cell mui-media list" addressId="{{value.id}}">
+							<a href="javascript:;">
+
+								<div class="mui-media-body">
+									{{value.address}}
+									<p class="mui-ellipsis">{{value.title}}<span> {{value.detail}}</span></p>
+								</div>
+							</a>
+							<button class="mui-pull-right mui-icon mui-icon-trash cancelBtn" addressId="{{value.id}}">取消地址</button>
+							<button class="mui-pull-right mui-icon mui-icon-compose editBtn" addressId="{{value.id}}">编辑地址</button>
+						</li>
+						{{/each}}
+					</script>
+				</ul>
+			</div>
+		</div>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/base.js"></script>
+		<script type="text/javascript">
+			//			mui.init({
+			//				preloadPages: [{
+			//					id:"send/send.html",
+			//					url:"send/send.html"
+			//				},{
+			//					id:"buy/buy.html",
+			//					url:"buy/buy.html"
+			//				},{
+			//					id:"take/take.html",
+			//					url:"take/take.html"
+			//				}]
+			//			});
+			mui.init();
+			mui('.mui-scroll-wrapper').scroll({
+				scrollY: true,
+				scrollX: false,
+				startX: 0,
+				startY: 0,
+				indicators: true,
+				deceleration: 0.001,
+				bounce: true
+			});
+			mui.plusReady(function() {
+				var userInfo = is_login();
+				window.addEventListener("AddNew", function() {
+					//location.reload();
+					plus.webview.getWebviewById('myaddress.html').reload();
+				})
+				var addressPage = null;
+				var wv = plus.webview.currentWebview();
+				addressPage = wv.addressPage;
+//				if(addressPage !=100){
+//					$('.addnew').css('display','none');
+//				}
+				window.addEventListener("DIY_TYPE", function(event) {
+					addressPage = event.detail.addressPage;
+				})
+				console.log("addresspage：" + addressPage);
+				//新增地址
+				$('.addnew').on('tap', function() {
+					var buy_place = null;
+					//获取下一个页面
+					if(buy_place == null) {
+						buy_place = plus.webview.getWebviewById('buy/buy_place.html');
+						//第一次他肯定为空，所以，这里面这个fire方法，是不会执行的
+						if(buy_place != null) {
+							mui.fire(buy_place, "DIY_DATA", {
+								id: 7
+							});
+						}
+					}
+
+					mui.openWindow({
+						id: 'buy/buy_place.html',
+						url: 'buy/buy_place.html',
+						extras: {
+							pageId: 7
+						}
+					})
+				})
+				var list = document.getElementById('listwrap');
+				ajaxGet('useraddress/historylist.html', {
+					userid: userInfo.id
+				}, function(res) {
+					console.log("历史地址:" + JSON.stringify(res));
+					if(res.code == 1) {
+						list.innerHTML = template('sike', {
+							list: res.data
+						})
+						if(addressPage) {
+							$('button').hide();
+						} else {
+							$('button').show();
+						}
+						$('.list').on('tap', function() {
+							var addressId = $(this).attr('addressId');
+							console.log("addressId:" + addressId);
+							var arr = res.data;
+							var addressInfo = null;
+							for(var i = 0; i < arr.length; i++) {
+								if(arr[i].id == addressId) {
+									addressInfo = arr[i];
+								}
+							}
+							var typePage = null;
+							if(addressPage == 5 || addressPage == 6 && (!typePage)) {
+								typePage = plus.webview.getWebviewById('send/send.html');
+							} else if(addressPage == 3 || addressPage == 4 && (!typePage)) {
+								typePage = plus.webview.getWebviewById('take/take.html');
+							} else if(addressPage == 1 || addressPage == 2 && (!typePage)) {
+								typePage = plus.webview.getWebviewById('buy/buy.html');
+							}
+							console.log("addressInfo:" + JSON.stringify(addressInfo));
+							mui.fire(typePage, "address", {
+								id: addressPage,
+								addressInfo: addressInfo
+							});
+							if(addressPage == 5 || addressPage == 6) {
+								mui.openWindow({
+									id: "send/send.html"
+								})
+								mui.back();
+							} else if(addressPage == 3 || addressPage == 4) {
+								mui.openWindow({
+									id: "take/take.html"
+								})
+								mui.back();
+							} else if(addressPage == 1 || addressPage == 2) {
+								mui.openWindow({
+									id: "buy/buy.html"
+								})
+								mui.back();
+							}
+						})
+					}
+
+					//编辑地址
+					var addressDetail = null;
+					$('.editBtn').on('tap', function() {
+						console.log("编辑");
+						var addressId = this.getAttribute('addressId');
+						var arr = res.data;
+						var addressInfo = null;
+						for(var i = 0; i < arr.length; i++) {
+							if(arr[i].id == addressId) {
+								addressInfo = arr[i];
+							}
+						}
+						console.log("dizhixinxi:" + JSON.stringify(addressInfo));
+						if(!addressDetail) {
+							addressDetail = plus.webview.getWebviewById('buy/buy_place.html');
+						}
+						mui.fire(addressDetail, 'DIY_DATA', {
+							id: 8,
+							addressInfo: addressInfo
+						})
+						mui.openWindow({
+							id: 'buy/buy_place.html',
+							url: 'buy/buy_place.html',
+							extras: {
+								pageId: 8,
+								addressInfo: addressInfo
+							}
+						})
+					})
+
+					//取消地址
+					$('.cancelBtn').on('tap', function() {
+						console.log("删除");
+						var addressId = this.getAttribute('addressId');
+						var li = this.parentNode;
+						mui.confirm('你确定要删除这个地址吗？', '提示', ['取消', '确定'], function(ev) {
+							if(ev.index == 1) {
+								console.log("执行这里");
+								ajaxPost('useraddress/delete_address.html', {
+									id: addressId
+								}, function(res) {
+									console.log("取消地址:" + JSON.stringify(res));
+									if(res.code == 1) {
+										li.remove();
+									}
+								}, function(res) {
+									console.log("shibai");
+								})
+							}
+						})
+					})
+				})
+			})
+		</script>
+	</body>
+
+</html>

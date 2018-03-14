@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>详细信息</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			nav {
+				padding: 0.5rem 1rem;
+				margin-bottom: 1rem;
+				border-bottom: 2px solid #e5e5e5;
+			}
+			
+			.time {
+				font-size: 1rem;
+			}
+			
+			p {
+				width: 90%;
+				margin: 0 auto;
+				font-size: 1rem;
+				color: #333;
+				line-height: 2rem;
+				text-indent: 3em;
+			}
+		</style>
+
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">消息通知</h1>
+		</header>
+		<!--<div class="mui-content">-->
+		<nav class="set_top">
+			<h2>取消订单退回优惠卷通知</h2>
+			<span class="time">2017/6/28 15:</span>
+		</nav>
+		<p class="content">
+			取消订单(订单编号:69580539) 退回使用得优惠卷已经到账，请注意查收。
+		</p>
+		<p>优惠卷金额: <span class="price">5.00</span></p>
+		<p>有效期至： <span class="update_time">2044.09.12</span></p>
+		<p>使用城市: 仅限新乡市</p>
+		<!--</div>-->
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({
+				preloadPages: [{
+					id: "info.html",
+					url: "info.html"
+				}]
+			})
+			var userInfo = is_login();
+			var res = null;
+			mui.plusReady(function() {
+				var wv = plus.webview.currentWebview();
+				res = wv.content;
+				$('.set_top h2').text(res.title);
+				$('.time').text(res.update_time_formated);
+				$('.content').text(res.content);
+				$('.price').text(res.price);
+				$('.update_time').text(res.update_time_formated);
+			})
+			//添加上一个页面自定义事件监听
+			window.addEventListener('DIY_DATA', function(event) {
+				console.log(event.detail.content);
+				res = event.detail.content;
+				$('.set_top h2').text(res.title);
+				$('.time').text(res.update_time_formated);
+				$('.content').text(res.content);
+				$('.price').text(res.price);
+				$('.update_time').text(res.update_time_formated);
+			})
+		</script>
+	</body>
+
+</html>

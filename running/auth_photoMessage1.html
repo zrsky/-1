@@ -1,0 +1,416 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>上传身份证</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.mui-bar-nav {
+				background-color: #FF8B02;
+			}
+			
+			.mui-icon-left-nav {
+				color: #fff;
+			}
+			
+			.mui-title {
+				color: #fff;
+			}
+			
+			.status_wrap {
+				padding: 1rem 0;
+				height: 4rem;
+				background-color: #FFFFFF;
+				margin-top: 5px;
+			}
+			
+			.status {
+				display: flex;
+				margin: 0 auto;
+			}
+			
+			.status .line {
+				display: block;
+				width: 30%;
+				height: 2px;
+				background-color: #D4D5D6;
+				position: relative;
+				top: 0.4rem;
+			}
+			
+			.status .line.small {
+				width: 20%;
+			}
+			
+			.status .active {
+				background-color: #E7501D;
+			}
+			
+			.status .circle {
+				display: block;
+				width: 0.8rem;
+				height: 0.8rem;
+				border-radius: 100%;
+				background-color: #D4D5D6;
+			}
+			
+			.status .circle.active {
+				background-color: #E7501D;
+				box-shadow: 0px 0px 0px 10px #FBEADF;
+			}
+			
+			.status_title {
+				display: flex;
+				width: 80%;
+				margin: 1rem auto;
+				justify-content: space-between;
+			}
+			/*身份证照片*/
+			
+			#photoForm .mui-table-view {
+				padding: 0 12px;
+			}
+			
+			#photoForm .mui-media-body {
+				display: flex;
+				justify-content: space-between;
+			}
+			
+			#photoForm .mui-media-body .container .photo {
+				width: 8rem;
+				height: 6rem;
+				border: 1px dashed #ccc;
+				text-align: center;
+				line-height: 6rem;
+				overflow: hidden;
+			}
+			
+			#photoForm .mui-media-body .container .photo img {
+				/*display: none;*/
+			}
+			
+			#photoForm .mui-media-body .container .photo .mui-icon-plusempty {
+				color: #ccc;
+				font-size: 2rem;
+			}
+			
+			#photoForm .mui-media-body .container p {
+				text-align: center;
+			}
+			
+			#photoForm .mui-table-view-cell::after {
+				height: 0;
+			}
+			/*/身份证照片*/
+			
+			#submit {
+				width: 19rem;
+				height: 4rem;
+				background: #F16623;
+				border-radius: 1%/6%;
+				margin: 15px auto;
+				text-align: center;
+				line-height: 4rem;
+			}
+			
+			#submit p {
+				color: #fff;
+				font-size: 1rem;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">注册认证</h1>
+		</header>
+		<div class="mui-content">
+			<form action="" id="photoForm" method="post">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell">
+						<div class="status_wrap">
+							<div class="status">
+								<span class="line small active"></span>
+								<span class="circle active"></span>
+								<span class="line active"></span>
+								<span class="circle active"></span>
+								<span class="line active"></span>
+								<span class="circle active"></span>
+								<span class="line small"></span>
+							</div>
+							<div class="status_title">
+								<span>个人信息</span>
+								<span>车辆信息</span>
+								<span>照片信息</span>
+							</div>
+						</div>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;">
+							<div class="mui-media-body">
+								<div class="container">
+									<div class="photo" id="id_down_picture">
+										<img width="100%" height="100%" src="../images/card1.jpg" class="image" id="photo_image1" />
+										<span class="mui-icon mui-icon-plusempty"></span>
+									</div>
+									<p>身份证照片</p>
+								</div>
+								<div class="container">
+									<div class="photo" id="hand_id_picture">
+										<img width="100%" height="100%" src="../images/card2.jpg" class="image" id="photo_image2" />
+										<span class="mui-icon mui-icon-plusempty"></span>
+									</div>
+									<p>手持身份证照片</p>
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;">
+							<div class="mui-media-body">
+								<div class="container">
+									<div class="photo" id="vehicle_picture">
+										<img width="100%" height="100%" src="../images/car.jpg" class="image" id="photo_image5" />
+										<span class="mui-icon mui-icon-plusempty"></span>
+									</div>
+									<p>车辆45°侧面照片</p>
+								</div>
+							</div>
+						</a>
+					</li>
+				</ul>
+				<div id="submit">
+					<p>确认提交</p>
+				</div>
+			</form>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/base.js"></script>
+	<script src="../js/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/jquery-mvalidate.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/template.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		mui.init();
+		var message = {},carData;
+		var idcard = "";
+		mui.plusReady(function() {
+			var userInfo = is_login();
+			var self = plus.webview.currentWebview();
+			carData = self.carData;
+			var each = carData.split("&");
+			for(var i=0;i<each.length;i++){
+				if(i==1|| i==3){
+					message[each[i].split("=")[0]] = decodeURIComponent(each[i].split("=")[1]);
+				}else{
+					message[each[i].split("=")[0]] = each[i].split("=")[1];
+				}
+			}
+			
+			console.log(idcard)
+			console.log(JSON.stringify(message))
+			//拍照
+			function getImages(str) {
+				var mobileCamera = plus.camera.getCamera();
+				mobileCamera.captureImage(function(e) {
+					plus.io.resolveLocalFileSystemURL(e, function(entry) {
+						var path = entry.toLocalURL() + '?version=' + new Date().getTime();
+						uploadHeadImg(path, str);
+					}, function(err) {
+						console.log('读取拍照文件错误');
+					});
+				}, function(e) {
+					console.log('er', err);
+				}, function() {
+					filename: '_doc/' + str + '.png';
+				});
+			}
+			//从本地相册选择
+			function galleryImages(str) {
+				console.log('你选择了从相册选择' + str);
+				plus.gallery.pick(function(a) {
+					plus.io.resolveLocalFileSystemURL(a, function(entry) {
+						plus.io.resolveLocalFileSystemURL('_doc/', function(root) {
+							root.getFile(str + '.png', {}, function(file) {
+								//文件已经存在
+								file.remove(function() {
+									entry.copyTo(root, str + '.png', function(e) {
+										var path = e.fullPath + '?version=' + new Date().getTime();
+										uploadHeadImg(path, str);
+									}, function(err) {
+										console.log('copy image fail:', err);
+									});
+								}, function(err) {
+									console.log('删除图片失败:(' + JSON.stringify(err) + ")");
+								});
+							}, function(err) {
+								//打开文件失败
+								entry.copyTo(root, str + '.png', function(e) {
+									var path = e.fullPath + '?version=' + new Date().getTime();
+									uploadHeadImg(path, str);
+								}, function(err) {
+									console.log('上传图片失败：(' + JSON.stringify(err) + ")");
+								});
+							});
+						}, function(e) {
+							console.log("读取文件夹失败：(" + JSON.stringify(err) + ")");
+						});
+					});
+				}, function(err) {
+					console.log("读取拍照文件失败:");
+				}, {
+					filter: 'image'
+				});
+			};
+			//上传图片
+			function uploadHeadImg(imgPath, str) {
+				//选中图片之后，头像当前的照片变为选中的照片
+				console.log(document.getElementById(str))
+				var mainImg = document.getElementById(str).children[0];
+
+				console.log(mainImg)
+				mainImg.style.display = "block";
+				mainImg.src = imgPath;
+				var images = new Image();
+				images.src = imgPath;
+				var imgData = '';
+				images.onload = function() {
+					imgData = getBase64Image(images, 800);
+					console.log(JSON.stringify(imgData))
+					var params = {
+						'imgDatas': imgData,
+						'userid': userInfo.id
+					};
+					console.log("params:" + JSON.stringify(params));
+					ajaxPost('expressattachment/update_base.html', params, function(data) {
+						if(data.code == 1) {
+							//mainImg.nextElementSibling.value = data.data.id;
+							console.log(111);
+							console.log("身份证id"+data.data.id)
+							message[str] = data.data.id;
+
+						}
+					}, function(res) {
+						console.log("链接服务器超时");
+					}, true, true)
+				}
+			}
+
+			function authImg(str) {
+				if(mui.os.plus) {
+					var a = [{
+						title: '拍照'
+					}, {
+						title: '从手机相册选择'
+					}];
+					plus.nativeUI.actionSheet({
+						title: '个人照片',
+						cancel: '取消',
+						buttons: a
+					}, function(b) {
+						switch(b.index) {
+							case 0:
+								break;
+							case 1:
+								//拍照
+								getImages(str);
+								break;
+							case 2:
+								//打开相册
+								galleryImages(str);
+								break;
+						}
+					});
+				}
+			}
+
+			$(".photo").on("tap", function() {
+				var id = $(this).attr("id");
+				authImg(id);
+			});
+		});
+		console.log(idcard)
+		//			确认提交
+		document.getElementById('submit').addEventListener('tap', function() {
+			var imgs = $(".image");
+			for(var i = 0; i < imgs.length; i++) {
+				if($(imgs[0]).attr("src") == "") {
+
+						mui.toast("请上传身份证照片");
+						return false;
+					}else if($(imgs[1]).attr("src") == "") {
+						mui.toast("请上传手持身份证照片");
+						return false;
+					}else if($(imgs[2]).attr("src") == ""){
+						mui.toast("请上传车辆45°侧面照片");
+						return false;
+					}
+			}
+			
+			console.log("params:"+JSON.stringify(message));
+			ajaxPost('express/auth.html', message, function(data) {
+				if(data.code == 1) {
+					var page = mui.preload({
+						url: "homePage.html",
+						id: "homePage.html"//默认使用当前页面的url作为id
+					});
+					//							mainImg.nextElementSibling.value = data.data.id;
+					mui.alert("您已成功提交，请等待验证", function() {
+						mui.openWindow(page);
+					});
+				}else{
+					mui.toast(data.msg);
+				}
+			}, function(res) {
+				console.log("失败错误："+JSON.stringify(res));
+				mui.openWindow({
+					url: "auth_register.html",
+					id: "auth_register.html"
+				})
+			}, true, true)
+
+			//		var imgData = [];
+			//		for (var i=0;i<imgs.length;i++) {
+			//			 imgData.push($(imgs[i]).attr("src"));
+			//		}
+			//		console.log(imgData)
+			//		imgData = getBase64Image(imgData, 800);
+			//					var params = {
+			//						'imgDatas': imgData,
+			//						'userid': userInfo.id
+			//					};
+			//					console.log("params:" + JSON.stringify(params));
+			//					ajaxPost('expressattachment/update_base.html', params, function(data) {
+			//						if(data.code == 1) {
+			////							mainImg.nextElementSibling.value = data.data.id;
+			//						}
+			//					}, function(res) {
+			//						console.log("链接服务器超时");
+			//					})
+
+			//					mui.openWindow({
+			//					url:'auth.html',
+			//					id:'auth.html',
+			//					styles:{
+			//								
+			//					},
+			//					show:{
+			//						autoShow:true,
+			//						aniShow:"slide-in-right",
+			//					},
+			//					waiting:{
+			//						autoShow:true,
+			//						title:'正在加载...'
+			//					}
+			//				})
+
+		})
+	</script>
+
+</html>

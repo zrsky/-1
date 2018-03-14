@@ -1,0 +1,917 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>帮我买订单详情</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/base.css" />
+		<link rel="stylesheet" href="../css/detail.css" />
+
+		<script src="js/immersed.js"></script>
+		<style type="text/css">
+			.anchorBL {
+				display: none;
+			}
+			
+			em {
+				font-style: normal;
+			}
+			
+			.mui-input-row label {
+				width: 50%;
+			}
+			
+			.mui-input-row label~input {
+				width: 50%;
+			}
+			
+			.imgbtn {
+				display: block;
+				width: 100px;
+				border: 1px solid lightgrey;
+				border-radius: 3px;
+				padding: 5px;
+				margin: 0 auto;
+				text-align: center;
+			}
+			
+			#middlePopover {
+				left: 50%;
+				top: 50%;
+				margin: -150px 0 0 -150px;
+				padding: 10px;
+				width: 300px;
+			}
+			
+			#payPopover {
+				left: 50%;
+				top: 30%;
+				margin: -150px 0 0 -150px;
+				padding: 10px;
+				width: 300px;
+			}
+			
+			.paytype h2 {
+				font-size: 20px;
+				text-align: center;
+			}
+			
+			.payimg {
+				margin-top: 10px;
+			}
+			
+			.warp .title {
+				margin-bottom: 10px;
+				text-align: center;
+			}
+			
+			.payimg {
+				width: 200px;
+				height: 200px;
+				margin: 0 auto;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left black"></a>
+			<h1 class="mui-title">订单详情</h1>
+		</header>
+		<div class="mui-scroll-wrapper set_top" style="margin-bottom: 50px;">
+			<div class="mui-scroll">
+				<!--这里放置真实显示的DOM内容-->
+				<div class="status_wrap">
+					<div class="status">
+						<span class="circle active"></span>
+						<span class="line line1"></span>
+						<span class="circle circle1"></span>
+						<span class="line line2"></span>
+						<span class="circle circle2"></span>
+					</div>
+					<div class="status_title">
+						<span class="qu">取货</span>
+						<span class="song">送货</span>
+						<span class="ok">完成</span>
+					</div>
+				</div>
+
+				<div class="to_address"><span>请前往:</span><em id="address">地址信息加载中</em></div>
+				<!--<div class="sytime">
+					<div class="sy">
+						请在<span class="rog">13分钟</span>内到达取货地点<span class="rog">(剩余时间00:12:11)</span>
+					</div>
+				</div>-->
+				<ul class="stepwrap">
+					<li class="active">
+						<h4>致电收货人<span>(第一步)</span></h4>
+						<p>请先致电收货人核实地址和价格区间</p>
+						<a href="javascript:;" class="callsender call">联系收货人</a>
+					</li>
+					<li step="2">
+						<h4>我已到达<span>(第二步)</span></h4>
+						<p>到达取货地点后点击"我已到达" </p>
+						<button class="toget">我已到达</button>
+					</li>
+					<li step="3">
+						<h4>我已购买<span>(第三步)</span></h4>
+						<p>为了避免纠纷请对购买凭证拍照</p>
+						<button class="camera">购买完成</button>
+					</li>
+					<!--<li step="4">
+						<h4>我已取货<span>(第四步)</span></h4>
+						<p>为了避免货物纠纷请对货物拍照存证</p>
+						<button class="hadget">我已取货</button>
+					</li>-->
+					<li>
+						<h4>致电收货人<span>(第四步)</span></h4>
+						<p>已到达收货地点联系收货人取货</p>
+						<a href="javascript:;" class="callgeter call">联系收货人</a>
+					</li>
+					<li step="5">
+						<h4>我已送达<span>(第五步)</span></h4>
+						<p>到达收货地址后点击"我已送达"</p>
+						<button class="tosend">我已送达</button>
+					</li>
+					<li step="6">
+						<h4>输入验证码<span>(第六步)</span></h4>
+						<p>完成订单后"输入验证码"</p>
+						<button class="sendcode">输入验证码</button>
+					</li>
+				</ul>
+
+			</div>
+		</div>
+		<nav class="mui-bar mui-bar-tab tabottom">
+			<a class="mui-pull-right" href="javascript:;"><i class="iconfont">&#xe62c;</i>查看导航</a>
+		</nav>
+
+		<style type="text/css">
+			#popover {
+				height: 400px;
+				width: 100%;
+				top: 212px;
+			}
+		</style>
+		<div id="popover" class="mui-popover">
+			<div class="smap" id="smap"></div>
+		</div>
+		<div id="middlePopover" class="mui-popover">
+			<div class="box">
+				<div class="mui-input-row">
+					<label>物品价格(/元)</label>
+					<input type="number" id="goodsPrice" class="price" placeholder="请输入物品价格" pattern="/(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/">
+				</div>
+				<div class="mui-input-row">
+					<div class="img-box">
+					</div>
+					<span class="imgbtn">请上传收费凭证照片</span>
+				</div>
+				<div class="mui-button-row">
+					<button type="button" class="mui-btn mui-btn-primary sure" onclick="return false;">确认</button>&nbsp;&nbsp;
+					<button type="button" class="mui-btn mui-btn-danger cancel" onclick="return false;">取消</button>
+				</div>
+			</div>
+		</div>
+		<div id="payPopover" class="mui-popover">
+			<div class="warp">
+				<div class="title">
+					<span>需付<em class="money">0</em>元</span>
+				</div>
+				<div class="paytype">
+					<h2>支付宝支付请扫下方二维码</h2>
+					<div class="payimg">
+						<img id="zhifubao" src="../images/banner.png" width="100%" height="100%" />
+					</div>
+				</div>
+				<div class="paytype">
+					<h2>微信支付请扫下方二维码</h2>
+					<div class="payimg">
+						<img id="wechat" src="../images/banner.png" width="100%" height="100%" />
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery.min.js"></script>
+		<script src="../js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=gQaPqDsmLkslvAiDCWYozxCS0dHy3BRa"></script>
+		<script type="text/javascript">
+			//			mui.init({
+			//				preloadPages: [{
+			//					id: "homePage.html",
+			//					url: "homePage.html"
+			//				}]
+			//			});
+			mui.init();
+			mui.plusReady(function() {
+				var toget = false;
+				//地址 联系电话 经纬度
+				var address = null;
+				var phone = null;
+				var xpoint = null;
+				var ypoint = null;
+				var orderinfo = null;
+				var to_x, to_y, to_address, goods_budget; //判断是否支付
+				//判断是否上传
+				var isUpload = false;
+				//判断是否输入价格和照片
+				var isPrice;
+				//判断步骤完成到哪里
+				var status;
+				var self = plus.webview.currentWebview();
+				orderinfo = self.orderinfo;
+				address = self.address;
+				phone = self.phone;
+				xpoint = self.xpoint;
+				ypoint = self.ypoint;
+				to_x = self.to_x;
+				to_y = self.to_y;
+				to_address = self.to_address;
+				status = self.status;
+				if(status < 3) {
+					if(address == 'null' || address == '') {
+						$('#address').text("最近地址购买");
+					} else {
+						$('#address').text(address);
+					}
+				} else if(status >= 3) {
+					$('#address').text(to_address);
+				}
+
+				console.log('订单id：' + orderinfo.id);
+
+				ajaxGet('expressorder/get_order_info.html', {
+					orderid: orderinfo.id
+				}, function(res) {
+					console.log("步骤：" + JSON.stringify(res));
+					if(res.code == 1) {
+						status = res.data.status;
+						goods_budget = res.data.goods_budget;
+						$('[step]').each(function() {
+							if($(this).attr('step') == status - 1) {
+								$(this).attr('class', 'active');
+								$(this).siblings().attr('class', '');
+							}
+						})
+					} else {
+						mui.toast(res.msg);
+					}
+				});
+				//检查拍照状态
+				ajaxGet('expressorder/get_order_ticket_status.html', {
+					orderid: orderinfo.id
+				}, function(res) {
+					if(res.code == 1) {
+						isPrice = true;
+					}
+					console.log('拍照状态:' + JSON.stringify(res));
+				})
+				//点击遮罩层
+				mui('body').on('tap', '.mui-backdrop', function() {
+					if(!isMap) {
+						mui('#middlePopover').popover('show');
+					} else {
+						isMap = false;
+						return;
+					}
+				});
+				var geolocation = new BMap.Geolocation();
+				//查看导航
+				var isMap = false;
+				$('.tabottom a').on('tap', function() {
+					mui('#popover').popover('show');
+					isMap = true;
+					var lon, lat;
+					geolocation.getCurrentPosition(function(r) {
+						lon = r.point.lng;
+						lat = r.point.lat;
+						var p1 = new BMap.Point(lon, lat);
+						var p2;
+						if(address == undefined) {
+							p2 = new BMap.Point(to_x, to_y);
+						} else {
+							if(toget) {
+								p2 = new BMap.Point(to_x, to_y);
+							} else {
+								p2 = new BMap.Point(xpoint, ypoint);
+							}
+						}
+						//清楚覆盖物
+						map.clearOverlays();
+						var driving = new BMap.DrivingRoute(map, {
+							renderOptions: {
+								map: map,
+								autoViewport: true
+							}
+						});
+						driving.search(p1, p2);
+					}, function(e) {
+						console.log("失败：" + JSON.stringify(e));
+					}, {
+						coordsType: 'bd09ll',
+						provider: 'baidu'
+					})
+					//					var geolocation = new BMap.Geolocation();
+					//					geolocation.getCurrentPosition(function(r) {
+					//						lon = r.longitude;
+					//						lat = r.latitude;
+					//						var p1 = new BMap.Point(lon, lat);
+					//						var p2;
+					//						if(address == undefined) {
+					//							p2 = new BMap.Point(to_x, to_y);
+					//						} else {
+					//							if(toget) {
+					//								p2 = new BMap.Point(to_x, to_y);
+					//							} else {
+					//								p2 = new BMap.Point(xpoint, ypoint);
+					//							}
+					//						}
+					//						//清楚覆盖物
+					//						map.clearOverlays();
+					//						var driving = new BMap.DrivingRoute(map, {
+					//							renderOptions: {
+					//								map: map,
+					//								autoViewport: true
+					//							}
+					//						});
+					//						driving.search(p1, p2);
+					//					})
+				})
+				//添加上一个页面自定义事件监听
+				window.addEventListener('DIY_DATA', function(event) {
+					address = event.detail.address;
+					phone = event.detail.phone;
+					xpoint = event.detail.xpoint;
+					ypoint = event.detail.ypoint;
+					orderinfo = event.detail.orderinfo;
+					status = event.detail.status;
+					if(status < 3) {
+						if(address == 'null' || address == '') {
+							$('#address').text("最近地址购买");
+						} else {
+							$('#address').text(address);
+						}
+					} else if(status >= 3) {
+						$('#address').text(to_address);
+					}
+				});
+
+				//联系发货人
+				$('.callsender').on('tap', function() {
+					console.log('收货人电话:' + phone);
+					//打电话
+					plus.device.dial(phone, false);
+				})
+				//我已到达
+				$('.toget').on('tap', function() {
+					console.log("我已到达");
+					if(status == 4 || status == 5 || status == 6) {
+						mui.toast("请勿重复操作");
+						return false;
+					}
+					var that = this;
+					var lng, lat;
+					geolocation.getCurrentPosition(function(r) {
+						lng = r.point.lng;
+						lat = r.point.lat;
+						console.log("orderid:" + orderinfo.id + " lng:" + lng + " lat:" + lat);
+						ajaxPost("expressorder/reach.html", {
+							orderid: orderinfo.id,
+							lng: lng,
+							lat: lat
+						}, function(res) {
+							console.log("我已到达:" + JSON.stringify(res));
+							if(res.code == 1) {
+								toget = true;
+								tonext(that);
+								$('#address').text(to_address);
+								if(goods_budget > 0) {
+									mui.confirm('', '商品费已支付' + goods_budget + '元', ['确定'], function() {
+
+									}, 'div');
+								} else {
+									mui.confirm('', '商品费用未支付', ['确定'], function() {
+
+									}, 'div');
+								}
+
+							} else {
+								mui.toast(res.msg);
+							}
+						}, function(res) {
+							console.log("shibai:" + JSON.stringify(res));
+						})
+					}, function(e) {
+						console.log("失败：" + JSON.stringify(e));
+					}, {
+						coordsType: 'bd09ll',
+						provider: 'baidu'
+					})
+					//					var geolocation = new BMap.Geolocation();
+					//					geolocation.getCurrentPosition(function(r) {
+					//						lng = r.longitude;
+					//						lat = r.latitude;
+					//						console.log("orderid:" + orderinfo.id + " lng:" + lng + " lat:" + lat);
+					//						ajaxPost("expressorder/reach.html", {
+					//							orderid: orderinfo.id,
+					//							lng: lng,
+					//							lat: lat
+					//						}, function(res) {
+					//							console.log("我已到达:" + JSON.stringify(res));
+					//							if(res.code == 1) {
+					//								toget = true;
+					//								tonext(that);
+					//								$('#address').text(to_address);
+					//								if(goods_budget > 0) {
+					//									mui.confirm('', '商品费已支付' + goods_budget + '元', ['确定'], function() {
+					//
+					//									}, 'div');
+					//								} else {
+					//									mui.confirm('', '商品费用未支付', ['确定'], function() {
+					//
+					//									}, 'div');
+					//								}
+					//
+					//							} else {
+					//								mui.toast(res.msg);
+					//							}
+					//						}, function(res) {
+					//							console.log("shibai:" + JSON.stringify(res));
+					//						})
+					//					})
+				})
+				var pop = document.getElementById('middlePopover');
+				var mask = mui.createMask(function() {
+					pop.classList.remove('mui-active');
+				});
+				//拍照
+				$('.camera').on('tap', function() {
+					if(status == 4 || status == 5 || status == 6) {
+						mui.toast("请勿重复操作");
+						return false;
+					};
+					mui('#middlePopover').popover('show');
+					//mask.show()//显示遮罩
+					//pop.classList.add('mui-active');
+					event.stopPropagation();
+				});
+				//确认
+				$('.sure').on('tap', function() {
+					var lng, lat;
+					if(isUpload) {
+
+					} else {
+						mui.alert("请上传照片");
+						return false;
+					}
+					geolocation.getCurrentPosition(function(r) {
+						lng = r.point.lng;
+						lat = r.point.lat;
+						//输入的价格
+						var price = document.getElementById('goodsPrice').value;
+
+						if(price.match(/(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/) && price != 0) {
+							var params = {
+								orderid: orderinfo.id,
+								lng: lng,
+								lat: lat,
+								goods_price: price
+							}
+							console.log("params:" + JSON.stringify(params));
+							ajaxPost('expressorder/pickup.html', {
+								orderid: orderinfo.id,
+								lng: lng,
+								lat: lat,
+								goods_price: price
+							}, function(res) {
+								console.log(JSON.stringify(res));
+								if(res.code == 1) {
+									console.log('ok');
+									console.log("upload:" + isUpload);
+									isPrice = true;
+									if(isUpload) {
+										$('.camera').parent().attr('class', 'active');
+										$('.camera').parent().siblings().attr('class', '');
+										mui('#middlePopover').popover('hide');
+										//										pop.classList.remove('mui-active');
+										//										mask.close();
+									} else {
+										mui.toast('请上传图片');
+										return false;
+									}
+								} else {
+									mui.alert(res.msg);
+								}
+							}, function(res) {
+								console.log("false");
+							})
+						} else {
+							mui.alert("请输入物品价格");
+							return false;
+						}
+//						event.stopPropagation();
+					}, function(e) {
+						console.log("失败：" + JSON.stringify(e));
+					}, {
+						coordsType: 'bd09ll',
+						provider: 'baidu'
+					})
+					//					var geolocation = new BMap.Geolocation();
+					//					geolocation.getCurrentPosition(function(r) {
+					//						lng = r.longitude;
+					//						lat = r.latitude;
+					//						//输入的价格
+					//						var price = document.getElementById('goodsPrice').value;
+					//						if(price.match(/(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/) && price != 0) {
+					//							var params = {
+					//								orderid: orderinfo.id,
+					//								lng: lng,
+					//								lat: lat,
+					//								goods_price: price
+					//							}
+					//							console.log("params:" + JSON.stringify(params));
+					//							ajaxPost('expressorder/pickup.html', {
+					//								orderid: orderinfo.id,
+					//								lng: lng,
+					//								lat: lat,
+					//								goods_price: price
+					//							}, function(res) {
+					//								console.log(JSON.stringify(res));
+					//								if(res.code == 1) {
+					//									console.log('ok');
+					//									console.log("upload:" + isUpload);
+					//									isPrice = true;
+					//									if(isUpload) {
+					//										$('.camera').parent().attr('class', 'active');
+					//										$('.camera').parent().siblings().attr('class', '');
+					//										mui('#middlePopover').popover('hide');
+					//										//										pop.classList.remove('mui-active');
+					//										//										mask.close();
+					//									} else {
+					//										mui.toast('请上传图片');
+					//										return false;
+					//									}
+					//								} else {
+					//									mui.alert(res.msg);
+					//								}
+					//							}, function(res) {
+					//								console.log("false");
+					//							})
+					//						} else {
+					//							mui.alert("请输入物品价格");
+					//							return false;
+					//						}
+					//					})
+					//					event.stopPropagation();
+				});
+				//取消
+				$('.cancel').on('tap', function() {
+					console.log("取消");
+					mui('#middlePopover').popover('hide');
+					pop.classList.remove('mui-active');
+					mask.close();
+					event.stopPropagation();
+				});
+
+				$('.imgbtn').on('tap', function() {
+					var that = this;
+					if(mui.os.plus) {
+						var a = [{
+							title: "拍照"
+						}, {
+							title: "从手机相册选择"
+						}];
+						plus.nativeUI.actionSheet({
+							title: "物品照片",
+							cancel: "取消",
+							buttons: a
+						}, function(b) {
+							switch(b.index) {
+								case 0:
+									break;
+								case 1:
+									//拍照
+									getImages();
+									break;
+								case 2:
+									//打开相册
+									galleryImages();
+									break;
+							}
+						}, false);
+					}
+					event.stopPropagation();
+				});
+				//已取货
+				//				$('.hadget').on('tap', function() {
+				//					if(!isPrice){
+				//						mui.alert('请上传物品价格和凭证');
+				//						return false;
+				//					}
+				//					if(status == 5 || status == 6) {
+				//						mui.toast("请勿重复操作");
+				//						return false;
+				//					}
+				//					var that = this;
+				//					if(mui.os.plus) {
+				//						var a = [{
+				//							title: "拍照"
+				//						}, {
+				//							title: "从手机相册选择"
+				//						}];
+				//						plus.nativeUI.actionSheet({
+				//							title: "物品照片",
+				//							cancel: "取消",
+				//							buttons: a
+				//						}, function(b) {
+				//							switch(b.index) {
+				//								case 0:
+				//									break;
+				//								case 1:
+				//									//拍照
+				//									getImages();
+				//									break;
+				//								case 2:
+				//									//打开相册
+				//									galleryImages();
+				//									break;
+				//							}
+				//						}, false);
+				//					}
+				//					tonext(that);
+				//					$('.line1').css('background-color', '#E48920');
+				//					$('.song').css('color', '#E48920');
+				//				})
+				//致电收货人
+				$('.callgeter').on('tap', function() {
+					if(!isPrice) {
+						mui.alert('请上传物品价格和凭证');
+						return false;
+					}
+					var that = this;
+					//打电话
+					plus.device.dial(phone, false);
+					tonext(that);
+				})
+				//已送达
+				$('.tosend').on('tap', function() {
+					if(!isPrice) {
+						mui.alert('请上传物品价格和凭证');
+						return false;
+					}
+					if(status == 6) {
+						mui.toast("请勿重复操作");
+						return false;
+					}
+					var that = this;
+					var lng, lat;
+					geolocation.getCurrentPosition(function(r) {
+						lng = r.point.lng;
+						lat = r.point.lat;
+						var params = {
+							orderid: orderinfo.id,
+							lng: lng,
+							lat: lat
+						}
+						console.log("params:" + JSON.stringify(params));
+						ajaxPost('expressorder/arrive.html', {
+							orderid: orderinfo.id,
+							lng: lng,
+							lat: lat
+						}, function(res) {
+							console.log("送达:" + JSON.stringify(res));
+							if(res.code == 1) {
+								isMap = true;
+								tonext(that);
+								if(res.data.second_pay > 0) {
+									mui('#payPopover').popover('show');
+									$('.money').text(res.data.unpay);
+									G('zhifubao').src = res.data.qrcode.alipay;
+									G('wechat').src = res.data.qrcode.weixin;
+								} else {
+									mui.toast("已付款");
+								}
+							} else {
+								mui.toast(res.msg);
+							}
+						})
+					}, function(e) {
+						console.log("失败：" + JSON.stringify(e));
+					}, {
+						coordsType: 'bd09ll',
+						provider: 'baidu'
+					})
+					//					var geolocation = new BMap.Geolocation();
+					//					geolocation.getCurrentPosition(function(r) {
+					//						lng = r.longitude;
+					//						lat = r.latitude;
+					//						var params = {
+					//							orderid: orderinfo.id,
+					//							lng: lng,
+					//							lat: lat
+					//						}
+					//						console.log("params:" + JSON.stringify(params));
+					//						ajaxPost('expressorder/arrive.html', {
+					//							orderid: orderinfo.id,
+					//							lng: lng,
+					//							lat: lat
+					//						}, function(res) {
+					//							console.log("送达:" + JSON.stringify(res));
+					//							if(res.code == 1) {
+					//								isMap = true;
+					//								tonext(that);
+					//								if(res.data.second_pay > 0) {
+					//									mui('#payPopover').popover('show');
+					//									$('.money').text(res.data.unpay);
+					//									G('zhifubao').src = res.data.qrcode.alipay;
+					//									G('wechat').src = res.data.qrcode.weixin;
+					//								} else {
+					//									mui.toast("已付款");
+					//								}
+					//							} else {
+					//								mui.toast(res.msg);
+					//							}
+					//						})
+					//					})
+				})
+				//发送验证码
+				$('.sendcode').on('tap', function(e) {
+					if(!isPrice) {
+						mui.alert('请上传物品价格和凭证');
+						return false;
+					}
+					var that = this;
+					e.detail.gesture.preventDefault(); //修复iOS 8.x平台存在的bug，使用plus.nativeUI.prompt会造成输入法闪一下又没了
+					var btnArray = ['取消', '确定'];
+					var geolocation = new BMap.Geolocation();
+					geolocation.getCurrentPosition(function(r) {
+						var lng = r.longitude;
+						var lat = r.latitude;
+						mui.prompt("请输入验证码", '', '', btnArray, function(e) {
+							if(e.index == 1) {
+								var str = e.value;
+								var aaa = {
+									orderid: orderinfo.id,
+									code: str
+								};
+								console.log(JSON.stringify(aaa));
+								ajaxPost('expressorder/end.html', {
+									orderid: orderinfo.id,
+									code: str,
+									lng: lng,
+									lat: lat
+								}, function(res) {
+									console.log('输入验证码:' + JSON.stringify(res));
+									if(res.code == 1) {
+										tonext(that);
+										mui.openWindow({
+											id: 'complete.html',
+											url: 'complete.html'
+										})
+									} else {
+										mui.toast(res.msg);
+									}
+								}, function(res) {
+									console.log("shibai:" + JSON.stringify(res));
+								})
+							}
+						})
+					})
+				})
+				mui('.mui-scroll-wrapper').scroll({
+					scrollY: true,
+					scrollX: false,
+					startX: 0,
+					startY: 0,
+					indicators: true,
+					deceleration: 0.001,
+					bounce: true
+				});
+				//显示元素
+				function tonext(that) {
+					$(that).parent().attr('class', 'active');
+					$(that).parent().siblings().attr('class', '');
+				}
+
+				var map = new BMap.Map('smap');
+				map.enableScrollWheelZoom();
+				var geolocation = new BMap.Geolocation();
+				geolocation.getCurrentPosition(function(r) {
+					var lng = r.longitude;
+					var lat = r.latitude;
+					map.centerAndZoom(new BMap.Point(lng, lat), 13);
+				})
+
+				//去拍照
+
+				//拍照
+				function getImages() {
+					var mobileCamera = plus.camera.getCamera();
+					mobileCamera.captureImage(function(e) {
+						plus.io.resolveLocalFileSystemURL(e, function(entry) {
+							var path = entry.toLocalURL() + '?version=' + new Date().getTime();
+							uploadHeadImg(path);
+						}, function(err) {
+							console.log('读取拍照文件错误');
+						});
+					}, function(e) {
+						console.log('er', err);
+					}, function() {
+						filename: '_doc_head.png';
+					})
+				}
+				//从本地相册选择
+				function galleryImages() {
+					console.log('你选择了从相册选择');
+					plus.gallery.pick(function(a) {
+							console.log('这是什么:' + a);
+							plus.io.resolveLocalFileSystemURL(a, function(entry) {
+								console.log('这是什么:' + entry);
+								plus.io.resolveLocalFileSystemURL('_doc/', function(root) {
+									root.getFile('head.png', {}, function(file) {
+										//文件已经存在
+										file.remove(function() {
+											console.log("文件移除成功");
+											entry.copyTo(root, 'head.png', function(e) {
+												var path = e.fullPath + '?version=' + new Date().getTime();
+												uploadHeadImg(path);
+											}, function(err) {
+												console.log('copy image fail:', err);
+											});
+										}, function(err) {
+											console.log('删除图片失败:(' + JSON.stringify(err) + ")");
+										});
+									}, function(err) {
+										//打开文件失败
+										entry.copyTo(root, 'head.png', function(e) {
+											var path = e.fullPath + '?version=' + new Date().getTime();
+											uploadHeadImg(path);
+										}, function(err) {
+											console.log('上传图片失败：(' + JSON.stringify(err) + ")");
+										});
+									});
+								}, function(e) {
+									console.log("读取文件夹失败：(" + JSON.stringify(err) + ")");
+								});
+							}, function(error) {
+								console.log(JSON.stringify(error));
+							});
+						},
+
+						function(err) {
+							console.log("读取拍照文件失败:");
+						}, {
+							filter: 'image'
+						});
+				};
+				//上传图片
+				function uploadHeadImg(imgPath) {
+					var images = new Image();
+					images.src = imgPath;
+					images.onload = function() {
+						var imgData = getBase64Image(images, 800);
+						console.log("imgData:" + imgData + " orderid:" + orderinfo.id);
+						var lng, lat;
+						var geolocation = new BMap.Geolocation();
+						geolocation.getCurrentPosition(function(r) {
+							lng = r.longitude;
+							lat = r.latitude;
+							ajaxPost('expressorder/goods_photos.html', {
+								"imgDatas": imgData,
+								'orderid': orderinfo.id,
+								lat: lat,
+								lng: lng
+							}, function(data) {
+								if(data.code == 1) {
+									isUpload = true;
+									console.log("照片:" + JSON.stringify(data));
+									$('.imgbtn').text('上传成功');
+								} else {
+									mui.toast(data.msg);
+								}
+							}, function(res) {
+								console.log("shibai:" + JSON.stringify(res));
+							});
+						}, function(e) {
+							console.log("失败：" + JSON.stringify(e));
+						}, {
+							coordsType: 'bd09ll',
+							provider: 'baidu'
+						})
+						//						var geolocation = new BMap.Geolocation();
+						//						geolocation.getCurrentPosition(function(r) {
+						//							lng = r.longitude;
+						//							lat = r.latitude;
+						//						})
+
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

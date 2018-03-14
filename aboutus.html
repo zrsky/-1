@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>关于我们</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" href="css/aboutus.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.logoImg {
+				margin: 4rem auto 0.5rem auto;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left black"></a>
+			<h1 class="mui-title" id="pagetitle">关于我们</h1>
+		</header>
+		<div class="mui-content" id="container">
+			<script type="text/html" id="containerData">
+				<img class="logoImg" src="images/logo.png" />
+				<p class="name" id="appname">{{data.appname}}</p>
+				<div class="description" id="aboutus">
+					{{#data.aboutus}}
+				</div>
+				<p class="copyright">Copyright 2017</p>
+				<p class="company" id="companyname">{{data.companyname}}</p>
+			</script>
+		</div>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/base.js"></script>
+		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function() {
+				var userInfo = is_login();
+				var container = G('container');
+				ajaxGet('system/aboutus.html', null, function(res) {
+					console.log(JSON.stringify(res));
+					if(res.code == 1) {
+						var datas = {
+							data:res.data
+						}
+						container.innerHTML = template('containerData',datas);
+					}
+				})
+			})
+		</script>
+	</body>
+
+</html>

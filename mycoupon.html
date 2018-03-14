@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>我的优惠卷</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" href="css/mycoupon.css" />
+		<script src="js/template.js"></script>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left black"></a>
+			<h1 class="mui-title">我的优惠卷</h1>
+		</header>
+		<div class="mui-scroll-wrapper set_top">
+			<div class="mui-scroll" id="content">
+				<!--这里放置真实显示的DOM内容-->
+
+				<script type="text/html" id="couponlist">
+					{{if list.length == 0}}
+					<div style="text-align: center;">
+						<span>无可用优惠券</span>
+					</div>
+					{{else}}
+					{{each list as value as i}}
+					<div class="coupon-wrap" orderid={{value.id}}>
+						<div class="coupon-left">
+							<div class="money">{{value.cut}}<span>元</span></div>
+							<p>满{{value.full}}元减{{value.cut}}元</p>
+
+						</div>
+						<div class="coupon-right">
+							<h4>{{value.coupon.name}}</h4>
+							<ul>
+								<li class='time_second' second='{{value.overtime}}'>
+									有效期至{{value.end_time_formated}}
+								</li>
+
+							</ul>
+						</div>
+					</div>
+					{{/each}}
+					{{/if}}
+				</script>
+
+			</div>
+		</div>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/base.js"></script>
+		<script type="text/javascript">
+//			mui.init({
+//				preloadPages: [{
+//					id: "../buy/detailPrice.html",
+//					url: "buy/detailPrice.html"
+//				}]
+//			});
+			mui.init();
+			//			pageId 3send 1buy  2take
+			mui.plusReady(function() {
+				var userinfo = is_login();
+				var wv = plus.webview.currentWebview();
+				var tag = wv.tag;
+				var page = wv.page;
+				var user_vehicle_id = wv.user_vehicle_id;
+				var from_address = wv.from_address;
+				var to_address = wv.to_address;
+				var from_point = wv.from_point;
+				var to_point = wv.to_point;
+				var goods_budget = wv.goods_budget;
+				window.addEventListener("DIY_DATA", function(event) {
+					tag = event.detail.tag;
+					page = event.detail.page;
+					user_vehicle_id = event.detail.user_vehicle_id;
+					from_address = event.detail.from_address;
+					to_address = event.detail.to_address;
+					from_point = event.detail.from_point;
+					to_point = event.detail.to_point;
+					goods_budget = event.goods_budget;
+				})
+				var content = document.getElementById('content');
+				var params;
+				if(from_address == undefined && to_address == undefined){
+					params = null;
+				}else{
+					params = {
+					userid: userinfo.id,
+					user_vehicle_id:user_vehicle_id,
+					from_address:from_address,
+					to_address:to_address,
+					from_point:from_point,
+					to_point:to_point,
+					goods_budget:goods_budget
+				};
+				}
+				console.log("优惠券发送数据:"+JSON.stringify(params));
+				ajaxGet('usercoupon/mycoupon.html',params,function(res) {
+					console.log(JSON.stringify(res));
+					if(res.code == 1) {
+						content.innerHTML = template('couponlist', {
+							list: res.data.data
+						})
+						if(tag == 1) {
+							mui('.coupon-wrap').each(function(i, ele) {
+								ele.addEventListener('tap', function() {
+									var orderid = ele.getAttribute('orderid');
+									console.log("orderid:" + orderid);
+									var arr = res.data.data;
+									var cut;
+									for(var i = 0; i < arr.length; i++) {
+										if(arr[i].id == orderid) {
+											cut = arr[i].cut;
+										}
+									}
+									//			pageId 3send 1buy  2take
+									var upPage = plus.webview.getWebviewById('../buy/detailPrice.html');
+									var buyPage = plus.webview.getWebviewById("buy/buy.html");
+									var takePage = plus.webview.getWebviewById("take/take.html");
+									var sendPage = plus.webview.getWebviewById("send/send.html");
+
+									mui.fire(upPage, "couponId", {
+										cut: cut,
+										couponId: orderid
+									});
+									if(page == 1) {
+										mui.fire(buyPage, "couponId", {
+											cut: cut,
+											couponId: orderid
+										})
+									} else if(page == 2) {
+										mui.fire(takePage, "couponId", {
+											cut: cut,
+											couponId: orderid
+										})
+									} else if(page == 3) {
+										mui.fire(sendPage, "couponId", {
+											cut: cut,
+											couponId: orderid
+										})
+									}
+
+									mui.back();
+								})
+							})
+						}
+
+					}
+				}, function(res) {
+					console.log(JSON.stringify(res));
+				})
+			})
+
+			mui('.mui-scroll-wrapper').scroll({
+				scrollY: true,
+				scrollX: false,
+				startX: 0,
+				startY: 0,
+				indicators: true,
+				deceleration: 0.001,
+				bounce: true
+			});
+		</script>
+	</body>
+
+</html>

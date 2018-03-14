@@ -1,0 +1,122 @@
+.status_wrap{
+	height: 4rem;
+	padding: 1rem 0;
+	background-color: #fff;
+}
+.status{
+	width: 80%;
+	margin: 0 auto;
+	display: flex;
+}
+.circle{
+	display: block;
+	width: 1rem;
+	height: 1rem;
+	background-color:#E5E5E5;
+	border-radius: 50%;
+}
+.circle.active{
+	background-color: #E48920;
+}
+.line{
+	display: block;
+	position: relative;
+	top: 0.4rem;
+	width: 10rem;
+	height: 2px;
+	background-color: #E5E5E5;
+}
+.status_title{
+	width: 80%;
+	margin: 0.3rem auto;
+	display: flex;
+	justify-content:space-between ;
+}
+.to_address{
+	margin: 0.3rem 0 1px 0;
+	color:#000;
+	line-height: 2rem;
+	background-color: #fff;
+	text-align: center;
+	font-size: 1rem;
+}
+.to_address span{
+	font-size: 0.8rem;
+	color: #333;
+}
+.sytime{
+	height: 4rem;
+	padding: 1rem 0;
+	background-color: #fff;
+}
+.sy{
+	width: 90%;
+	height: 2rem;
+	margin:0 auto;
+	border: 1px dashed #E19646;
+	background-color:#fefef5 ;
+	text-align: center;
+	font-size: 0.8rem;
+	line-height: 2rem;
+}
+.rog{
+	color: #E48920;
+}
+.stepwrap{
+	margin:0.2rem 0;
+	padding: 0;
+	background-color: #fff;
+}
+.stepwrap li{
+	padding: 1rem 0 1rem 1.2rem;
+	position: relative;
+	list-style: none;
+	border-top: 1px solid #E5E5E5;
+}
+.stepwrap li h4{
+	color: #333333;
+}
+.stepwrap li h4 span{
+	font-size: 0.8rem;
+}
+.stepwrap li p{
+	width: 12.5rem;
+}
+.stepwrap li button{
+	position: absolute;
+	right: 1rem;
+    top: 1.5rem;
+    border: 1px solid #333;
+    border-radius:5px;
+    background: none;
+}
+.stepwrap li.active{
+	background-color: #E48920;
+	color: #fff;
+}
+.stepwrap li.active h4,.stepwrap li.active p,.stepwrap li.active span,.stepwrap li.active button,.stepwrap li.active a{
+	color: #fff;
+	border-color: #fff;
+}
+.tabottom a{
+	display: block;
+	padding: 0.2rem 0.3rem;
+	margin:0.5rem 0.3rem;
+	background-color: #E48920;
+	color: #fff;
+	font-size: 0.9rem;
+}
+.stepwrap .call{
+	display: block;
+	padding: 0.2rem 0.4rem;
+	position: absolute;
+	right: 1rem;
+	top: 1.5em;
+	border: 1px solid #333;
+    border-radius:5px;
+    font-size: 0.8rem;
+}
+.smap{
+	width: 100%;
+	height: 100%;
+}

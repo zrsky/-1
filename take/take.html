@@ -1,0 +1,1969 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>帮我取</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/validate.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/audio.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			body {
+				font-size: 14px;
+			}
+			
+			em {
+				font-style: normal;
+			}
+			
+			.mui-table-view .mui-media-object {
+				line-height: 1em;
+				max-width: 1em;
+				height: 1em;
+			}
+			
+			.mui-media-body {
+				display: flex;
+			}
+			
+			.title {
+				flex: 0 0 60px;
+				font-size: 14px;
+			}
+			
+			.speech {
+				flex: 0 0 120px;
+				font-size: 14px;
+			}
+			
+			.category {
+				flex: 1;
+				margin-top: -10px;
+			}
+			
+			.category span {
+				display: block;
+				float: left;
+				padding: 0 5px;
+				margin-left: 3px;
+				border: 1px solid lightgrey;
+				border-radius: 5px;
+				font-size: 0.8em;
+				margin-top: 10px;
+			}
+			
+			.active {
+				background-color: #ff8b02;
+				color: #FFFFFF;
+			}
+			
+			.name input {
+				position: absolute;
+				top: 2px;
+				border: none;
+				margin: 0;
+				padding: 0 5px;
+				font-size: 14px;
+			}
+			
+			input[type=text] {
+				line-height: 16px;
+				height: 16px;
+			}
+			
+			.require textarea {
+				border: none;
+				margin-top: 10px;
+				font-size: 14px;
+			}
+			
+			.address {
+				flex: 0 0 60px;
+				text-align: center;
+				font-size: 14px;
+			}
+			
+			.name i {
+				position: absolute;
+				right: 0;
+				top: 3px;
+				font-size: 14px;
+				color: #BBBBBB;
+			}
+			
+			.mui-input-row {
+				width: 100%;
+			}
+			
+			nav {
+				display: flex !important;
+				justify-content: center;
+				align-content: center;
+			}
+			
+			.mui-bar-tab~.mui-content {
+				padding-bottom: 70px;
+			}
+			
+			.nav-left {
+				display: flex;
+				flex: 0 0 100px;
+				justify-content: center;
+				align-items: center;
+				text-align: center;
+			}
+			
+			.nav-right {
+				display: flex;
+				flex: 0 0 80px;
+				align-items: center;
+				justify-content: center;
+				text-align: center;
+				background-color: #ff8b02;
+				color: #FFFFFF;
+			}
+			
+			.nav-right .pay {
+				flex: 1;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			
+			.nav-center {
+				display: flex;
+				flex: 1;
+				align-items: center;
+				justify-content: space-between;
+				text-align: center;
+			}
+			
+			.nav-left p {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin: 0;
+				padding: 5px;
+				color: #ff8b02;
+				border-right: 1px solid #BBBBBB;
+			}
+			
+			.nav-left p i {
+				display: block;
+				font-style: normal;
+				width: 20px;
+				height: 20px;
+				border-radius: 100%;
+				border: 1px solid #999999;
+			}
+			
+			.nav-center p {
+				margin-top: 10px;
+				text-align: left;
+			}
+			
+			.nav-center p em {
+				font-style: normal;
+			}
+			
+			.cen-bottom {
+				color: #ff8b02;
+			}
+			
+			.nav-center i {
+				color: #BBBBBB;
+			}
+			
+			.place {
+				color: #FF8B02;
+			}
+			
+			#popover {
+				position: fixed;
+				z-index: 20;
+				bottom: 0;
+				right: 0;
+				width: 100%;
+				min-height: 32em;
+				left: 0 !important;
+			}
+			
+			.nav-right a {
+				display: flex;
+				width: 100%;
+				height: 100%;
+				color: #FFFFFF;
+			}
+			
+			#popover .mui-card {
+				margin: 0;
+				padding: 0;
+			}
+			
+			.pay-box .mui-card-header {
+				justify-content: center;
+			}
+			
+			.pay-foot {
+				margin-top: 20px;
+				background-color: #ff8b02;
+				color: #FFFFFF;
+				justify-content: center;
+			}
+			
+			.pay-price p {
+				text-align: center;
+			}
+			
+			.pay-price {
+				border-bottom: 1px solid #c8c7cc;
+			}
+			
+			.pay-price em {
+				color: #FF8B02;
+				font-weight: bold;
+				font-size: 16px;
+			}
+			
+			.pay-warp {
+				display: flex;
+				border-bottom: 1px solid #c8c7cc;
+			}
+			
+			.pay-warp .logo {
+				/*flex: 0 0 60px;
+		   		display: flex;
+		   		justify-content: center;
+		   		align-items: center;*/
+			}
+			
+			.pay-warp .pay-style {
+				flex: 0 0 220px;
+				margin-left: 5px;
+			}
+			
+			.pay-warp .pay-style p {
+				margin-bottom: 0px;
+			}
+			
+			.pay-warp .pay-select {
+				flex: 1;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+			
+			.logo img {
+				width: 40px;
+				height: 40px;
+			}
+			
+			.pay-select img {
+				width: 40px;
+				height: 40px;
+			}
+			
+			#buy_time span {
+				margin-left: 5px;
+			}
+			
+			.mui-backdrop {
+				z-index: 10;
+			}
+			
+			#yujiTime {
+				margin-left: 30px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<form id="infoForm">
+
+			<header class="mui-bar mui-bar-nav">
+				<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+				<h1 class="mui-title">帮我取</h1>
+				<button type="button" class="mui-btn mui-btn-link mui-pull-right btn">使用须知</button>
+			</header>
+
+			<nav class="mui-bar mui-bar-tab" style="height: 50px;">
+				<div class="nav-left">
+					<p>
+						<i>!</i>
+						<span>￥<em>0.00</em></span>
+					</p>
+				</div>
+				<div class="nav-center">
+					<p>
+						<span>跑腿：</span><em>0.0</em>元 <br />
+						<span class="cen-bottom">优惠券已抵用<span>0.00</span></span>
+					</p>
+					<i class="mui-icon mui-icon-arrowright"></i>
+				</div>
+				<div class="nav-right">
+					<a>
+						<span class="pay">去支付</span>
+					</a>
+				</div>
+			</nav>
+			<div class="mui-content">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell mui-media" id="container">
+						<script type="text/html" id="containerData">
+							<a href="javascript:;">
+								<img class="mui-media-object mui-pull-left" src="../images/pt-icon-suben.png">
+								<div class="mui-media-body">
+									<div class="title">物品类型</div>
+									<div class="category">
+										{{each data.category as value}}
+										<span selectId={{value.id}}>{{value.name}}</span> {{/each}}
+									</div>
+									<input type="hidden" data-required="true" data-descriptions="category" name="goods_type_id" id="category" value="" />
+								</div>
+							</a>
+						</script>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;">
+							<img class="mui-media-object mui-pull-left" src="../images/pt-icon-jinqi.png">
+							<div class="mui-media-body">
+								<div class="title">
+									物品名称
+								</div>
+								<div class="mui-input-row name">
+									<input type="text" data-required="true" data-descriptions="name" name="goods" id="name" value="" placeholder="请填写你要取的物品" />
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;">
+							<img class="mui-media-object mui-pull-left" src="../images/pt-icon-fenxiang.png">
+							<div class="mui-media-body">
+								<div class="title">
+									取货地址
+								</div>
+								<div class="mui-input-row name" id="shop">
+									<p class="mui-ellipsis place">请选择取货地址</p>
+									<input type="hidden" data-required="true" data-descriptions="quhuo" name="from_address" id="quhuo" value="" />
+									<i class="mui-icon mui-icon-arrowright"></i>
+								</div>
+								<div class="address" tag='3'>
+									常用地址
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;">
+							<img class="mui-media-object mui-pull-left" src="../images/pt-icon-dingwei.png">
+							<div class="mui-media-body">
+								<div class="title">
+									收货地址
+								</div>
+								<div class="mui-input-row name" id="shouhuo">
+									<p class="mui-ellipsis place">请选择收货地址</p>
+									<input type="hidden" data-required="true" data-descriptions="sh_place" name="to_address" id="sh_place" value="" />
+									<i class="mui-icon mui-icon-arrowright"></i>
+								</div>
+								<div class="address" tag='4'>
+									常用地址
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;" class="mui-navigate-right">
+							<img class="mui-media-object mui-pull-left" src="../images/pt-icon-dianhua.png">
+							<div class="mui-media-body">
+								<div class="title">
+									取货电话
+								</div>
+								<div class="mui-input-row name">
+									<input type="text" data-required="true" data-descriptions="phone" data-pattern="^1[345678]\d{9}$" name="from_mobile" id="phone" value="" placeholder="请填写手机号" />
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;" class="mui-navigate-right">
+							<img class="mui-media-object mui-pull-left" src="../images/pt-icon-dianhua.png">
+							<div class="mui-media-body">
+								<div class="title">
+									收货电话
+								</div>
+								<div class="mui-input-row name">
+									<input type="text" data-required="true" data-descriptions="shphone" data-pattern="^1[345678]\d{9}$" name="to_mobile" id="shphone" value="" placeholder="请输入手机号" />
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;" class="mui-navigate-right">
+							<img class="mui-media-object mui-pull-left" src="../images/pt-icon-shandian.png">
+							<div class="mui-media-body">
+								<div class="title">
+									配送工具
+								</div>
+								<div class="mui-input-row name" id="ps_tool">
+									<span>请选择配送工具</span>
+									<input type="hidden" data-required="true" data-descriptions="tool" name="user_vehicle_id" id="tool" value="" placeholder="不限配送工具" />
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;" class="mui-navigate-right">
+							<img class="mui-media-object mui-pull-left" src="../images/pt-icon-shijian.png">
+							<div class="mui-media-body">
+								<div class="title">
+									取货时间
+								</div>
+								<div class="mui-input-row name" id="buy_time">
+									<span>立即取货</span>
+									<input type="hidden" name="pre_start_time" id="time" value="" placeholder="立即前往" />
+									<i class="mui-icon mui-icon-arrowright"></i>
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;" class="mui-navigate-right">
+							<img class="mui-media-object mui-pull-left" src="../images/pt-icon-shijian.png">
+							<div class="mui-media-body">
+								<div class="title">
+									预计到达时间
+								</div>
+								<div class="mui-input-row" id="yujiTime">
+									<span>立即取货</span>
+									<input type="hidden" name="pre_end_time" id="ddtime" value="" placeholder="立即前往" />
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;">
+							<img class="mui-media-object mui-pull-left" src="../images/pt-icon-bianji.png">
+							<div class="mui-media-body">
+								<div class="title">
+									备注留言
+								</div>
+								<div class="speech" id="audio">
+									<span class="mui-icon mui-icon-mic" style="font-size: 18px;font-weight: bold;"></span>
+									<span>点击播放</span>
+								</div>
+							</div>
+							<div id="player-warp" style="padding: 10px;display: none;">
+								<span id="player">播放录音</span>
+								<span class="mui-pull-right" id="delete">X</span>
+							</div>
+							<div class="mui-media-body require">
+								<textarea name="description" id="word" rows="2" cols="" placeholder="订单信息补充"></textarea>
+							</div>
+						</a>
+					</li>
+					<!--<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;" class="mui-navigate-right">
+							<img class="mui-media-object mui-pull-left" src="../images/pt-icon-qian.png">
+							<div class="mui-media-body box">
+								<div class="title">
+									特殊要求
+								</div>
+								<div class="mui-input-row">
+									<input type="checkbox" name="heat_insulation_box" id="heat" value="1" /> 保温箱配送
+									<input type="checkbox" name="insured" id="insured" value="1" /> 保价
+								</div>
+							</div>
+						</a>
+					</li>-->
+				</ul>
+				<div id="popover" class="mui-popover">
+					<div class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<div class="mui-card pay-box">
+								<div class="mui-card-header">
+									付款详情
+								</div>
+								<div class="mui-card-content">
+									<div class="mui-card-content-inner pay-price">
+										<p>
+											需支付金额<br>
+											<em id="money">0.00</em><em>元</em>
+										</p>
+									</div>
+									<div id="paymethod">
+										<script type="text/html" id="paymethodData">
+											{{each data as value}}
+											<div class="mui-card-content-inner pay-warp">
+												<div class="logo">
+													<img src="{{value.icon.src}}" />
+												</div>
+												<div class="pay-style">
+													{{value.name}}
+													<p class="mui-ellipsis">
+														{{value.description}}
+													</p>
+												</div>
+												<div class="pay-select">
+													<img src="../images/pt-error.png" check="0" select="{{value.code}}" />
+												</div>
+											</div>
+											{{/each}}
+										</script>
+									</div>
+
+								</div>
+								<div class="mui-card-footer pay-foot">
+									确认付款
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!--<a href="#popover" id="openPopover" class="mui-btn mui-btn-primary mui-btn-block">打开弹出菜单</a>-->
+
+			</div>
+			<div id='sound-alert' class="rprogress">
+				<div class="rschedule"></div>
+				<div class="r-sigh">!</div>
+				<div id="audio-tips" class="rsalert">手指上滑，取消发送</div>
+			</div>
+
+		</form>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/jquery-mvalidate.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/time.data.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			//			mui.init();
+			mui.init({
+				gestureConfig: {
+					tap: true, //默认为true
+					drag: true, //默认为true
+					hold: true, //默认为false，不监听
+					release: true //默认为false，不监听
+				}
+			});
+			var MIN_SOUND_TIME = 800;
+			var recorder = null;
+			var startTimestamp = null;
+			var stopTimestamp = null;
+			var stopTimer = null;
+			var recordCancel = false;
+
+			var soundAlert = document.getElementById("sound-alert");
+			var audioTips = document.getElementById("audio-tips");
+			// 控制录音弹出框是否播放
+			var setSoundAlertVisable = function(show) {
+				if(show) {
+					soundAlert.style.display = 'block';
+					soundAlert.style.opacity = 1;
+				} else {
+					soundAlert.style.opacity = 0;
+					//  完成再真正隐藏
+					setTimeout(function() {
+						soundAlert.style.display = 'none';
+					}, 200);
+				}
+			};
+			mui.plusReady(function() {
+				//删除
+				document.getElementById('delete').addEventListener('tap', function(e) {
+					console.log('aaa');
+					document.getElementById('player-warp').style.display = 'none';
+					e.stopPropagation();
+				});
+				/***
+				 * 录制语音文件转base64字符串
+				 */
+				//按住录音（长按开始录音）
+				var base64Str;
+				document.querySelector('#audio').addEventListener('hold', function() {
+					recordCancel = false;
+					if(stopTimer) clearTimeout(stopTimer);
+					audioTips.innerHTML = "手指上划，取消录音";
+					soundAlert.classList.remove('rprogress-sign');
+					setSoundAlertVisable(true);
+					//h获取当前设备的录音对象
+					recorder = plus.audio.getRecorder();
+					startTimestamp = (new Date()).getTime();
+					console.log("supportedFormats:" + JSON.stringify(recorder.supportedFormats));
+					recorder.record({
+						format: "amr",
+						filename: "_doc/audio/"
+					}, function(path) {
+						if(recordCancel) return;
+						console.log("path:" + path);
+						Audio2dataURL(path);
+					}, function(e) {
+						mui.toast("录音出现异常: " + e.message);
+					});
+				})
+				//释放保存（松手保存）
+				document.querySelector('#audio').addEventListener('release', function() {
+					if(audioTips.classList.contains('cancel')) {
+						audioTips.classList.remove('cancel');
+						audioTips.innerHTML = "手指上划，取消录音"
+					}
+					//判断语音时间
+					stopTimestamp = (new Date()).getTime();
+					if(stopTimestamp - startTimestamp < 800) {
+						audioTips.innerHTML = "录音时间太短";
+						soundAlert.classList.add('rprogress-sign');
+						recordCancel = true;
+						stopTimer = setTimeout(function() {
+							setSoundAlertVisable(false);
+						}, 800);
+					} else {
+						setSoundAlertVisable(false);
+					}
+					recorder.stop();
+				})
+				//拖动屏幕（手指上划 取消录音）
+				document.body.addEventListener('drag', function(event) {
+					if(Math.abs(event.detail.deltaY) > 50) {
+						if(!recordCancel) {
+							recordCancel = true;
+							if(!audioTips.classList.contains("cancel")) {
+								audioTips.classList.add('cancel');
+							}
+							audioTips.innerHTML = "松开手指，取消录音";
+						}
+					} else {
+						if(recordCancel) {
+							recordCancel = false;
+							if(audioTips.classList.contains('cancel')) {
+								audioTips.classList.remove('cancel');
+							}
+							audioTips.innerHTML = "手指上划，取消录音";
+						}
+					}
+				}, false);
+
+				/*
+				 * base64字符串转成语音文件播放
+				 */
+				document.querySelector('#player').addEventListener('tap', function(e) {
+					dataURL2Audio(base64Str, function(entry) {
+						var toURL = entry.toURL();
+						playAudio(toURL);
+					})
+					e.stopPropagation();
+				});
+				/*
+				 *录音文件转base64字符串
+				 * @param{object} path
+				 * 
+				 * */
+				function Audio2dataURL(path) {
+					plus.io.resolveLocalFileSystemURL(path, function(entry) {
+						entry.file(function(file) {
+							var reader = new plus.io.FileReader();
+							reader.onloadend = function(e) {
+								console.log(e.target.result);
+								base64Str = e.target.result;
+								document.getElementById('player-warp').style.display = 'block';
+							};
+							reader.readAsDataURL(file);
+						}, function(e) {
+							mui.toast("读写出现异常: " + e.message);
+						})
+					})
+				}
+
+				var userInfo = is_login();
+				//起步价 起步包含的公里数
+				var start_price, start_km;
+				if(userInfo.is_incubator == 1) {
+					$('#heat').attr("checked", true);
+					$('#heat').val(1);
+				} else {
+					$('#heat').attr("checked", false);
+					$('#heat').val(0);
+				}
+				//常用地址
+				$('.address').on('tap', function(event) {
+					var tag = $(this).attr('tag');
+					var addressPage = null;
+					if(addressPage == null) {
+						addressPage = plus.webview.getWebviewById('myaddress.html');
+						if(addressPage != null) {
+							mui.fire(addressPage, "DIY_TYPE", {
+								addressPage: tag
+							})
+						}
+					}
+					mui.openWindow({
+						id: "myaddress.html",
+						url: "../myaddress.html",
+						extras: {
+							addressPage: tag
+						}
+					})
+					event.stopPropagation();
+				})
+				//常用地址选择地址
+				window.addEventListener("address", function(event) {
+					var addressInfo = event.detail.addressInfo;
+					var detail = addressInfo.detail ? addressInfo.detail : "";
+					console.log(JSON.stringify(addressInfo));
+					if(event.detail.id == 3) {
+						$('#shop p').attr('currentText', '1');
+						$('#shop p').text(addressInfo.title + detail);
+						$('#quhuo').val(addressInfo.title + detail);
+						fahuoAddress = addressInfo.title + detail;
+						fahuoPoint = {
+							"lat": addressInfo.lat,
+							"lng": addressInfo.lng
+						};
+					} else if(event.detail.id == 4) {
+						$('#shouhuo p').attr('currentText', '1');
+						$('#shouhuo p').text(addressInfo.title + detail);
+						$('#sh_place').val(addressInfo.title + detail);
+						shouhuoAddress = addressInfo.title + detail;
+						shouhuoPoint = {
+							"lat": addressInfo.lat,
+							"lng": addressInfo.lng
+						};
+					}
+					sendPrice();
+				})
+
+				function getData() {
+					var categryToolData = null;
+					ajaxGet('usertake/getinfo.html', {},
+						function(res) {
+							if(res.code == 1) {
+								categryToolData = res.data;
+							} else if(res.code == -1 || res.code == -2) {
+								mui.confirm('', "你还没有登录请登录", ['现在去登录'], function(res) {
+									console.log('关闭了页面');
+									mui.openWindow({
+										id: 'login_code.html',
+										url: '/login_code.html'
+									});
+								}, 'div');
+							} else {
+								mui.toast(res.msg);
+							}
+
+						})
+					return categryToolData;
+				}
+				var data = getData();
+				if(data == null) {
+					$('#container').css('display', 'none');
+				}
+				var container = document.getElementById('container');
+				container.innerHTML = template('containerData', {
+					data: data
+				});
+				//支付方式
+				var payNum = 0;
+				var paymenthod = document.getElementById("paymethod");
+				ajaxGet('userpay/getpaylist.html', {}, function(res) {
+					var datas = {
+						data: res.data
+					}
+					paymethod.innerHTML = template('paymethodData', datas);
+					//支付方式
+					$('.pay-warp').each(function() {
+						$(this).on('tap', function() {
+							if($(this).children('div:last-child').find('img').attr('check') == '0') {
+								$(this).children('div:last-child').find('img').attr('src', '../images/pt-right.png');
+								$(this).children('div:last-child').find('img').attr('check', '1');
+								payNum = $(this).children('div:last-child').find('img').attr('select');
+								$(this).siblings().children('div:last-child').find('img').attr('check', '0');
+								$(this).siblings().children('div:last-child').find('img').attr('src', '../images/pt-error.png');
+							} else {
+								$(this).children('div:last-child').find('img').attr('src', '../images/pt-error.png');
+								$(this).children('div:last-child').find('img').attr('check', '0');
+								payNum = 0;
+							}
+						})
+					})
+				})
+				//支付清单
+				var listData = '';
+				//发货地址 收货地址
+				var fahuoAddress, shouhuoAddress, fahuoPoint, shouhuoPoint;
+				//下单时用户的实际经度纬度
+				var createPoint;
+				//跑男价 优惠券 最终价 公里
+				var express_price, coupon_cut, end_price, km, coupon_id;
+				//定位当前位置
+				var geolocation = new BMap.Geolocation();
+				geolocation.getCurrentPosition(function(r) {
+					var longitude = r.longitude;
+					var latitude = r.latitude;
+					createPoint = {
+						lng: longitude,
+						lat: latitude
+					};
+				})
+				coupon_id = null;
+				window.addEventListener('couponId', function(event) {
+					coupon_cut = event.detail.cut;
+					coupon_id = event.detail.couponId;
+					$('.nav-center p em').html(express_price);
+					$('.nav-center .cen-bottom span').html(coupon_cut);
+					sendPrice();
+				})
+				//获取收货地址
+				window.addEventListener('newsId', function(event) {
+					//					createPoint = event.detail.createPoint;
+					if(event.detail.id == 3) {
+						$('#shop p').attr('currentText', '1');
+						$('#shop p').text(event.detail.address);
+						$('#quhuo').val(event.detail.address);
+						fahuoAddress = event.detail.address;
+						fahuoPoint = event.detail.point;
+					} else if(event.detail.id == 4) {
+						$('#shouhuo p').attr('currentText', '1');
+						$('#shouhuo p').text(event.detail.address);
+						$('#sh_place').val(event.detail.address);
+						shouhuoAddress = event.detail.address;
+						shouhuoPoint = event.detail.point;
+					}
+					sendPrice();
+				})
+				//使用须知
+				$('.btn').on('tap', function() {
+					mui.openWindow({
+						id: "../buy/know.html",
+						url: "../buy/know.html"
+					})
+				});
+
+				var channel = null;
+				var wxChannel = null;
+				var aliChannel = null;
+				getChannels();
+
+				function getChannels() {
+					plus.payment.getChannels(function(channels) {
+						console.log("channels:" + JSON.stringify(channels));
+						for(var i = 0; i < channels.length; i++) {
+							if(channels[i].id == 'wxpay') {
+								wxChannel = channels[i];
+							}
+							if(channels[i].id == 'alipay') {
+								aliChannel = channels[i];
+							}
+						}
+					}, function(e) {
+						plus.ui.toast('获取支付通道失败！');
+						console.log("获取支付通道失败");
+					})
+				}
+
+				function pay(id) {
+					if(id == 'alipay') {
+						channel = aliChannel;
+					} else if(id == 'wxpay') {
+						channel = wxChannel;
+					} else {
+						plus.ui.toast('不支持此支付通道');
+						return;
+					};
+					var params = {
+						id: listData,
+						paytype: payNum
+					};
+					console.log("params:" + JSON.stringify(params));
+					ajaxPost('userpay/pay.html', params, function(res) {
+						console.log("这个可以有:" + JSON.stringify(res));
+						var data = JSON.stringify(res.data);
+						console.log('支付数据:' + res.data);
+						var str = res.data;
+						plus.payment.request(channel, str, function(result) {
+							console.log("result:" + JSON.stringify(result));
+							//							plus.ui.alert('支付成功!',function(){
+							//								back();
+							//							})
+							mui.openWindow({
+								id: "buy-result.html",
+								url: "../buy/buy-result.html",
+								extras: {
+									infoId: listData
+								},
+								createNew: true
+							});
+							setTimeout(function() {
+								plus.webview.currentWebview().close();
+							}, 100);
+						}, function(error) {
+							plus.ui.alert('支付失败', function() {
+								//								mui.back();
+							})
+							console.log('失败原因：' + JSON.stringify(error));
+							//							mui.alert("失败原因"+JSON.stringify(error));
+						})
+					}, function(res) {
+						console.log("请求失败:" + JSON.stringify(res));
+					})
+				}
+
+				//确认付款
+				$('.pay-foot').on('tap', function() {
+					if(payNum == 0) {
+						mui.alert("请选择支付方式")
+					} else if(payNum == 'yue') {
+						var params = {
+							id: listData,
+							paytype: payNum
+						};
+						ajaxPost('userpay/pay.html', params, function(res) {
+							console.log("余额支付:" + JSON.stringify(res));
+							if(res.code == 1) {
+								//支付成功
+								mui.openWindow({
+									id: 'buy-result.html',
+									url: '../buy/buy-result.html',
+									extras: {
+										infoId: listData
+									},
+									createNew: true
+								});
+								setTimeout(function() {
+									plus.webview.currentWebview().close();
+								}, 100);
+
+							} else if(res.code == 0) {
+								mui.toast(res.msg);
+							}
+						})
+					} else {
+						pay(payNum);
+					}
+				})
+				//支付
+				$('.pay').on('tap', function() {
+					if(end_price > 3000) {
+						mui.toast('金额不能超过3000');
+						return false;
+					};
+					$('#infoForm').submit();
+				})
+				/**
+				 * 获取对象属性的值
+				 * 主要用于过滤三级联动中，可能出现的最低级的数据不存在的情况，实际开发中需要注意这一点；
+				 * @param {Object} obj 对象
+				 * @param {String} param 属性名
+				 */
+				var _getParam = function(obj, param) {
+					return obj[param] || '';
+				};
+				//购买时间
+				//购买时间
+				//获取当前时间
+				var day = new Date().getHours();
+				var arr = timeData[0].children;
+				for(var i = 0; i < arr.length; i++) {
+					if(parseInt(arr[i].value) < parseInt(day) + 2) {
+						arr.splice(i--, 1);
+					}
+				}
+				var newTimeData = [{
+						value: "0",
+						text: "今天",
+						children: arr
+					},
+					{
+						value: "1",
+						text: "明天",
+						children: [{
+								value: "00",
+								text: "00点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "01",
+								text: "01点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "02",
+								text: "02点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "03",
+								text: "03点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "04",
+								text: "04点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "05",
+								text: "05点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "06",
+								text: "06点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "07",
+								text: "07点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "08",
+								text: "08点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "09",
+								text: "09点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "10",
+								text: "10点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "11",
+								text: "11点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "12",
+								text: "12点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "13",
+								text: "13点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "14",
+								text: "14点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "15",
+								text: "15点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "16",
+								text: "16点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "17",
+								text: "17点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "18",
+								text: "18点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "19",
+								text: "19点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "20",
+								text: "20点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "21",
+								text: "21点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "22",
+								text: "22点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							},
+							{
+								value: "23",
+								text: "23点",
+								children: [{
+										value: "00",
+										text: "00分"
+									},
+									{
+										value: "10",
+										text: "10分"
+									},
+									{
+										value: "20",
+										text: "20分"
+									},
+									{
+										value: "30",
+										text: "30分"
+									},
+									{
+										value: "40",
+										text: "40分"
+									},
+									{
+										value: "50",
+										text: "50分"
+									}
+								]
+							}
+
+						]
+					}
+				]
+				var buy_time = document.getElementById('buy_time');
+				$('#time').val("0-99-"); //默认立即购买
+				var timePicker = new mui.PopPicker({
+					layer: 3
+				});
+				timePicker.setData(newTimeData);
+				buy_time.addEventListener('tap', function() {
+					timePicker.show(function(items) {
+						$('#buy_time input').val(_getParam(items[0], 'value') + "-" + _getParam(items[1], 'value') + "-" + _getParam(items[2], 'value'));
+						$("#buy_time span").text(_getParam(items[0], 'text') + " " + _getParam(items[1], 'text') + " " + _getParam(items[2], 'text'));
+						sendPrice();
+					})
+				})
+				var yujiTime = document.getElementById('yujiTime');
+
+				//配送工具
+				var ps_tool = document.getElementById('ps_tool');
+				var toolPicker = new mui.PopPicker();
+				toolPicker.setData(data.tool);
+				ps_tool.addEventListener('tap', function(event) {
+					toolPicker.show(function(items) {
+						console.log('ggg');
+						$('#ps_tool span').text(items[0].text);
+						$('#ps_tool input').val(items[0].value);
+						sendPrice();
+					});
+					event.stopPropagation();
+				}, false);
+				//运送价格
+				function sendPrice() {
+					var tool = $('#ps_tool input').val();
+					var a1 = $("#shop p").attr('currentText');
+					var a2 = $("#shouhuo p").attr('currentText');
+					var select_time = $('#buy_time input').val();
+					coupon_id = coupon_id ? coupon_id : '';
+					console.log("a1:" + a1 + "a2:" + a2 + "tool:" + tool);
+					console.log("收货地址:" + shouhuoPoint);
+					if(parseInt(a1) == 1 && parseInt(a2) == 1 && tool != '') {
+						var params = {
+							pageId: 2,
+							user_vehicle_id: tool,
+							from_address: fahuoAddress,
+							to_address: shouhuoAddress,
+							from_point: fahuoPoint,
+							to_point: shouhuoPoint,
+							user_coupon_id: coupon_id
+						};
+						console.log("params:" + JSON.stringify(params));
+						ajaxPost('usertake/get_price.html', {
+							pageId: 2,
+							user_vehicle_id: tool,
+							from_address: fahuoAddress,
+							to_address: shouhuoAddress,
+							from_point: fahuoPoint,
+							to_point: shouhuoPoint,
+							user_coupon_id: coupon_id
+						}, function(data) {
+							console.log(JSON.stringify(data));
+							if(data.code == 1) {
+								//起步价 起步公里数
+								start_price = data.data.start_price;
+								start_km = data.data.start_km;
+								express_price = data.data.total_express_price;
+								end_price = data.data.first_pay;
+								km = data.data.km;
+								$('.nav-center p em').html(express_price);
+								$('.nav-left em').html(data.data.first_pay);
+								$('#money').html(data.data.first_pay);
+							}
+						}, function(res) {
+							console.log(JSON.stringify(res));
+						});
+						var preparams = {
+							pageId: 2,
+							pre_start_time: select_time,
+							user_vehicle_id: tool,
+							from_address: fahuoAddress,
+							to_address: shouhuoAddress,
+							from_point: fahuoPoint,
+							to_point: shouhuoPoint
+						};
+						console.log('给后台的数据:' + JSON.stringify(preparams));
+						ajaxPost("user/get_pre_end_time.html", preparams, function(res) {
+							if(res.code == 1) {
+								var strArr = res.data.time.split("-");
+								var str = res.data.day ? "明天" : "今天" + strArr[0] + "点" + strArr[1] + "分";
+								console.log(str);
+								$('#yujiTime span').text(str);
+								$('#ddtime').val(res.data.day + "-" + strArr[0] + "-" + strArr[1]);
+							}
+						})
+
+					}
+				}
+
+				//类型选中
+				$('.category span').each(function() {
+					$(this).on('tap', function() {
+						var selectId = $(this).attr('selectId');
+						$(this).attr('class', 'active').siblings().attr('class', 'none');
+						$('#category').val(selectId);
+					})
+				})
+				//取货地址
+				$('#shop').on('tap', function() {
+					var buy_place = null;
+					//获取下一个页面
+					if(buy_place == null) {
+						buy_place = plus.webview.getWebviewById('../buy/buy_place.html');
+						//第一次他肯定为空，所以，这里面这个fire方法，是不会执行的
+						if(buy_place != null) {
+							mui.fire(buy_place, "DIY_DATA", {
+								id: 3
+							});
+						}
+					}
+					mui.openWindow({
+						id: '../buy/buy_place.html',
+						url: '../buy/buy_place.html',
+						extras: {
+							pageId: 3
+						},
+						createNew: true
+					})
+					sendPrice();
+				})
+
+				//收货地址
+				$('#shouhuo').on('tap', function() {
+					var buy_place = null;
+					//获取下一个页面
+					if(buy_place == null) {
+						buy_place = plus.webview.getWebviewById('../buy/buy_place.html');
+						//第一次他肯定为空，所以，这里面这个fire方法，是不会执行的
+						if(buy_place != null) {
+							mui.fire(buy_place, "DIY_DATA", {
+								id: 4
+							});
+						}
+					}
+					mui.openWindow({
+						id: '../buy/buy_place.html',
+						url: '../buy/buy_place.html',
+						extras: {
+							pageId: 4
+						},
+						createNew: true
+					})
+					sendPrice();
+				})
+				//前端验证
+				$("#infoForm").mvalidate({
+					type: 1,
+					onKeyup: true,
+					sendForm: true,
+					firstInvalidFocus: false,
+					valid: function(event, options) {
+						var create_x = createPoint.lng;
+						var create_y = createPoint.lat;
+						var formData;
+						if(coupon_id == null) {
+							formData = $.param({
+								from_point: fahuoPoint,
+								to_point: shouhuoPoint,
+								create_x: create_x,
+								create_y: create_y,
+								speech: base64Str
+							}) + '&' + $('#infoForm').serialize();
+						} else {
+							formData = $.param({
+								user_coupon_id: coupon_id,
+								from_point: fahuoPoint,
+								to_point: shouhuoPoint,
+								create_x: create_x,
+								create_y: create_y,
+								speech: base64Str
+							}) + '&' + $('#infoForm').serialize();
+						}
+						ajaxPost('usertake/publish_task.html', formData, function(data) {
+							if(data.code == 1) {
+								//订单ID
+								listData = data.data.id;
+								mui('#popover').popover('show');
+								var mainPage = plus.webview.getWebviewById('main.html');
+								if(mainPage) {
+									mui.fire(mainPage, "updateCenter");
+								}
+							} else {
+								mui.toast(data.msg);
+							}
+						}, function(res) {
+							console.log(res.msg);
+						});
+						event.preventDefault();
+					},
+					descriptions: {
+						category: {
+							required: "请选择物品类型"
+						},
+						name: {
+							required: "请填写物品名称"
+						},
+						quhuo: {
+							required: "请选择取货地址"
+						},
+						sh_place: {
+							required: "请选择收货地址"
+						},
+						shphone: {
+							required: "请填写收货电话",
+							pattern: "手机号码格式不正确"
+						},
+						phone: {
+							required: "请输入取货电话",
+							pattern: "手机号码格式不正确"
+						},
+						tool: {
+							required: "请选择配送工具"
+						},
+						price: {
+							required: "请输入商品价格"
+						},
+						time: {
+							required: "请输入购买时间"
+						}
+					}
+				})
+				//价格明细
+				$('.nav-center').on('tap', function() {
+					var tool = $('#ps_tool input').val();
+					var a1 = $("#shop p").attr('currentText');
+					var a2 = $("#shouhuo p").attr('currentText');
+					if(end_price > 3000) {
+						mui.toast('金额不能超过3000');
+						return false;
+					};
+					if(parseInt(a1) == 1 && parseInt(a2) == 1 && tool != '') {
+						coupon_cut = $('.nav-center .cen-bottom span').html();
+						var detailPrice = null;
+						if(detailPrice == null) {
+							detailPrice = plus.webview.getWebviewById('../buy/detailPrice.html');
+							if(detailPrice != null) {
+								mui.fire(detailPrice, "DIY_DATA", {
+									pageId: 2,
+									user_vehicle_id: tool,
+									from_address: fahuoAddress,
+									to_address: shouhuoAddress,
+									from_point: fahuoPoint,
+									to_point: shouhuoPoint,
+									express_price: express_price,
+									coupon_cut: coupon_cut,
+									end_price: end_price,
+									km: km,
+									start_price: start_price,
+									start_km: start_km
+								});
+							}
+						}
+						mui.openWindow({
+							id: "../buy/detailPrice.html",
+							url: "../buy/detailPrice.html",
+							extras: {
+								pageId: 2,
+								user_vehicle_id: tool,
+								from_address: fahuoAddress,
+								to_address: shouhuoAddress,
+								from_point: fahuoPoint,
+								to_point: shouhuoPoint,
+								express_price: express_price,
+								coupon_cut: coupon_cut,
+								end_price: end_price,
+								km: km,
+								start_price: start_price,
+								start_km: start_km
+							}
+						})
+					} else {
+						mui.alert('请选择地址和运送工具');
+					}
+
+				})
+			})
+		</script>
+	</body>
+
+</html>

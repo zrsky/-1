@@ -1,0 +1,771 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>购买地址</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<!--阿里图标-->
+		<link rel="stylesheet" type="text/css" href="http://at.alicdn.com/t/font_392393_1jakp7zzjrc9dx6r.css" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			.anchorBL {
+				display: none;
+			}
+			
+			.mui-card {
+				margin: 0;
+			}
+			
+			.btn-color {
+				background-color: #ff8b02;
+				color: #FFFFFF;
+			}
+			
+			em {
+				font-style: normal;
+			}
+			
+			.mui-card-header em {
+				color: #FF8B02;
+				margin-right: 5px;
+			}
+			
+			.mui-card-header p {
+				margin-top: 5px;
+				margin-bottom: 0;
+			}
+			
+			.mui-card-header {
+				display: block;
+				position: relative;
+			}
+			
+			.mui-card-header i {
+				position: absolute;
+				top: 15px;
+				right: 15px;
+			}
+			
+			.mui-card-content-inner {
+				display: flex;
+			}
+			
+			.mui-card-content-inner input {
+				border: none;
+				padding: 0;
+				margin-bottom: 0;
+				flex: 80%;
+			}
+			
+			.mui-card-content-inner button {
+				flex: 20%;
+				margin: 5px;
+			}
+			
+			.route {
+				width: 100%;
+				height: 15em;
+			}
+			
+			.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+				color: #FF8B02;
+				border-bottom: 2px solid #FF8B02;
+			}
+			
+			#segmentedControl i {
+				margin-right: 5px;
+			}
+			
+			#segmentedControl {
+				background-color: #FFFFFF;
+			}
+			
+			#item1 div {
+				border: none;
+			}
+			
+			#item1,
+			#item2,
+			#item3 {
+				height: 20em;
+			}
+			
+			#topPopover {
+				width: 100%;
+				height: 80%;
+				left: 0 !important;
+			}
+			
+			.searchInput {
+				width: 95%;
+				margin: 0 auto;
+				margin-top: 15px;
+			}
+			
+			.mui-backdrop {
+				background-color: rgba(0, 0, 0, 0);
+			}
+			
+			#searchResultPanel {
+				position: relative;
+				z-index: 1000;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">新乡市</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-input-row mui-search searchInput">
+				<input type="search" class="mui-input-clear" name="search-input" id="search-input" value="" placeholder="请输入你要搜索的地址" />
+				<div id="searchResultPanel" style="border:1px solid #C0C0C0;width:150px;height:auto; display:none;"></div>
+			</div>
+			<div class="mui-card">
+				<div class="mui-card-header current">
+					<em>[当前]</em><span></span>
+					<p class="mui-ellipsis"></p>
+				</div>
+				<div class="mui-card-content">
+					<div class="mui-card-content-inner">
+						<input type="text" name="detail" id="detail" placeholder="楼层/门牌号" />
+						<button type="button" class="mui-btn btn-color" id="sure">确定</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="route" id="allmap">
+
+			</div>
+			<!--选项卡-->
+			<div id="segmentedControl" class="mui-segmented-control mui-segmented-control-inverted mui-segmented-control-primary">
+				<a class="mui-control-item mui-active" href="#item1"><i class="iconfont icon-dingwei"></i>附近的点</a>
+				<a class="mui-control-item" href="#item2" id="historyBtn"><i class="iconfont icon-lishijilu"></i>历史记录</a>
+				<a class="mui-control-item" href="#item3" id="collectBtn"><i class="iconfont icon-shoucang"></i>收藏的点</a>
+			</div>
+		</div>
+		<div id="item1" class="mui-control-content mui-active">
+			<script type="text/html" id="item1Data">
+				<ul class="mui-table-view">
+					{{each data as value index}}
+					<li class="mui-table-view-cell mui-media" id="slide{{index}}">
+						<a href="javascript:;" class="wrap">
+							<img class="mui-media-object mui-pull-right" src="../images/pt-star.png">
+							<div class="mui-media-body">
+								<span>{{value[0]}}</span>
+								<p class="mui-ellipsis">{{value[1]}}</p>
+							</div>
+						</a>
+					</li>
+					{{/each}}
+				</ul>
+			</script>
+		</div>
+		<!--历史记录-->
+		<div id="item2" class="mui-control-content">
+			<script type="text/html" id="history">
+				{{if data.length == 0}}
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;">
+							<div class="mui-media-body">
+								暂无历史记录
+							</div>
+						</a>
+					</li>
+				</ul>
+				{{else if data.length != 0}}
+				<ul class="mui-table-view">
+					{{each data as value index}}
+					<li class="mui-table-view-cell mui-media" id="history{{index}}">
+						<a href="javascript:;" class="wrap">
+							<div class="mui-media-body">
+								<span>{{value.title}}</span>
+								<p class="mui-ellipsis">{{value.address}}</p>
+							</div>
+						</a>
+					</li>
+					{{/each}}
+				</ul>
+				{{/if}}
+			</script>
+
+		</div>
+		<!--收藏的点-->
+		<div id="item3" class="mui-control-content">
+			<script type="text/html" id="shouchang">
+				{{if data.length == 0}}
+				<ul class="mui-table-view" id="collection">
+					<li class="mui-table-view-cell mui-media">
+						<a href="javascript:;" class="collection-wrap">
+							<div class="mui-media-body">
+								暂无收藏点
+							</div>
+						</a>
+					</li>
+				</ul>
+				{{else if data.length != 0}}
+				<ul class="mui-table-view" id="collection">
+					{{each data as value index}}
+					<li class="mui-table-view-cell mui-media" id="coll{{index}}">
+						<a href="javascript:;" class="collection-wrap">
+							<img class="mui-media-object mui-pull-right" src="../images/pt-star-select.png">
+							<div class="mui-media-body">
+								<span>{{value.title}}</span>
+								<p class="mui-ellipsis">{{value.address}}</p>
+							</div>
+						</a>
+					</li>
+					{{/each}}
+				</ul>
+				{{/if}}
+
+			</script>
+
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/base.js"></script>
+		<script type="text/javascript">
+			//			mui.init({
+			//				preloadPages: [{
+			//						id: "buy/buy.html",
+			//						url: 'buy.html'
+			//					},
+			//					{
+			//						id: "take/take.html",
+			//						url: "../take/take.html"
+			//					},
+			//					{
+			//						id: "send/send.html",
+			//						url: "../send/send.html"
+			//					}
+			//				]
+			//			});
+			mui.init();
+
+			mui.plusReady(function() {
+				var userinfo = is_login();
+				var id = null;
+				//地址信息
+				var addressInfo = null;
+				var wv = plus.webview.currentWebview();
+				//坐标
+				var createPoint, lng, lat;
+				var currentPoint = {
+					lng: '',
+					lat: ''
+				};
+				var uid = null; //地址ID
+				id = wv.pageId;
+				addressInfo = wv.addressInfo;
+				//添加上一个页面自定义事件监听
+				window.addEventListener('DIY_DATA', function(event) {
+					id = event.detail.id;
+					addressInfo = event.detail.addressInfo;
+					if(addressInfo) {
+						$('.current span').text(addressInfo.title);
+						$('.current p').text(addressInfo.address);
+						$('#detail').val(addressInfo.detail);
+					}
+				})
+				//自定义监听编辑地址
+				window.addEventListener('edited', function(event) {
+					id = event.detail.id;
+				})
+				//收藏地址
+				var item3 = document.getElementById("item3");
+				$('#collectBtn').on('tap', function() {
+					ajaxGet("useraddress/favlist.html", {}, function(res) {
+						console.log("收藏的点:" + JSON.stringify(res));
+						if(res.code == 1) {
+							var datas = {
+								data: res.data
+							}
+							item3.innerHTML = template('shouchang', datas);
+							$('#item3 .mui-media-body').each(function(index) {
+								$(this).on('tap', function() {
+									var arr = res.data[index];
+									$('.current span').text(arr.title);
+									$('.current p').text(arr.address);
+									uid = arr.id;
+									currentPoint.lng = arr.lng;
+									currentPoint.lat = arr.lat;
+									lng = arr.lng;
+									lat = arr.lat;
+									console.log(arr.detail);
+									$('#detail').val(arr.detail);
+									place = arr.title;
+									address = arr.address;
+									//改变地图定位
+									var point = new BMap.Point(lng, lat);
+									bm.centerAndZoom(point, 15);
+									//清除之前标记
+									bm.clearOverlays();
+									var marker = new BMap.Marker(point, {
+										icon: new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+											scale: 2,
+											fillColor: "orange",
+											fillOpacity: 0.8
+										})
+									})
+									bm.addOverlay(marker);
+								})
+							})
+							$('.collection-wrap img').each(function(index) {
+								$(this).on('tap', function() {
+									var self = this;
+									var arr = res.data[index];
+									uid = arr.id;
+									console.log(uid);
+									var btnArray = ['否', '是'];
+									mui.confirm('确定要取消收藏么？', '收藏', btnArray, function(e) {
+										if(e.index == 1) {
+											//向服务器发送取消收藏
+											ajaxPost("useraddress/cancel_fav_address.html", {
+												id: uid
+											}, function(res) {
+												console.log(JSON.stringify(res));
+												if(res.code == 1) {
+													console.log($(self).parent().parent());
+													$(self).parent().parent().hide();
+													console.log("取消成功");
+												}
+											}, function(res) {
+												console.log("shibai:" + JSON.stringify(res));
+											})
+										} else {
+
+										}
+									})
+								})
+							})
+						}
+					}, function(res) {
+						console.log("收藏失败:" + JSON.stringify(res));
+					})
+				})
+				//历史记录
+				var item2 = document.getElementById('item2');
+				$('#historyBtn').on("tap", function() {
+					ajaxGet('useraddress/historylist.html', {}, function(res) {
+						console.log("历史记录:" + JSON.stringify(res));
+						if(res.code == 1) {
+							var datas = {
+								data: res.data
+							}
+							item2.innerHTML = template("history", datas);
+							$('#item2 .mui-media-body').each(function(index) {
+								$(this).on('tap', function() {
+									console.log(JSON.stringify(res.data));
+									console.log(index);
+									var arr = res.data[index];
+									$('.current span').text(arr.title);
+									$('.current p').text(arr.address);
+									uid = arr.id;
+									lng = arr.lng;
+									lat = arr.lat;
+									currentPoint.lat = arr.lat;
+									currentPoint.lng = arr.lng;
+									console.log(arr.detail);
+									$('#detail').val(arr.detail);
+									place = arr.title;
+									address = arr.address;
+									//改变地图定位
+									var point = new BMap.Point(lng, lat);
+									bm.centerAndZoom(point, 15);
+									//清除之前标记
+									bm.clearOverlays();
+									var marker = new BMap.Marker(point, {
+										icon: new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+											scale: 2,
+											fillColor: "orange",
+											fillOpacity: 0.8
+										})
+									})
+									bm.addOverlay(marker);
+								})
+							})
+						}
+					}, function(res) {
+						console.log("记录失败:" + JSON.stringify(res));
+					})
+				})
+				//地址
+				var place = $('.current span').text();
+				var address = $('.current p').text();
+				//创建地址解析
+				function mygeoUpload(pp, mOption) {
+					var myGeo = new BMap.Geocoder(); //创建地址解析实例
+					myGeo.getLocation(pp, function mCallback(rs) {
+						var allPois = rs.surroundingPois; //获取全部poi
+						var s = [];
+						for(var i = 0; i < allPois.length; i++) {
+							s.push(allPois[i].title + "," + allPois[i].address);
+						}
+						var strs = new Array();
+						for(var i = 0; i < s.length; i++) {
+							strs.push(s[i].split(','));
+						}
+						var datas = {
+							data: strs
+						}
+						document.getElementById('item1').innerHTML = template('item1Data', datas);
+
+						$('#item1 .mui-media-body').each(function(index) {
+							$(this).on('tap', function() {
+								bm.clearOverlays();
+								var spanStr = $(this).find('span').text();
+								var pStr = $(this).find('p').text();
+								$('.current span').text(spanStr);
+								$('.current p').text(pStr);
+								place = $('.current span').text();
+								address = $('.current p').text();
+								var point = allPois[index].point;
+								currentPoint.lat = point.lat;
+								currentPoint.lng = point.lng;
+								console.log("currentPoint1:" + JSON.stringify(currentPoint));
+								lng = point.lng;
+								lat = point.lat;
+								bm.centerAndZoom(point, 18);
+								marker = new BMap.Marker(point, {
+									icon: new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+										scale: 2,
+										fillColor: "orange",
+										fillOpacity: 0.8
+									})
+								})
+								bm.addOverlay(marker);
+								a(point);
+							})
+						})
+
+						//收藏
+						var state = 0; //是否收藏
+						var collection = document.getElementById('collection');
+						$('.wrap img').each(function(index) {
+							$(this).on('tap', function() {
+								var xpoint = allPois[index].point.lng;
+								var ypoint = allPois[index].point.lat;
+								var title = allPois[index].title;
+								var address = allPois[index].address;
+								console.log("address:" + address);
+								console.log("xpoint:" + xpoint);
+								console.log("ypoint:" + ypoint);
+								var i = index;
+								var self = this;
+								if($(self).attr('check') != '1') {
+									state = 0;
+								} else {
+									state = 1
+								}
+								if(state) {
+									$(self).attr('src', '../images/pt-star.png');
+									$(self).attr('check', '0');
+									state = 0;
+									$('#' + index).hide();
+									uid = $(self).attr("uid");
+									console.log(uid);
+									//向服务器发送取消收藏
+									ajaxPost("useraddress/cancel_fav_address.html", {
+										id: uid
+									}, function(res) {
+										console.log(JSON.stringify(res));
+										if(res.code == 1) {
+											console.log("取消成功");
+										}
+									})
+								} else {
+									$(self).attr('src', '../images/pt-star-select.png');
+									$(self).attr('check', '1');
+									state = 1;
+									//向服务器发送收藏地址
+									ajaxPost("useraddress/add_fav_address.html", {
+										lng: xpoint,
+										lat: ypoint,
+										title: title,
+										address: address
+									}, function(res) {
+										console.log("收藏:" + JSON.stringify(res));
+										if(res.code == 1) {
+											mui.alert("收藏成功");
+											uid = res.data.id;
+											$(self).attr("uid", uid);
+										}
+									}, function(res) {
+										console.log(JSON.stringify(res));
+									})
+								}
+							})
+						})
+					}, mOption);
+				}
+
+				//附近显示半径
+				function a(pp) {
+					var mOption = {
+						poiRadius: 500, //半径为1000米内的POI，默认100米
+						numPois: 12 //列举出12个POI，默认是10个
+					}
+					mygeoUpload(pp, mOption);
+				}
+				//创建地图
+				var bm = new BMap.Map('allmap');
+				var longitude, latitude, point, marker;
+				var geolocation = new BMap.Geolocation();
+				geolocation.getCurrentPosition(function(r){
+//				plus.geolocation.getCurrentPosition(function(r) {
+					if(id == 8) {
+						longitude = addressInfo.lng;
+						latitude = addressInfo.lat;
+						currentPoint.lng = longitude;
+						currentPoint.lat = latitude;
+						console.log("currentPoint2:" + JSON.stringify(currentPoint));
+						point = new BMap.Point(longitude, latitude);
+						bm.centerAndZoom(point, 15);
+						marker = new BMap.Marker(point, {
+							icon: new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+								scale: 2,
+								fillColor: "orange",
+								fillOpacity: 0.8
+							})
+						})
+						bm.addOverlay(marker);
+					} else {
+						longitude = r.point.lng;
+						latitude = r.point.lat;
+						currentPoint.lng = longitude;
+						currentPoint.lat = latitude;
+						console.log("currentPoint3:" + JSON.stringify(currentPoint));
+						point = new BMap.Point(longitude, latitude);
+						bm.centerAndZoom(point, 15);
+						marker = new BMap.Marker(point, {
+							icon: new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+								scale: 2,
+								fillColor: "orange",
+								fillOpacity: 0.8
+							})
+						})
+						bm.addOverlay(marker);
+					}
+					//现在所在位置
+					var geoc = new BMap.Geocoder();
+					geoc.getLocation(point, function(rs) {
+						var addComp = rs.addressComponents;
+						var str = addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber;
+						console.log("232:" + JSON.stringify(addressInfo));
+						if(addressInfo) {
+							$('.current span').text(addressInfo.title);
+							$('.current p').text(addressInfo.address);
+							$('#detail').val(addressInfo.detail);
+						} else {
+							$('.current span').text(addComp.street + addComp.streetNumber);
+							$('.current p').text(addComp.province + addComp.city + addComp.district)
+						}
+						place = $('.current span').text();
+						address = $('.current p').text();
+						lng = point.lng;
+						lat = point.lat;
+						createPoint = point;
+					})
+					//附近的点
+					var mOption = {
+						poiRadius: 500, //半径为1000米内的POI，默认100米
+						numPois: 12 //列举出12个POI，默认是10个
+					}
+					mygeoUpload(point, mOption);
+				}, function(e) {
+					mui.alert("定位失败,请重新定位");
+					console.log(e);
+					console.log('失败:' + JSON.stringify(e));
+					switch(e.code) {
+						case e.PERMISSION_DENIED:
+							alert('User denied the request for Geolocation.');
+							break;
+						case e.POSITION_UNAVAILABLE:
+							alert('Location information is unavailable.');
+							break;
+						case e.TIMEOUT:
+							alert('The request to get user location timed out.');
+							break;
+						case e.UNKNOWN_ERROR:
+							alert('An unknown error occurred.');
+							break;
+					}
+				}, {
+					coordsType: 'bd09ll',
+					provider: 'baidu'
+				});
+
+
+				//    添加定位控件
+				var geolocationControl = new BMap.GeolocationControl();
+				geolocationControl.addEventListener("locationSuccess", function(e) {
+					marker.hide();
+					latitude = e.point.lat;
+					longitude = e.point.lng;
+					point = new BMap.Point(longitude, latitude);
+					bm.centerAndZoom(point, 15);
+					marker = new BMap.Marker(point, {
+						// 指定Marker的icon属性为Symbol
+						icon: new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+							scale: 2, //图标缩放大小
+							fillColor: "orange", //填充颜色
+							fillOpacity: 0.8 //填充透明度
+						})
+					});
+					bm.addOverlay(marker);
+				});
+				geolocationControl.addEventListener("locationError", function(e) {
+					// 定位失败事件
+					mui.alert(e.message);
+				});
+				bm.addControl(geolocationControl);
+
+				//建立一个自动完成的对象
+				var ac = new BMap.Autocomplete({
+					"input": "search-input",
+					"location": bm
+				});
+				//鼠标放在下拉列表上的事件
+				ac.addEventListener("onhighlight", function(e) {
+					var str = "";
+					var _value = e.fromitem.value;
+					var value = "";
+					if(e.fromitem.index > -1) {
+						value = _value.province + _value.city + _value.district + _value.street + _value.business;
+					}
+					str = "FromItem<br />index = " + e.fromitem.index + "<br />value = " + value;
+
+					value = "";
+					if(e.toitem.index > -1) {
+						_value = e.toitem.value;
+						value = _value.province + _value.city + _value.district + _value.street + _value.business;
+					}
+					str += "<br />ToItem<br />index = " + e.toitem.index + "<br />value = " + value;
+					document.getElementById('searchResultPanel').innerHTML = str;
+				});
+				var myValue;
+				//鼠标点击下拉列表后的事件
+				ac.addEventListener("onconfirm", function(e) {
+					var _value = e.item.value;
+					myValue = _value.province + _value.city + _value.district + _value.street + _value.business;
+					document.getElementById('searchResultPanel').innerHTML = "onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;
+					$('.current span').text(_value.street + _value.business);
+					$('.current p').text(_value.province + _value.city + _value.district);
+					place = $('.current span').text();
+					address = $('.current p').text();
+					setPlace();
+				});
+
+				function setPlace() {
+					bm.clearOverlays(); //清除地图上的所有覆盖物
+					function myFun() {
+						var pp = localSearch.getResults().getPoi(0).point; //获取第一个智能搜索的结果
+						currentPoint = pp;
+						lng = pp.lng;
+						lat = pp.lat;
+						bm.centerAndZoom(pp, 18);
+						bm.addOverlay(new BMap.Marker(pp, {
+							icon: new BMap.Symbol(BMap_Symbol_SHAPE_POINT, {
+								scale: 2,
+								fillColor: "orange",
+								fillOpacity: 0.8
+							})
+						})); //添加标注
+						//附近的点
+						a(pp);
+					}
+					var localSearch = new BMap.LocalSearch(bm, {
+						onSearchComplete: myFun
+					});
+					localSearch.search(myValue);
+				}
+				//点击确认
+				$('#sure').on('tap', function() {
+					//详细地址
+					var str = $('#detail').val();
+					if(id == 8) {
+						uid = addressInfo.id;
+					}
+					console.log("str:" + str);
+					if(!str || str.match(/^\s+$/g)) {
+						mui.alert('请填写详细地址');
+					} else {
+						var detailAddress = place + str;
+						console.log("title:" + place + " address:" + address + " lng:" + currentPoint.lng + " lat:" + currentPoint.lat + " detail:" + str + " id:" + uid);
+						var buyPage = null;
+						ajaxPost('useraddress/add_address.html', {
+							title: place,
+							address: address,
+							lng: currentPoint.lng,
+							lat: currentPoint.lat,
+							detail: str,
+							id: uid
+						}, function(data) {
+							console.log(JSON.stringify(data));
+							if(data.code == 1) {
+								uid = data.data.id;
+								//获取buy页面
+								if((id == 1) || (id == 2) && (!buyPage)) {
+									buyPage = plus.webview.getWebviewById('buy/buy.html');
+								} else if((id == 3) || (id == 4) && (!buyPage)) {
+									buyPage = plus.webview.getWebviewById('take/take.html');
+								} else if((id == 5) || (id == 6) && (!buyPage)) {
+									buyPage = plus.webview.getWebviewById('send/send.html');
+								} else if(id == 7 && (!buyPage)) {
+									buyPage = plus.webview.getWebviewById('myaddress.html');
+								}
+								//触发buy页面的newsId事件
+								mui.fire(buyPage, 'newsId', {
+									id: id,
+									address: detailAddress,
+									point: currentPoint,
+									createPoint: createPoint
+								});
+								if(id == 1 || id == 2) {
+									mui.openWindow({
+										id: "buy/buy.html"
+									})
+									mui.back();
+								} else if(id == 3 || id == 4) {
+									mui.openWindow({
+										id: "take/take.html"
+									})
+									mui.back();
+								} else if(id == 5 || id == 6) {
+									mui.openWindow({
+										id: "send/send.html"
+									})
+									mui.back();
+								} else if(id == 7) {
+									console.log('执行回地址');
+									var Scanner = plus.webview.getWebviewById("myaddress.html");
+									mui.fire(Scanner, "AddNew");
+									mui.back();
+								} else if(id == 8) {
+									var Scanner = plus.webview.getWebviewById("myaddress.html");
+									mui.fire(Scanner, "AddNew");
+									mui.back();
+								}
+							} else {
+								mui.alert("所选地址不存在");
+							}
+						}, function(res) {
+							console.log("shibai：" + JSON.stringify(res));
+						});
+
+					}
+				})
+			})
+		</script>
+	</body>
+
+</html>

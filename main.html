@@ -1,0 +1,502 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>滴滴跑腿</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" href="css/index.css" />
+		<link rel="stylesheet" type="text/css" href="css/iconfont.css" />
+		<style type="text/css">
+			.anchorBL {
+				display: none;
+			}
+			
+			.progressbar {
+				position: absolute;
+				top: 45%;
+				left: 30%;
+				width: 40%;
+				display: none;
+				z-index: 1000;
+			}
+			
+			.progressbar div {
+				display: inline-block;
+			}
+			
+			.mui-backdrop {
+				position: fixed;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				z-index: 998;
+				background-color: rgba(0, 0, 0, .5);
+			}
+			
+			.local {
+				position: absolute;
+				left: 20px;
+				bottom: 100px;
+				z-index: 1000;
+				width: 30px;
+				height: 30px;
+				background-color: lightgrey;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<!-- 主界面菜单同时移动 -->
+		<!-- 侧滑导航根容器 -->
+		<div class="mui-off-canvas-wrap mui-draggable">
+			<!-- 主页面容器 -->
+			<div class="mui-inner-wrap" id="offCanvasWrapper">
+				<!-- 菜单容器 -->
+				<aside class="mui-off-canvas-left ff" id="offCanvasSide">
+					<div class="mui-scroll-wrapper">
+						<div class="mui-scrolnal">
+							<div id="container">
+								<script type="text/html" id="containerData">
+									<div class="noLogin">
+										<img class="userimg" src="images/logo4.jpg" />
+										<div class="info-flex">
+											未登录/请点击登录
+										</div>
+									</div>
+									<div class="user-info">
+										{{if res.data.touxiang == ''}}
+										<img class="userimg" src="images/logo4.jpg" alt="" /> {{else}}
+										<img class="userimg" src="{{res.data.touxiang}}" alt="" /> {{/if}}
+										<div class="info">
+											<h5>{{res.data.username}}</h5>
+											<p class="account">账号 {{res.data.mobile}}</p>
+											<!--{{if res.data.status == 1}}
+											<p>个人资料 <span>已认证</span></p>
+											{{else if res.data.status == 0}}
+											<p>个人资料</p><span>未认证</span> {{/if}}-->
+										</div>
+										<span class="mui-icon mui-icon-compose" id="edit"></span>
+									</div>
+									<div class="mui-row selmenu">
+										<div class="mui-col-xs-3" id="yue">
+											<img src="images/yue.png" />
+											<p>余额</p>
+											<p>{{res.data.balance}}</p>
+										</div>
+										<div class="mui-col-xs-3" id="coupon">
+											<img src="images/yh.png" />
+											<p>优惠卷</p>
+											<p>{{res.data.coupon_count}}</p>
+										</div>
+										<div class="mui-col-xs-3" id="order">
+											<img src="images/cx.png" />
+											<p>订单</p>
+											<p>{{res.data.order_count}}</p>
+										</div>
+										<div class="mui-col-xs-3" id="zjdetail">
+											<img src="images/mx.png" />
+											<p>资金</p>
+											<p>{{res.data.balancelog_count}}</p>
+										</div>
+									</div>
+								</script>
+							</div>
+							<!--<div class="mui-row dys" id="info">
+								<i class="iconfont one">&#xe66c;</i>消息通知
+							</div>-->
+							<!--<div class="mui-row dys" id="invite">
+								</span><i class="iconfont two">&#xe625;</i>邀请好友
+							</div>-->
+							<div class="mui-row dys" id="text">
+								<i class="mui-icon iconfont icon-tuwenjiaocheng one"></i>图文教程
+							</div>
+							<div class="mui-row dys" id="video">
+								</span><i class="mui-icon iconfont icon-shipinjiaocheng two"></i>视频教程
+							</div>
+							<div class="mui-row dys alphone" id="kefu">
+								<i class="iconfont three">&#xe657;</i>
+								<a href="javascript:;">联系客服</a>
+							</div>
+							<div class="mui-row dys" id="myaddress">
+								<i class="iconfont four">&#xe65a;</i>我的地址
+							</div>
+							<div class="mui-row dys" id="set">
+								<i class="iconfont five">&#xe63b;</i>设置
+							</div>
+						</div>
+
+					</div>
+				</aside>
+				<!-- 主页面标题 -->
+				<header class="mui-bar mui-bar-nav">
+					<!--<a class="mui-icon mui-icon-bars mui-pull-left orange" href="#offCanvasSide"></a>-->
+					<a href="javascript:;" class="mui-icon iconfont icon-gerenzhongxinzhuyegerenziliao mui-pull-left orange mui-actice" id="offCanvasShow"></a>
+					<h1 class="mui-title"><span class="city">新乡市</span><span class="mui-icon mui-icon-arrowdown"></span></h1>
+					<!--<a class="mui-icon mui-icon-chat mui-pull-right orange msg" href=""></a>-->
+				</header>
+
+				<!-- 主页面内容容器 -->
+				<div class="mui-content mui-scroll-wrapper">
+					<div class="allmap" id="allmap">
+
+					</div>
+					<div class="local">
+						<span class="mui-icon mui-icon-location"></span>
+					</div>
+					<div class="progressbar" id="progressbar">
+						<div>正在下载......</div>
+						<div id="progress" class="mui-progressbar">
+							<span></span>
+						</div>
+					</div>
+					<!-- 主界面具体展示内容 -->
+					<div class="tabbar">
+						<a class="helpsend" href="javascript:;"><img src="images/bws.png" /><br>帮我送</a>
+						<a class="helpget" href="javascript:;"><img src="images/bwq.png" /><br>帮我取</a>
+						<a class="helpbuy" href="javascript:;"><img src="images/send.png" /><br>帮我买</a>
+					</div>
+
+				</div>
+
+				<div class="mui-off-canvas-backdrop"></div>
+			</div>
+		</div>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<script src="js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			//			mui.init({
+			//				preloadPages:[{
+			//					id:"send/send.html",
+			//					url:'send/send.html'
+			//				},{
+			//					id:"take/take.html",
+			//					url:"take/take.html"
+			//				},{
+			//					id:"buy/buy.html",
+			//					url:"buy/buy.html"
+			//				}]
+			//			});
+			mui.init();
+			mui('.mui-scroll-wrapper').scroll({
+				scrollY: true,
+				scrollX: false,
+				startX: 0,
+				startY: 0,
+				indicators: true,
+				deceleration: 0.002,
+				bounce: true
+			});
+			mui.plusReady(function() {
+				wainshow();
+
+				function wainshow() {
+					if(plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE) {
+						mui.toast("网络异常，请检查网络设置！");
+					}
+				}
+				typeUpdate();
+
+				// 创建Map实例 获取用户当前位置 获取用户周围跑男位置
+				var map = new BMap.Map("allmap");
+				var mk = null;
+				//地址经纬度
+				var location = '';
+				//城市编号
+				var cityCode = null;
+				var geolocation = new BMap.Geolocation();
+				geolocation.getCurrentPosition(function(r) {
+					var point = new BMap.Point(r.point.lng, r.point.lat);
+					location = r.point.lat + "," + r.point.lng;
+					console.log('位置信息:' + JSON.stringify(r));
+					var address = '';
+					map.enableScrollWheelZoom();
+					map.centerAndZoom(point, 15);
+					mk = new BMap.Marker(point);
+					$('.mui-title .city').text(r.address.city);
+					address = r.address.province + r.address.city + r.address.district + r.address.street;
+					map.addOverlay(mk);
+					if(access_token != 'undefined') {
+						updateMan(map, point);
+					}
+					cityCode = r.address.city_code;
+					var param = {
+						citycode: cityCode,
+						lat: r.latitude,
+						lng: r.longitude
+					};
+					console.log("params:" + JSON.stringify(param));
+					ajaxGet('common/check_city_active.html', param, function(res) {
+						console.log("获取数据:" + JSON.stringify(res));
+						if(res.code == 1) {
+							cityCode = res.data;
+							localStorage.setItem("areaid", res.data);
+						} else {
+							mui.alert("你所在城市未开通业务，请选择城市");
+						}
+					})
+
+				}, function(e) {
+					mui.alert('定位失败请重新定位');
+					console.log('定位失败:' + JSON.stringify(e));
+					console.log('失败:' + JSON.stringify(e));
+//					switch(e.code) {
+//						case e.PERMISSION_DENIED:
+//							alert('User denied the request for Geolocation.');
+//							break;
+//						case e.POSITION_UNAVAILABLE:
+//							alert('Location information is unavailable.');
+//							break;
+//						case e.TIMEOUT:
+//							alert('The request to get user location timed out.');
+//							break;
+//						case e.UNKNOWN_ERROR:
+//							alert('An unknown error occurred.');
+//							break;
+//					}
+				});
+
+				//定位
+				$('.local').on('tap', function() {
+					geolocation.getCurrentPosition(function(r) {
+						var point = new BMap.Point(r.point.lng, r.point.lat);
+						map.centerAndZoom(point, 15);
+					}, function(e) {
+						console.log("失败：" + JSON.stringify(e));
+					}, {
+						coordsType: 'bd09ll',
+						provider: 'baidu'
+					})
+				});
+
+				var dataNum = localStorage.getItem('user');
+				//选城市
+				$('.mui-title').on("tap", function() {
+					var listPage = null;
+					if(listPage == null) {
+						listPage = plus.webview.getWebviewById('list_select.html');
+						if(listPage != null) {
+							mui.fire(listPage, 'cityCode', {
+								page: 1
+							});
+						}
+					}
+					mui.openWindow({
+						id: "list_select.html",
+						url: "list_select.html",
+						extras: {
+							page: 1
+						}
+					})
+				})
+				window.addEventListener("cityId", function(e) {
+					$('.mui-title .city').text(e.detail.cityText);
+					cityCode = e.detail.cityId;
+					map.centerAndZoom(e.detail.cityText, 15);
+				})
+
+				//刷新页面
+				window.addEventListener('update', function(e) {
+					console.log('刷新了一次界面');
+					plus.webview.currentWebview().reload();
+				});
+				//登录以后 个人信息			
+				var userInfo = localStorage.getItem('userinfo');
+				//判断是否登录
+				var access_token = null;
+				console.log("data：" + JSON.stringify(userInfo));
+				var userid = 0;
+				if(userInfo != null) {
+					userInfo = JSON.parse(userInfo);
+					userid = userInfo.id;
+					console.log("userinfo.id:" + userInfo.id);
+				}
+				//获取个人中心数据
+				var container = document.getElementById('container');
+
+				function getCenterData() {
+					var centerData = null;
+					ajaxGet('index/main.html', {
+						userid: userid
+					}, function(res) {
+						console.log("获取数据11:" + JSON.stringify(res));
+						if(res.code == 1) {
+							centerData = res;
+						} else {
+							mui.toast(res.msg);
+						}
+						centerData = res;
+					}, function(res) {
+						console.log("shibai");
+					});
+					return centerData;
+				}
+				var datas;
+				window.addEventListener("updateCenter", function(e) {
+					datas = getCenterData();
+					container.innerHTML = template('containerData', {
+						res: datas
+					});
+					loginShow();
+				})
+				datas = getCenterData();
+				console.log("datas:" + JSON.stringify(datas));
+				container.innerHTML = template('containerData', {
+					res: datas
+				});
+
+				function loginShow() {
+					access_token = typeof(datas.data.access_token);
+					if(typeof(datas.data.access_token) != 'undefined') {
+						$('.noLogin').css('display', 'none');
+						document.getElementById('edit').addEventListener('tap', function() {
+							mui.openWindow({
+								id: 'editdata.html',
+								url: 'editdata.html'
+							})
+						})
+					} else {
+						$('.user-info').css('display', 'none');
+						var info_flex = document.querySelector('.info-flex');
+						if(info_flex != null) {
+							info_flex.addEventListener('tap', function() {
+								mui.openWindow({
+									id: "login_code.html",
+									url: "login_code.html"
+								})
+							})
+						}
+					}
+					//资金
+					document.getElementById('zjdetail').addEventListener('tap', function() {
+						isLogin(userInfo, 'accountdetail.html');
+					})
+					//订单
+					document.getElementById('order').addEventListener('tap', function() {
+						isLogin(userInfo, 'order.html');
+						//						isLogin(userInfo,'test.html');
+						//						isLogin(userInfo,'ordertest111.html');
+					})
+					//余额
+					document.getElementById('yue').addEventListener('tap', function() {
+						//						isLogin(userInfo, 'recharge.html');
+						if(userInfo) {
+							mui.openWindow({
+								id: "recharge.html",
+								url: "recharge.html",
+								createNew: true
+							})
+						} else {
+							mui.confirm('', '您还未登录，请先登录', ['我知道了', '现在去登录'], function(res) {
+								if(res.index == 1) {
+									mui.openWindow({
+										id: "login_code.html",
+										url: "/login_code.html"
+									})
+								}
+							}, 'div');
+						}
+
+					})
+					//优惠券
+					document.getElementById('coupon').addEventListener('tap', function() {
+						isLogin(userInfo, 'mycoupon.html');
+					})
+				}
+				loginShow();
+				//侧滑容器父节点
+				var offCanvasWrapper = mui('#offCanvasWrapper');
+				//点击显示右滑菜单
+				document.getElementById('offCanvasShow').addEventListener('tap', function() {
+					offCanvasWrapper.offCanvas('show');
+				});
+				//			plus.screen.lockOrientation("portrait-primary");
+
+				var geoc = new BMap.Geocoder();
+
+				function updateMan(map, point) {
+					var params = {
+						userid: userid,
+						xpoint: point.lng,
+						ypoint: point.lat
+					}
+					ajaxGet('index/index.html', params, function(res) {
+						var nearbys = [];
+						res.data.points.forEach(function(item) {
+							var pointnearBy = new BMap.Point(item.x, item.y);
+							if(map.getDistance(point, pointnearBy).toFixed(2) < 2000) {
+								nearbys.push(pointnearBy)
+							}
+						})
+						nearbys.forEach(function(item) {
+							var icon = new BMap.Icon('images/mk.png', new BMap.Size(20, 24), {
+								anchor: new BMap.Size(10, 0)
+							})
+							var mk = new BMap.Marker(item, {
+								icon: icon
+							});
+							map.addOverlay(mk);
+						})
+
+					})
+
+				}
+
+				//消息通知
+				//				document.getElementById('info').addEventListener('tap', function() {
+				//					isLogin(userInfo, 'info.html');
+				//				})
+				//				//邀请好友
+				//				document.getElementById('invite').addEventListener('tap', function() {
+				//					isLogin(userInfo, 'invite.html');
+				//				})
+				G('text').addEventListener('tap', function() {
+					isLogin(userInfo, 'teach_imgtext.html');
+				})
+				G('video').addEventListener('tap', function() {
+					isLogin(userInfo, 'teach_video.html');
+				})
+
+				//联系客服
+				document.getElementById("kefu").addEventListener('tap', function() {
+					plus.device.dial(default_kefu, false);
+				})
+				//我的地址
+				document.getElementById('myaddress').addEventListener('tap', function() {
+					isLogin(userInfo, 'myaddress.html');
+				})
+				//设置
+				document.getElementById('set').addEventListener('tap', function() {
+					isLogin(userInfo, 'setting.html');
+				})
+				//帮我买
+				document.querySelector('.helpbuy').addEventListener('tap', function() {
+					//判断登录状态					
+					isLogin(userInfo, 'buy/buy.html');
+					//					isLogin(userInfo,"buy/test.html");
+				})
+				//帮我送
+				document.querySelector('.helpsend').addEventListener('tap', function() {
+					isLogin(userInfo, 'send/send.html');
+				})
+				//帮我取
+				document.querySelector('.helpget').addEventListener('tap', function() {
+					isLogin(userInfo, 'take/take.html')
+				})
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,196 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>接单设置</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/base.css" />
+		<link rel="stylesheet" href="../css/recOrder.css" />
+		<link rel="stylesheet" href="../css/mui.picker.min.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left black"></a>
+			<h1 class="mui-title">接单设置</h1>
+		</header>
+		<div class="mui-scroll-wrapper" style="margin-top: 45px;" id="container">
+			<script type="text/html" id="containerData">
+				<div class="mui-scroll">
+				<!--这里放置真实显示的DOM内容-->
+				<p class="noFull title">我的接单时间</p>
+				<div class="timewrap">
+					<div class="time" data-options='{"type":"time"}'>
+						<span class="beginhour">08</span> : <span class="benginmin">00</span>
+					</div>
+					-
+					<div class="time" data-options='{"type":"time"}'>
+						<span class="endhour">22</span> : <span class="endmin">12</span>
+					</div>
+				</div>
+				<p class="title noFull"><i class="iconfont">&#xe60e;</i>星期</p>
+				<ul class="weekwrap">
+					<li index="1" {{if data.day1 == 1}}class = "active"{{/if}}>一</li>
+					<li index="2" {{if data.day2 == 1}}class = "active"{{/if}}>二</li>
+					<li index="3" {{if data.day3 == 1}}class = "active"{{/if}}>三</li>
+					<li index='4' {{if data.day4 == 1}}class = "active"{{/if}}>四</li>
+					<li index='5' {{if data.day5 == 1}}class = "active"{{/if}}>五</li>
+					<li index='6' {{if data.day6 == 1}}class = "active"{{/if}}>六</li>
+					<li index='7' {{if data.day7 == 1}}class = "active"{{/if}}>日</li>
+				</ul>
+				<div class="blank"></div>
+				<!--<p class="title mytop noFull">我的装备</p>-->
+				<!--<div class="equip noFull">
+					<div class="bag">
+						<img src="../images/bag.png" alt="" /> 保温箱
+					</div>
+				</div>-->
+				<button id="save">保存</button>
+			</div>
+			</script>
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/base.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function() {
+				var userinfo = is_login();
+				//领取装备
+//				$('.bag').on('tap', function() {
+//					var s = $(this).find('img').attr('select');
+//					console.log('s:'+s);
+//					if(s != undefined || s != 0) {
+//						console.log('aaa');
+//						$(this).find('img').attr('src', '../images/bag.png');
+//						$(this).find('img').attr('select', '0');
+//						equip = $(this).find('img').attr('select');
+//					} else {
+//						console.log("执行了这里");
+//						$(this).find('img').attr('src', '../images/banner.png');
+//						$(this).find('img').attr('select', '1');
+//						equip = $(this).find('img').attr('select');
+//					}
+//				})
+				//请求数据，发送的数组信息
+				var data = null;
+				var arr = [];
+				var container = document.getElementById("container");
+				ajaxGet('express/get_order_setting', {}, function(res) {
+					console.log("res:" + JSON.stringify(res));
+					data = res.url;
+					container.innerHTML = template('containerData',{data:res.url});
+					//是否有保温箱
+					var equip = data.is_parts;
+					var times = document.querySelectorAll('.time');
+					//开始 结束接单时间
+					var beginTime = data.day_start;
+					var endTime = data.day_end;
+					//设置的时间
+					var day1 = data.day1?'1':'0';
+					var day2 = data.day2?'2':'0';
+					var day3 = data.day3?'3':'0';
+					var day4= data.day4?'4':'0';
+					var day5 = data.day5?'5':'0';
+					var day6 = data.day6?'6':'0';
+					var day7= data.day7?'7':'0';
+					var arr = [day1,day2,day3,day4,day5,day6,day7];
+					//拆分字符串
+					var arr1 = beginTime.split(':');
+					$('.beginhour').text(arr1[0]);
+					$('.benginmin').text(arr1[1]);
+					var arr2 = endTime.split(':');
+					$('.endhour').text(arr2[0]);
+					$('.endmin').text(arr2[1]);
+					times[0].addEventListener('tap', function() {
+						var s = this.children;
+						var options = this.getAttribute('data-options');
+						options = JSON.parse(options);
+						var dtPicker = new mui.DtPicker(options);
+						dtPicker.show(function(selectItems) {
+							s[0].innerHTML = selectItems.h.text;
+							s[1].innerHTML = selectItems.i.text;
+							beginTime = selectItems.h.text + ':' + selectItems.i.text;
+						})
+					})
+					times[1].addEventListener('tap', function() {
+						var s = this.children;
+						var options = this.getAttribute('data-options');
+						options = JSON.parse(options);
+						var dtPicker = new mui.DtPicker(options);
+						dtPicker.show(function(selectItems) {
+							s[0].innerHTML = selectItems.h.text;
+							s[1].innerHTML = selectItems.i.text;
+							endTime = selectItems.h.text + ':' + selectItems.i.text;
+						})
+					})
+
+					$('.weekwrap li').on('tap', function() {
+						var b = $(this).attr("class");
+						if(b != undefined && b != '') {
+							$(this).attr('class', '');
+							var index = $(this).attr('index');
+							for(var i = 0; i < arr.length; i++) {
+								if(arr[i] == index) {
+									arr.splice(i, 1);
+								}
+							}
+						} else {
+							$(this).attr("class", "active");
+							var index = $(this).attr('index');
+							arr.push(index);
+						}
+					})
+					
+					$('#save').on('tap', function() {
+						var a1 = beginTime.split(':');
+						var a2 = endTime.split(':');
+						if(parseInt(a1[0])>parseInt(a2[0])){
+							mui.alert("接单设置有误");
+							return false;
+						}
+						var params = {
+						day_start: beginTime,
+							day_end: endTime,
+							workDay: arr,
+							is_parts: equip
+					}
+					console.log("params:"+JSON.stringify(params));
+						ajaxPost('express/set_order_setting.html', {
+							day_start: beginTime,
+							day_end: endTime,
+							workDay: arr,
+							is_parts: equip
+						},function(res){
+							if(res.code == 1){
+								mui.toast("保存成功");
+							}else{
+								mui.toast(res.msg);
+							}
+						})
+					})
+				});
+
+				mui('.mui-scroll-wrapper').scroll({
+					scrollY: true,
+					scrollX: false,
+					startX: 0,
+					startY: 0,
+					indicators: true,
+					deceleration: 0.001,
+					bounce: true
+				});
+
+			})
+		</script>
+	</body>
+
+</html>

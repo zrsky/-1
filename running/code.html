@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>验证码 目前没用</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.content {
+				display: flex;
+				background-color: #FFFFFF;
+				padding-top: 15px;
+				padding: 15px 15px 0;
+			}
+			
+			.content p {
+				flex: 1;
+				text-align: center;
+			}
+			
+			.box {
+				display: flex;
+				padding: 15px 15px 0;
+				background-color: #FFFFFF;
+			}
+			
+			.box .left {
+				width: 35%;
+				white-space: nowrap;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			
+			.box input {
+				border: none;
+				margin: 0;
+			}
+			
+			.box .right {
+				white-space: nowrap;
+				color: #1AAC19;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">验证码</h1>
+		</header>
+		<div class="mui-content">
+			<div class="content">
+				<p>绑定银行卡需要短信确认，验证码已发送至手机：
+					<span>134****9363</span>,请按提示操作。
+				</p>
+			</div>
+			<div class="box">
+				<span class="left">验证码</span>
+				<input type="text" name="" id="" value="" placeholder="填写验证码" />
+				<span class="right">获取验证码(<em>55</em>)</span>
+			</div>
+			<button type="button" class="mui-btn mui-btn-block">下一步</button>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init()
+		</script>
+	</body>
+
+</html>

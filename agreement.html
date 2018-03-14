@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>用户协议</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/base.css" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style>
+			body {
+				background-color: #fff;
+			}
+			
+			.content {
+				width: 90%;
+				margin: 0 auto;
+				text-indent: 2em;
+				color: #000;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav backorange">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left white"></a>
+			<h1 class="mui-title white">用户协议</h1>
+		</header>
+		<div class="mui-content">
+		    <div class="mui-card">
+				<div class="mui-card-content" id="container">
+					<script type="text/html" id="containerData">
+						<div class="mui-card-content-inner">
+						{{#data}}
+						</div>
+					</script>
+				</div>
+			</div>
+		</div>
+		<!--<div class="mui-scroll-wrapper set_top">
+			<div class="mui-scroll">
+				<div id="container">
+					<script type="text/html" id="containerData">
+						<div class="content">
+							{{#data}}
+						</div>
+					</script>
+				</div>
+
+			</div>
+		</div>-->
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function() {
+				var userinfo = is_login();
+				var container = document.getElementById('container');
+				ajaxGet('common/getuseragreement.html', {
+				}, function(res) {
+					console.log(res.data.info);
+					console.log(JSON.stringify(res));
+					var datas = {
+						data: res.data.info
+					};
+					container.innerHTML = template('containerData', datas);
+				})
+			})
+
+			mui('.second').scroll({
+				scrollY: true,
+				scrollX: false,
+				startX: 0,
+				startY: 0,
+				indicators: true,
+				deceleration: 0.001,
+				bounce: true
+			});
+		</script>
+	</body>
+
+</html>

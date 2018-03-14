@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>取消订单原因</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			.because {
+				background-color: lightgrey;
+				text-align: center;
+				height: 50px;
+				line-height: 50px;
+			}
+			
+			textarea {
+				margin: 10px auto;
+				width: 100%;
+				background-color: #FFFFFF;
+			}
+			
+			.bottom {
+				display: flex;
+			}
+			
+			.bottom span {
+				display: block;
+				flex: 1;
+				background-color: #FFFFFF;
+				text-align: center;
+				height: 50px;
+				line-height: 50px;
+				margin: 10px;
+				border-radius: 5px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">取消订单</h1>
+		</header>
+		<div class="mui-content">
+			<div class="because">
+				不发件了？告诉我们原因吧
+			</div>
+			<div class="box">
+				<ul class="mui-table-view" id="container">
+					<script type="text/html" id="containerData">
+						{{each datas as value}}
+						<li class="mui-table-view-cell mui-checkbox mui-left">
+							<input select='{{value.id}}' name="checkbox" type="checkbox">{{value.title}}{{value.id}}
+						</li>
+						{{/each}}
+					</script>
+				</ul>
+				<textarea id="reason_dosc" name="description" rows="5" cols="" placeholder="有什么需要补充的么？（选填）"></textarea>
+			</div>
+			<div class="bottom">
+				<span status='1'>暂不取消</span>
+				<span status='2'>取消订单</span>
+			</div>
+
+		</div>
+		<script src="js/mui.min.js"></script>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<script src="js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init()
+			//删除数组某一项
+			Array.prototype.indexOf  =   function(val)  {
+				for (var  i  =  0;  i  <  this.length;  i++)  {
+					if (this[i]  ==  val)  return  i;
+				}
+				return  -1;
+			};
+			Array.prototype.remove = function(val) {
+				var index = this.indexOf(val);
+				if(index > -1) {
+					this.splice(index, 1);
+				}
+			};
+			mui.plusReady(function() {
+				var wv = plus.webview.currentWebview();
+				var orderId = wv.orderid;
+				ajaxGet('userorder/get_cancel_order_reason.html', {}, function(res) {
+					if(res.code == 1) {
+						var datas = res.data;
+						G('container').innerHTML = template('containerData', {
+							datas: datas
+						});
+						var arr = [];
+						mui('.mui-table-view').on('change', 'input', function(e) {
+							var value = this.checked;
+							var selectId = this.getAttribute('select');
+							console.log('selectid:' + selectId);
+							if(value) {
+								arr.push(selectId);
+							} else {
+								arr.remove(selectId);
+							}
+							e.stopPropagation();
+						});
+						mui('.bottom').on('tap', 'span', function() {
+							var status = this.getAttribute('status');
+							if(status == 1) { //暂不取消
+								mui.back();
+							} else {
+								console.log('arr：' + arr);
+								if(arr === undefined || arr.length == 0) {
+									mui.toast('请勾选取消理由');
+								} else {
+									var desc = G('reason_dosc').innerHTML;
+									var params = {
+										orderid: orderId,
+										reason_id: arr,
+										reason_desc: desc
+									}
+									console.log('发送的数据:' + JSON.stringify(params));
+									//向服务器发消息取消订单
+									ajaxPost('userorder/cancel_order.html', params, function(res) {
+										console.log('取消:' + JSON.stringify(res));
+										console.log('orderid:' + orderId);
+										if(res.code == 1) {
+											mui.toast('取消成功');
+											mui.openWindow({
+												id: 'order_cancelSuccess.html',
+												url: 'order_cancelSuccess.html',
+												extras: {
+													orderid: orderId
+												}
+											})
+										} else {
+											mui.toast(res.msg);
+										}
+									})
+								}
+							}
+						})
+						console.log('arr:' + arr);
+					}
+					console.log("liyou:" + JSON.stringify(res));
+				})
+			})
+		</script>
+	</body>
+
+</html>

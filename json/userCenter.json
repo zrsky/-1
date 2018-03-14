@@ -1,0 +1,16 @@
+{
+	"data":{
+		"id":"0",
+		"avatar":"../images/logo3.png",
+		"name":"张三",
+		"balance":"20.00",
+		"level_id":"3",
+		"username":"xx1231312312",
+		"score":"500",
+		"avg_star":"5.00",
+		"response_rate":"100%",
+		"day_orders_count":"3",
+		"day_order_km_sum":"5",
+		"day_balance_log_sum":"3"
+	}
+}

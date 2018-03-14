@@ -1,0 +1,398 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>注册认证 改版界面</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<!--<link rel="stylesheet" type="text/css" href="../css/validate.css"/>-->
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.mui-bar {
+				background-color: #FA7809;
+			}
+			
+			.mui-bar a {
+				color: #FFFFFF;
+			}
+			
+			.mui-bar .mui-title {
+				color: #FFFFFF;
+			}
+			
+			.status_wrap {
+				padding: 1rem 0;
+				height: 4rem;
+				background-color: #FFFFFF;
+				margin-top: 5px;
+			}
+			
+			.status {
+				display: flex;
+				margin: 0 auto;
+			}
+			
+			.status .line {
+				display: block;
+				width: 30%;
+				height: 2px;
+				background-color: #D4D5D6;
+				position: relative;
+				top: 0.4rem;
+			}
+			
+			.status .line.small {
+				width: 20%;
+			}
+			
+			.status .active {
+				background-color: #E7501D;
+			}
+			
+			.status .circle {
+				display: block;
+				width: 0.8rem;
+				height: 0.8rem;
+				border-radius: 100%;
+				background-color: #D4D5D6;
+			}
+			
+			.status .circle.active {
+				background-color: #E7501D;
+				box-shadow: 0px 0px 0px 10px #FBEADF;
+			}
+			
+			.status_title {
+				display: flex;
+				width: 80%;
+				margin: 1rem auto;
+				justify-content: space-between;
+			}
+			
+			.mui-media-body {
+				display: flex;
+			}
+			
+			.title {
+				flex: 0 0 120px;
+				font-size: 14px;
+			}
+			
+			.mui-input-row {
+				/*width: 100%;*/
+				flex: 1;
+			}
+			
+			.mui-input-row input {
+				position: absolute;
+				top: 2px;
+				border: none;
+				margin: 0;
+				padding: 0 5px;
+				font-size: 14px;
+			}
+			
+			input[type=text] {
+				line-height: 16px;
+				height: 16px;
+			}
+			
+			/*.next {
+				bottom: 40px;
+				width: 100%;
+				z-index: 999;
+				position: fixed;
+			}*/
+			.next{
+				margin-top: 2rem;
+			}
+			
+			.next a {
+				display: block;
+				color: #FFFFFF;
+				width: 90%;
+				border-radius: 3px;
+				margin: 0 auto;
+				padding: 10px;
+				text-align: center;
+				background-color: #E9501C;
+			}
+			
+			.alert {
+				text-align: center;
+				color: red;
+			}
+			
+			.telBox,
+			.cardBox,
+			.nameBox,
+			.persionBox {
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">注册认证</h1>
+		</header>
+		<!--<div class="next" style="height: 50px;">
+			<a class="btn">下一步</a>
+		</div>-->
+		<div class="mui-content">
+			<form action="" id="infoForm" method="post">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell">
+						<div class="status_wrap">
+							<div class="status">
+								<span class="line small active"></span>
+								<span class="circle active"></span>
+								<span class="line"></span>
+								<span class="circle"></span>
+								<span class="line"></span>
+								<span class="circle"></span>
+								<span class="line small"></span>
+							</div>
+							<div class="status_title">
+								<span>个人信息</span>
+								<span>车辆信息</span>
+								<span>照片信息</span>
+							</div>
+						</div>
+					</li>
+					<li class="mui-table-view-cell">
+						<a class="">
+							<div class="mui-media-body" id="choice">
+								<div class="title">
+									所属城市：
+								</div>
+								<div class="city">
+									<span>新乡市</span>
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a class="">
+							<div class="mui-media-body">
+								<div class="title">
+									姓名：
+								</div>
+								<div class="mui-input-row">
+									<input type="text" required="required" id="username" name="name" value="" placeholder="请输入真实姓名" />
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell nameBox">
+						<a class="">
+							<div class="mui-media-body">
+								<div class="mui-input-row">
+									<p class="alert alertCard">提示：请输入姓名</p>
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a class="">
+							<div class="mui-media-body">
+								<div class="title">
+									身份证号码：
+								</div>
+								<div class="mui-input-row">
+									<input type="text" required="required" id="idcard" name="idnumber" value="" placeholder="请输入本人真实身份证号" />
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell cardBox">
+						<a class="">
+							<div class="mui-media-body">
+								<div class="mui-input-row">
+									<p class="alert alertCard">提示：请输入本人身份证号</p>
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a class="">
+							<div class="mui-media-body">
+								<div class="title">
+									紧急联系人：
+								</div>
+								<div class="mui-input-row">
+									<input type="text" id="persion" required="required" name="second_contact_name" value="" placeholder="请输入紧急联系人姓名" />
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell persionBox">
+						<a class="">
+							<div class="mui-media-body">
+								<div class="mui-input-row">
+									<p class="alert alertCard">提示：请输入紧急联系人姓名</p>
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a class="">
+							<div class="mui-media-body">
+								<div class="title">
+									紧急联系人电话：
+								</div>
+								<div class="mui-input-row">
+									<input type="text" id="tel" required="required" name="mobile" value="" placeholder="请输入11位手机号码" />
+								</div>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell telBox">
+						<a class="">
+							<div class="mui-media-body">
+								<div class="mui-input-row">
+									<p class="alert alertTel">提示：请输入紧急联系人手机号</p>
+								</div>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</form>
+			<div class="next" style="height: 50px;">
+				<a class="btn">下一步</a>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init()
+			mui.plusReady(function() {
+				var userInfo = is_login();
+				var cityName = "";
+				var cityId = 191;
+				window.addEventListener("cityId", function(e) {
+					cityName = e.detail.cityText;
+					cityId = e.detail.cityId;
+					$(".city span").text(cityName);
+				});
+				ajaxGet('expressrunning/index.html',null,function(res){
+					if (res.code == 1) {
+						var express_status = res.data.express_status;
+						if(express_status == 1){
+							mui.alert('您已经通过认证，您修改认证信息之后提交数据将会造成你的认证状态失效，您需要等待管理员再次认证之后才能接单，您确定要修改认证信息吗?');
+						}else if(express_status == 0){
+							mui.toast('未认证');
+						}else if(express_status == -1){
+							mui.toast('认证被驳回');
+						}else if(express_status == -2){
+							mui.toast('禁止登陆');
+						}
+					}
+				});
+				//选择所在城市
+				var listPage = null;
+				$("#choice").on("tap", function() {
+					mui.openWindow({
+						url: '../list_select.html',
+						id: '../list_select.html',
+						extras: {
+							page: 2
+						}
+					})
+				})
+				var userTel, userCard, idcard, tel,username,persion;
+				//前端验证
+				function blur(element,pattern,box,text1,text2){
+					var element =  $('#'+element);
+					var val = element.val();
+					var pattern_flag = pattern.test(val);
+					if(val != ""){
+						if(!pattern_flag){
+							$('.' + box + ' p').html(text1);
+							console.log($('.' + box + ' p').html())
+							$("."+box).fadeIn();
+						}else{
+							$("."+box).fadeOut();
+						}
+					}else{
+						$('.' + box + ' p').html(text2);
+						$("."+box).fadeIn();
+					}
+				}
+				function submitVal(element,pattern,box){
+					var value = element.val();
+					var pattern_flag = pattern.test(value);
+					if(!pattern_flag){
+						$("."+box).fadeIn();
+					}
+					return pattern_flag;
+				}
+				var idcardP = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+				$("#idcard").blur(function(){
+					blur("idcard",idcardP,"cardBox","提示：请输入正确的身份证号","提示：请输入本人身份证号")
+				})
+				var telP = /^1[345678]\d{9}$/;
+				$("#tel").blur(function(){
+					blur("tel",telP,"telBox","提示：请输入正确的手机号","提示：请输入紧急联系人手机号");
+				})
+
+				var userP = /^[\u4e00-\u9fa5]+$/;
+				$("#username").blur(function(){
+					blur("username",userP,"nameBox","提示：请输入正确的姓名","提示：请输入姓名");
+				})
+
+				var persionP = /^[\u4e00-\u9fa5]+$/;
+				$("#persion").blur(function(){
+					blur("persion",persionP,"persionBox","提示：请输入正确的紧急联系人姓名","提示：请输入紧急联系人姓名");
+				})
+				function validate() {
+					console.log(window.flag)
+					var formData = $.param({
+						id: userInfo.id
+					}) + '&' + $('#infoForm').serialize() + '&' + 'area_id='+ cityId;
+					console.log(formData);
+					var f1 = submitVal($("#username"),userP,"nameBox");
+					var f2 = submitVal($("#tel"),telP,"telBox");
+					var f3 = submitVal($("#idcard"),idcardP,"cardBox");
+					var f4 = submitVal($("#persion"),persionP,"persionBox");
+					console.log("aaaa"+f4);
+					if(f1 == false || f2 == false || f3 == false || f4 == false) {
+//						if(f1 == false){
+//							mui.toast("请输入姓名");
+//							return false;
+//						}else if(f2==false){
+//							mui.toast('请输入手机号');
+//							return false;
+//						}else if(f3 == false){
+//							mui.toast('请输入身份证号');
+//							return false;
+//						}else if(f4 == false){
+//							mui.toast("请输入联系人姓名");
+//							return false;
+//						}
+						return false;
+					}
+					if(userTel == "" || userCard == "" || username == "" || persion == "") {
+						return false;
+					}
+					mui.openWindow({
+						url: "auth_car.html",
+						id: "auth_car.html",
+						extras: {
+							formData: formData
+						}
+					})
+
+				}
+				//点击下一步
+				$('.btn').on('tap', function() {
+					validate();
+				})
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>提现</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.box span {
+				margin-left: 10px;
+			}
+			
+			.box input {
+				border: none;
+			}
+			
+			.btn {
+				background-color: #FF8B02;
+				color: #FFFFFF;
+				width: 95%;
+				margin: 20px auto;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">提现</h1>
+			<i class="mui-pull-right mui-icon mui-icon-plusempty" id="addCard"></i>
+		</header>
+		<div class="mui-content">
+			<ul class="mui-table-view" id="container">
+
+				<script type="text/html" id="containerData">
+					<li class="mui-table-view-cell">
+						<a class="">
+							<div class="mui-media box">
+								真实姓名<span class="name"></span>（实名认证姓名)
+							</div>
+						</a>
+					</li>
+
+					<li class="mui-table-view-cell">
+						<a class="">
+							<div class="mui-media box">
+								账户类型 {{if data.bank_name == '未知'}}
+								<span>未绑定银行卡 点右上角加号绑定</span> {{else}}
+								<span class="bank_name">{{data.bank_name}}</span> {{/if}}
+							</div>
+						</a>
+					</li>
+
+					<li class="mui-table-view-cell">
+						<a class="">
+							<div class="mui-media box">
+								提现账号<span class="bank_no">{{data.bank_no}}</span>
+							</div>
+						</a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a class="">
+							<div class="mui-media box">
+								提现金额<input type="text" name="money" id="money" value="" placeholder="请输入提现金额（元）" />
+							</div>
+						</a>
+					</li>
+				</script>
+			</ul>
+
+			<button type="button" class="mui-btn mui-btn-block btn" id="btn">确认提现</button>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/base.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function() {
+				var userInfo = is_login();
+				//刷新页面
+				window.addEventListener('update', function(e) {
+					console.log('刷新了一次界面');
+					plus.webview.currentWebview().reload();
+				})
+				console.log("userInfo:" + JSON.stringify(userInfo));
+				var container = document.getElementById('container');
+				ajaxGet('express/reflect.html', {}, function(res) {
+					console.log("提现:" + JSON.stringify(res));
+					var datas = {
+						data: res.data
+					};
+					container.innerHTML = template('containerData', datas);
+					$('.name').text(userInfo.name);
+				})
+				var add = document.getElementById('addCard');
+				add.addEventListener('tap', function() {
+					mui.openWindow({
+						id: "addCard.html",
+						url: "addCard.html"
+					})
+				})
+				var btn = document.getElementById('btn');
+				btn.addEventListener('tap', function() {
+					var money = document.getElementById("money").value;
+					if(!money.match(/(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/)||money==0){
+						mui.toast('请输入金额');
+						document.getElementById('money').value = '';
+						return false;
+					}else if($('.bank_name').text() == ''&&$('.bank_no').text()==''){
+						mui.toast("未绑定银行卡");
+						return false;
+					}else if($('.name').text() ==''){
+						mui.toast('未认证');
+						return false;
+					}
+					console.log(money);
+					ajaxPost('express/reflect_add.html', {
+						money: money
+					}, function(res) {
+						console.log('res:'+JSON.stringify(res));
+						if(res.code == 1){
+							mui.toast('提现成功');
+						}else{
+							mui.toast(res.msg);
+						}
+					});
+				})
+			})
+		</script>
+	</body>
+
+</html>

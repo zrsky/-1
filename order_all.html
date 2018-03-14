@@ -1,0 +1,241 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>全部订单</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" href="css/order.css" />
+		<style type="text/css">
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			
+			.wc,
+			.qx {
+				display: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--下拉刷新容器-->
+		<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
+			<div class="mui-scroll">
+				<!--数据列表-->
+				<ul class="mui-table-view mui-table-view-chevron" id="listwrap">
+					<li v-for="item in orderArr" class="mui-table-view-cell mui-media infoDetail" :orderId="item.id" :statusId='item.status'>
+						<a class="mui-navigate" href="javascript:;">
+							<img class="stateImg wc mui-media-object mui-pull-right" src="images/wc.png" />
+							<img class="stateImg qx mui-media-object mui-pull-right" src="images/qx.png" />
+							<img v-if="item.status == 7" class="stateImg mui-media-object mui-pull-right" src="images/wc.png" />
+							<img v-else-if="item.status == -1" class="stateImg mui-media-object mui-pull-right" src="images/qx.png" />
+							<div class="mui-media-body">
+								<!--1 帮我送 2 帮我买 3帮我取-->
+								<img v-if="item.type_id == 1" class="sendimg" src="images/1.jpg" alt="" />
+								<img v-else-if="item.type_id == 2" class="sendimg" src="images/2.jpg" alt="" />
+								<img v-else-if="item.type_id == 3" class="sendimg" src="images/3.jpg" alt="" />
+								<p v-if="item.from_address == ''||item.from_address == 'null'&&item.type_id == 1">从:就近购买</p>
+								<p v-else>从:{{item.from_address}}</p>
+								<p class="toaddress" :xpoint="item.to_x" :ypoint="item.to_y">到:{{item.to_address}}</p>
+								<p>金额: {{item.end_price}}元</p>
+								<p>订单类型:
+									<span v-if="item.order_type_id == 1">实时订单</span>
+									<span v-else-if="item.order_type_id == 2">预约订单</span>
+									<span class="f_r">{{item.create_time_formated}}</span>
+								</p>
+								<p>
+									订单编号：{{item.order_sn}}
+								</p>
+								<!--0待付款 1待接单 4待收货 7已完成-->
+								<button v-if="item.status == 0" class="active gopay" :orderId="item.id">去支付</button>
+								<button v-if="item.status == 0" class="cancle" :orderId="item.id">取消订单</button>
+								<button v-if="item.status == 1" class="cancle active" :orderId="item.id">取消订单</button>
+								<button v-if="item.status == 7" class="again active" :orderId="item.id" :typeId="item.type_id">再来一单</button>
+								<button v-if="item.comment_status == 0&&item.status == 7" :orderId="item.id" class="gocomment active">去评价</button>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/vue.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init({
+				swipeBack: false,
+				keyEventBind: {
+					backbutton: false //关闭back按键监听
+				},
+				pullRefresh: {
+					container: '#refreshContainer',
+					up: {
+						auto: true,
+						contentrefresh: '正在加载...',
+						contentnomore: '没有更多数据了', //可选，请求完毕若没有更多数据时显示的提醒内容；
+						callback: pullupRefresh
+					}
+				}
+			});
+			var userInfo = is_login();
+			//数据
+			var data_details = new Vue({
+				el: '#listwrap',
+				data: {
+					orderArr: []
+				}
+			})
+			//刷新数据
+				window.addEventListener('update',function(e){
+					vue_ajaxGet('userorder/lists',{},function(res){
+						if(res.code == 1){
+							data_details.orderArr = res.data.data;
+						}
+					})
+				})
+			function pullupRefresh() {
+				var page = parseInt(data_details.orderArr.length / 15)+1;
+				console.log('执行上啦加载:'+page);
+				vue_ajaxGet('userorder/lists', {
+					page: page
+				}, function(res) {
+					console.log("上啦res:" + JSON.stringify(res));
+					if(res.code == 1) {
+						//清空之前数据
+						console.log('数组长度:' + data_details.orderArr.length);
+						if(data_details.orderArr.length < res.data.total) {
+							data_details.orderArr = data_details.orderArr.concat(res.data.data);
+						}
+//						for(var i = 0;i<data_details.orderArr.length;i++){
+//							console.log("nihao:"+i+"--"+JSON.stringify(data_details.orderArr[i]));
+//						}
+						//结束下拉刷新 上啦加载
+						mui('#refreshContainer').pullRefresh().endPullupToRefresh(data_details.orderArr.length >= res.data.total);
+					}
+				})
+			}
+			//订单详情
+
+			mui('#listwrap').on('tap', 'li', function() {
+				var orderId = this.getAttribute('orderId');
+				var statusId = this.getAttribute('statusId');
+				if(statusId == 0) {
+					mui.openWindow({
+						id: 'payorder.html',
+						url: 'payorder.html',
+						extras: {
+							listdata: orderId,
+							statusId: statusId
+						}
+					})
+				} else if(statusId == -1) {
+					mui.openWindow({
+						id: 'order_detail.html',
+						url: 'order_detail.html',
+						extras: {
+							orderid: orderId
+						}
+					})
+				} else if(statusId == -2) {
+					mui.toast('订单处理中');
+				} else if(statusId == 7) {
+					mui.openWindow({
+						id: 'order_detail.html',
+						url: 'order_detail.html',
+						extras: {
+							orderid: orderId
+						}
+					})
+				} else {
+					mui.openWindow({
+						id: "findExpress.html",
+						url: 'findExpress.html',
+						extras: {
+							orderId: orderId,
+							statusId: statusId
+						}
+					})
+				}
+				event.stopPropagation();
+			})
+			//取消订单
+			mui('#listwrap').on('tap', '.cancle', function() {
+				var orderid = this.getAttribute('orderId');
+				mui.openWindow({
+					id: 'order_cancel.html',
+					url: 'order_cancel.html',
+					extras: {
+						orderid: orderid
+					}
+				});
+				event.stopPropagation();
+			})
+			//评论
+			mui('#listwrap').on('tap', '.gocomment', function() {
+				var orderId = this.getAttribute('orderId');
+				var detail = null;
+				if(detail == null) {
+					detail = plus.webview.getWebviewById("comment.html");
+					if(detail != null) {
+						mui.fire(detail, "DIY_DATA", {
+							orderid: orderId
+						});
+					}
+				}
+				mui.openWindow({
+					id: "comment.html",
+					url: 'comment.html',
+					extras: {
+						orderid: orderId
+					}
+				})
+				event.stopPropagation();
+			})
+			//再来一单
+			mui('#listwrap').on('tap', '.again', function() {
+				var id = this.getAttribute('orderId');
+				var typeId = this.getAttribute('typeId');
+				if(typeId == 1) {
+					mui.openWindow({
+						id: "send/send.html",
+						url: "./send/send.html"
+					})
+				} else if(typeId == 2) {
+					mui.openWindow({
+						id: "buy/buy.html",
+						url: "./buy/buy.html"
+					})
+				} else if(typeId == 3) {
+					mui.openWindow({
+						id: "take/take.html",
+						url: "./take/take.html"
+					})
+				}
+				event.stopPropagation();
+			})
+			//去支付
+			mui('#listwrap').on('tap', '.gopay', function() {
+				var orderid = this.getAttribute('orderId');
+				var statusId = this.getAttribute('statusId');
+				mui.openWindow({
+					id: 'payorder.html',
+					url: 'payorder.html',
+					extras: {
+						listdata: orderid,
+						statusId: statusId
+					}
+				})
+				event.stopPropagation(); //阻止冒泡
+			})
+		</script>
+	</body>
+
+</html>

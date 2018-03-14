@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			/**
+			 * 自定义 视频播放示例的样式
+			 * */
+			/*
+			 *设置一个边框与固定宽度
+			 * */
+			
+			#videoContainer {
+				/*border: 1px solid #000;*/
+				width: 360px;
+				height: 200px;
+				max-width: 100%;
+				margin: 0 auto;
+			}
+			/*控制视频本身 默认是高度和宽度是1px 用来隐藏视频，用一张默认的图片替代视频*/
+			
+			#videoMedia {
+				margin-top: 0px;
+				width: 1px;
+				height: 1px;
+			}
+			/**
+ * 默认图片和videoContainer保持宽高一致
+ */
+			
+			#videoContainer img {
+				width: 360px;
+				max-width: 100%;
+				/*margin: 0 auto;*/
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">视频教程</h1>
+		</header>
+		<div class="mui-content">
+			<div id="videoContainer">
+				<video id="videoMedia" controls="controls" preload>
+					<!--<source src="https://media.w3.org/2010/05/sintel/trailer.mp4" type='video/mp4'>-->
+						<!--<source src="http://didi.test.91xinxiang.com/static/videos/user.mp4" type='video/mp4'>-->
+				</video>
+				<img id="videoMediaDefaultImg" src="./images/img_clickToPlay.png" />
+			</div>
+		</div>
+		<script src="js/mui.min.js"></script>
+		<script src="js/base.js" type="text/javascript" charset="utf-8"></script>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<script type="text/javascript">
+			mui.init();
+			var videoMedia = document.getElementById('videoMedia');
+			var videoContainer = G('videoContainer');
+			//获取视频应该得宽和高
+			var videoWidth = videoContainer.offsetWidth;
+			var videoHeight = videoContainer.offsetHeight;
+			mui.plusReady(function(){
+				ajaxGet('common/get_user_edu_video.html',{},function(res){
+					console.log("视频数据："+JSON.stringify(res));
+					if(res.code == 1){
+						videoMedia.innerHTML = "<source src='"+res.data.info+"'type='video/mp4'>"
+//						data_detail.videourl = res.data.info;
+//						data_detail.videourl = 'https://media.w3.org/2010/05/sintel/trailer.mp4';
+					}
+				})
+				//竖屏显示
+				plus.screen.lockOrientation("portrait-primary");
+				videoMedia.addEventListener('tap',function(){
+					console.log('aaa');
+					play();
+				});
+				G('videoMediaDefaultImg').addEventListener('tap',function(){
+					console.log('bbb');
+					play();
+				})
+				
+			})
+			//播放
+			function play() {
+				var url = videoMedia.getElementsByTagName('source')[0].src;
+				console.log('url:'+url);
+				playHtml5Video(url,videoMedia,function(isPlay){
+					if(isPlay){
+						console.log('播放了');
+					}else{
+						console.log('暂停了');
+					}
+				});
+			}
+			/**
+			 * @description 播放Html5视频
+			 * plus下android:通过NJS,在android上用原生播放器打开视频
+			 * plus下iOS:直接play视频,会自动调用原生播放器播放
+			 * 非plus下: 直接play视频
+			 * @param {String} url 视频的地址,可以是网络地址或者本地地址
+			 * @param {HTMLElement} mediaTarget 目标video的dom对象
+			 * @param {Function} callback(isPlay) 回调函数,true为正在播放,false为暂停,
+			 * 只有非plus情况才能回调
+			 * @param {Boolean} isInlinePlay 是否内联播放,默认为false
+			 * ios 下内联播放:  	  非全屏,h5播放方式
+			 * ios 下非内联播放:  全屏,h5播放方式
+			 * Android 下内联播放:  	  非全屏,h5播放方式
+			 * Android 下非内联播放:  全屏,NJS原生播放器播放方式
+			 */
+			function playHtml5Video(url, mediaTarget, callback) {
+				if(!url || !mediaTarget) {
+					//url 和video元素不存在
+					return;
+				}
+				if(window.plus && plus.os.name == 'Android') {
+					//非内联模式下的plus下的android才用到
+					var Intent = plus.android.importClass("android.content.Intent");
+					var Uri = plus.android.importClass("android.net.Uri");
+					var main = plus.android.runtimeMainActivity();
+					var intent = new Intent(Intent.ACTION_VIEW);
+					var uri = Uri.parse(url);
+					intent.setDataAndType(uri, "video/*");
+					main.startActivity(intent);
+				} else {
+					//如果是非内敛,ios需要去除内联样式
+					mediaTarget.removeAttribute('webkit-playsinline');
+					if(mediaTarget.paused || mediaTarget.ended){
+						//暂停时播放
+						if(mediaTarget.ended){
+							mediaTarget.currentTime = 0;
+						}
+						mediaTarget.play();
+						callback && callback(true);
+					}else{
+						//播放时暂停
+						mediaTarget.pause();
+						callback && callback(false);
+					}
+				}
+			};
+		</script>
+	</body>
+
+</html>

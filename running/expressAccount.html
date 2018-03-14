@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>账户明细</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/base.css" />
+		<script src="../js/template.js"></script>
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">账户明细</h1>
+		</header>
+
+		<div class="mui-scroll-wrapper set_top">
+			<div class="mui-scroll">
+				<ul class="mui-table-view" id="listwrap">
+					<script type="text/html" id="beyon">
+						{{if list.total == 0}}
+						<li class="mui-table-view-cell">
+							<a class="mui-navigate" href="javascript:;">
+								<span>暂无明细</span>
+							</a>
+						</li>
+						{{else}} {{each list.data as value i}}
+						<li class="mui-table-view-cell">
+							<a class="mui-navigate" href="javascript:;">
+								{{value.reason_type}}
+								<span class="mui-pull-right">{{(value.new-value.old).toFixed(2)}}</span>
+							</a>
+							<p>{{value.create_time_formated}}</p>
+						</li>
+						{{/each}} {{/if}}
+					</script>
+				</ul>
+				<div class="mui-content-padded">
+					<ul class="mui-pager">
+						<li id="upPage">
+							<a href="#">
+								上一页
+							</a>
+						</li>
+						<li id="nextPage">
+							<a href="#">
+								下一页
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/base.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui('.second').scroll({
+				scrollY: true,
+				scrollX: false,
+				startX: 0,
+				startY: 0,
+				indicators: true,
+				deceleration: 0.001,
+				bounce: true
+			});
+			mui.plusReady(function() {
+				var userinfo = is_login();
+				var page = 1;
+				var last_page;
+				var listwrap = document.getElementById('listwrap');
+				ajaxGet('expressaccount/detail.html', {
+					page:page
+				}, function(res) {
+					console.log("资金明细:" + JSON.stringify(res));
+					if(res.code == 1) {
+						listwrap.innerHTML = template('beyon', {
+							list: res.data
+						})
+						if(res.data.total == 0){
+							$('.mui-content-padded').css('display','none');
+						}
+						last_page = res.data.last_page;
+					}
+				}, function(res) {
+					console.log("shibai:" + JSON.stringify(res));
+				})
+				var upPage = document.getElementById('upPage');
+				var nextPage = document.getElementById('nextPage');
+				upPage.addEventListener('tap', function() {
+					page = page - 1;
+					if(page < 1) {
+						page = 1;
+						mui.toast('第一页');
+					}
+					ajaxGet('useraccount/detail.html', {
+						page: page
+					}, function(res) {
+						console.log("资金明细:" + JSON.stringify(res));
+						if(res.code == 1) {
+							listwrap.innerHTML = template('beyon', {
+								list: res.data
+							})
+						}
+					}, function(res) {
+						console.log("shibai:" + JSON.stringify(res));
+					})
+				})
+				nextPage.addEventListener('tap', function() {
+					page = page + 1;
+					if(page > last_page) {
+						page = last_page;
+						mui.toast('最后一页');
+					}
+					ajaxGet('useraccount/detail.html', {
+						page: page
+					}, function(res) {
+						console.log("资金明细:" + JSON.stringify(res));
+						if(res.code == 1) {
+							listwrap.innerHTML = template('beyon', {
+								list: res.data
+							})
+						}
+					}, function(res) {
+						console.log("shibai:" + JSON.stringify(res));
+					})
+				})
+			})
+		</script>
+	</body>
+
+</html>

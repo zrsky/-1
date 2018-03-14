@@ -1,0 +1,99 @@
+body{
+	background-color: #fff;
+}
+.bill{
+	line-height: 44px;
+	font-size: 0.8rem;
+}
+.bannerImg{
+	width: 100%;
+}
+.mui-scroll-wrapper{
+	margin-top: 44px;
+}
+.flex-box{
+	padding: 0 0.2rem;
+	height: 55px;
+	display: flex;
+	justify-content: space-between;
+	color: #E19646;
+	
+}
+.money{
+	width: 6rem!important;
+	padding: 0!important;
+	border: none!important;
+	outline: none!important;
+	font-size: 0.9rem;
+}
+.rechList{
+	padding-left: 0.4rem;
+	display: flex;
+	flex-wrap: wrap;
+}
+.rechList li{
+	padding: 0.5rem 0;
+	margin: 0.3rem 0.5rem;
+	width: 28%;
+	text-align: center;
+	list-style: none;
+	border: 1px solid #E5E5E5;
+	border-radius: 5px;
+}
+.rechList li.active{
+	border: 1px solid #E19646;
+	color: #E48920;
+}
+.rechList li.active p{
+	color: #E48920;
+}
+.other-money{
+	padding: 0!important;
+	line-height: 67px;
+}
+.go_rech{
+	display: block;
+	padding: 0.3rem 0.5rem;
+	margin: 0.5rem auto;
+	width: 90%;
+	background-color: #E58620;
+	color: #fff;
+	text-align: center;
+}
+.pop h4{
+	padding: 0.6rem 0;
+	text-align: center;
+	border-bottom: 1px solid #E5E5E5;
+}
+.pop .title{
+	margin: 1.5rem 0 1rem 0;
+	font-size: 1rem;
+	color: #000;
+	font-weight: bold;
+	text-align: center;
+}
+.pop .moneys{
+	padding-bottom: 1rem;
+	font-size: 1.5rem;
+	color: #E58921;
+	margin: 1rem 0;
+	font-weight: bold;
+	text-align: center;
+	border-bottom: 1px solid #E5E5E5;
+}
+.mui-radio{
+	height: 32px!important;
+	position: absolute;
+	top: 1rem;
+	right: 0.5rem;
+	
+}
+.affirm-pay{
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	color: #fff;
+	background-color: #E58921;
+	border: none;
+	outline: none;
+}

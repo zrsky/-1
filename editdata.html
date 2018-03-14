@@ -1,0 +1,359 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>资料修改</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" type="text/css" href="css/validate.css" />
+		<link rel="stylesheet" href="css/mui.picker.min.css" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<script src="js/immersed.js"></script>
+		<style type="text/css">
+			.userimg {
+				width: 4rem;
+				height: 4rem;
+				border-radius: 50%;
+			}
+			
+			.firsted {
+				line-height: 70px
+			}
+			
+			input {
+				position: absolute;
+				top: 0;
+				right: 5px;
+				width: 50%!important;
+				height: 28px;
+				padding: 0!important;
+				margin: 0!important;
+				font-size: 1rem;
+				text-align: right;
+				border: none!important;
+			}
+			
+			.righter {
+				display: block;
+				width: 190px;
+				text-align: right;
+				z-index: 1000;
+			}
+			
+			.save {
+				position: absolute;
+				top: 5px;
+				right: 5px;
+				z-index: 1000;
+				border: none;
+				outline: none;
+				background-color: #f7f7f7;
+			}
+			.nickname{
+				padding-right: 10px !important;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">资料修改</h1>
+			<button type="button" class="mui-btn mui-btn-link mui-pull-right btn">保存</button>
+		</header>
+		<form method="post" id="infoForm" onsubmit="return false">
+			<ul class="mui-table-view set_top" id="container">
+				<script type="text/html" id="containerData">
+					<li class="mui-table-view-cell firsted">
+
+						<a class="mui-navigate">
+							头像
+							{{if data.avatar_id == null}}
+							<img id="userImg" class="userimg mui-pull-right" src="images/logo_round.png" alt="" />
+							<input type="hidden" name="avatar_id" id="avatar_id" value="{{data.avatar_id}}" />
+							{{else}}
+							<img id="userImg" class="userimg mui-pull-right" src="{{data.avatar}}" alt="" />
+							<input type="hidden" name="avatar_id" id="avatar_id" value="{{data.avatar_id}}" />
+							{{/if}}
+						</a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a class="mui-navigate">
+							姓名
+							<input placeholder="请输入姓名" type="text" name="name" class="nickname" id="nickname" value="{{data.name}}" maxlength="7" />
+						</a>
+					</li>
+					<li class="mui-table-view-cell" id="sex">
+						<a class="">
+							性别
+							<span class="sex mui-pull-right">{{data.sex?"男":"女"}}</span>
+							<input class="righter sex_input" type="hidden" name="sex" value="{{data.sex}}" />
+						</a>
+					</li>
+					<li class="mui-table-view-cell" id="age">
+						<a class="mui-navigate">
+							生日
+							<span class="age mui-pull-right">{{data.birthday}}</span>
+							<input class="righter age_input" type="hidden" name="birthday" value="{{data.birthday}}" />
+						</a>
+					</li>
+			</ul>
+			</script>
+		</form>
+		<script src="js/mui.min.js"></script>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/jquery-mvalidate.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/mui.picker.min.js"></script>
+		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/base.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function() {
+				var userInfo = is_login();
+				//刷新页面
+				window.addEventListener('update', function(e) {
+					var avatar_id = e.detail.avatar_id;
+					var imgData = e.detail.imgData;
+					$('#avatar_id').val(avatar_id);
+					var userImg = document.getElementById('userImg');
+					console.log('imgData:'+imgData);
+					userImg.src = imgData;
+				});
+				$('.btn').on('tap', function() {
+					$('#infoForm').submit();
+				})
+				var container = document.getElementById('container');
+				ajaxGet('user/editData_json.html', {}, function(res) {
+					console.log("avatar_id:"+JSON.stringify(res));
+					var datas = {
+						data: res.data
+					};
+					container.innerHTML = template('containerData', datas);
+					var nickname = document.getElementById('nickname');
+					//前端验证
+					$('#infoForm').mvalidate({
+						type: 1,
+						onKeyup: true,
+						sendForm: true,
+						firstInvalidFocus: false,
+						valid: function(event, options) {
+							if(nickname.value.match(/^\s+$/g)){
+								mui.toast("姓名不能为空");
+								return false;
+							}
+							var formData = $('#infoForm').serialize();
+							formData += '&userid=' + userInfo.id;
+							console.log('formData:'+JSON.stringify(formData));
+							ajaxPost('user/editData.html', formData, function(data) {
+								console.log("baocun:"+JSON.stringify(data));
+								if(data.code == 1) {
+									/*
+									 * 重新保存信息缓存
+									 */
+									mui.alert("保存成功");
+									var mainPage = plus.webview.getWebviewById('main.html');
+									if(mainPage != null){
+										mui.fire(mainPage,"update");
+									}
+									setUserInfo(JSON.stringify(data.data));
+								}
+							},function(res){
+								console.log("shibai:"+JSON.stringify(res));
+							});
+							event.preventDefault();
+						},
+						descriptions: {
+							phone: {
+								required: "请填写手机号",
+								pattern: "手机号码格式不正确"
+							}
+						}
+					})
+
+					var sex = document.getElementById('sex');
+					var age = document.getElementById('age');
+					sex.addEventListener('tap', function() {
+						var picker = new mui.PopPicker();
+						var that = this;
+						picker.setData([{
+							value: '1',
+							text: '男'
+						}, {
+							value: '0',
+							text: '女'
+						}]);
+
+						picker.show(function(selectItems) {
+							$('.sex').text(selectItems[0].text);
+							$('.sex_input').val(selectItems[0].value);
+						})
+
+					})
+					age.addEventListener('tap', function() {
+						var that = this;
+						var dtPicker = new mui.DtPicker({
+							"type": 'date',
+							"beginDate": new Date(1949, 10, 01), //设置开始日期
+							"endDate": new Date()
+						});
+						dtPicker.show(function(selectItems) {
+							$('.age').text(selectItems.y.text + '-' + selectItems.m.text + '-' + selectItems.d.text);
+							$('.age_input').val(selectItems.y.text + '-' + selectItems.m.text + '-' + selectItems.d.text);
+						})
+					})
+					var userImg = document.getElementById('userImg');
+					userImg.addEventListener("tap",function(){
+						mui.openWindow({
+							url:"cropImg1.html",
+							id:"cropImg1.html"
+						})
+					});
+//					userImg.addEventListener('tap', function() {
+//						if(mui.os.plus) {
+//							var a = [{
+//								title: "拍照"
+//							}, {
+//								title: '从手机相册选择'
+//							}];
+//							plus.nativeUI.actionSheet({
+//								title: '修改头像',
+//								cancel: '取消',
+//								buttons: a
+//							}, function(b) {
+//								switch(b.index) {
+//									case 0:
+//										break;
+//									case 1:
+//										//拍照
+//										getImages();
+//										break;
+//									case 2:
+//										//打开相册
+//										galleryImages();
+//										break;
+//								}
+//							}, false);
+//						}
+//					});
+//					//拍照
+//					function getImages() {
+//						var mobileCamera = plus.camera.getCamera();
+//						mobileCamera.captureImage(function(e) {
+//							plus.io.resolveLocalFileSystemURL(e, function(entry) {
+//								
+//								var path = entry.toLocalURL() + '?version=' + new Date().getTime();
+//								var page = mui.preload({
+//								    url:'cropImg.html',
+//								    id:'cropImg.html',//默认使用当前页面的url作为id
+//								    extras:{src:path}//自定义扩展参数
+//								});
+//								setTimeout(function(){
+//									
+//									mui.openWindow(page)
+//								},1500)
+////								uploadHeadImg(path);
+//							}, function(err) {
+//								console.log('读取拍照文件错误');
+//							});
+//						}, function(e) {
+//							console.log('er', err);
+//						}, function() {
+//							filename: '_doc/head.png';
+//						});
+//					}
+//					//从本地相册选择
+//					function galleryImages() {
+//						console.log('你选择了从相册选择');
+//						plus.gallery.pick(function(a) {
+//							plus.io.resolveLocalFileSystemURL(a, function(entry) {
+//								plus.io.resolveLocalFileSystemURL('_doc/', function(root) {
+//									root.getFile('head.png', {}, function(file) {
+//										//文件已经存在
+//										file.remove(function() {
+//											console.log('文件移除成功');
+//											entry.copyTo(root, 'head.png', function(e) {
+//												var path = e.fullPath + '?version=' + new Date().getTime();
+//												mui.openWindow({
+//													id:'cropImg.html',
+//													url:'cropImg.html',
+//													extras:{
+//														src:path
+//													}
+//												})
+////												uploadHeadImg(path);
+//											}, function(err) {
+//												console.log('copy image fail:', err);
+//											});
+//										}, function(err) {
+//											console.log('删除图片失败:(' + JSON.stringify(err) + ")");
+//										});
+//									}, function(err) {
+//										//打开文件失败
+//										entry.copyTo(root, 'head.png', function(e) {
+//											var path = e.fullPath + '?version=' + new Date().getTime();
+//											mui.openWindow({
+//													id:'cropImg.html',
+//													url:'cropImg.html',
+//													extras:{
+//														src:path
+//													}
+//												})
+////											uploadHeadImg(path);
+//										}, function(err) {
+//											console.log('上传图片失败：(' + JSON.stringify(err) + ")");
+//										});
+//									});
+//								}, function(e) {
+//									console.log("读取文件夹失败：(" + JSON.stringify(err) + ")");
+//								});
+//							});
+//						}, function(err) {
+//							console.log("读取拍照文件失败:");
+//						}, {
+//							filter: 'image'
+//						});
+//					};
+//					//上传图片
+//					function uploadHeadImg(imgPath) {
+//						//选中图片之后，头像当前的照片变为选中的照片
+//						var mainImg = document.getElementById('userImg');
+//						mainImg.src = imgPath;
+//						var images = new Image();
+//						images.src = imgPath;
+//						images.onload = function() {
+//							var imgData = getBase64Image(images, 64);
+//							var params = {
+	
+//								'imgDatas': imgData,
+//								'userid': userInfo.id
+//							}
+//							console.log("params:"+JSON.stringify(params));
+//							ajaxPost("userattachment/update_base.html", {
+//								'imgDatas': imgData,
+//								'userid': userInfo.id
+//							}, function(data) {
+//								if(data.code == 1) {
+//									console.log('上传成功！');
+//									mainImg.nextElementSibling.value = data.data.id;
+//									$('#avatar_id').val(data.data.id);
+//								}
+//							}, function(xhr, type, errorThrown) {
+//								if(type == 'timeout') {
+//									mui.alert('服务器连接超时，请稍后再试');
+//								}
+//							})
+//
+//						}
+//					}
+				})
+			})
+		</script>
+	</body>
+
+</html>

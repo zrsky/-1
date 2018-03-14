@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>信用积分</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<!--百度地图-->
+		<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RLEGhQPP1GjddU70dhu2T3fv3eLHmIC7"></script>
+		<style type="text/css">
+			.box {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				padding: 15px;
+				background-color: #ff8b02;
+				color: #FFFFFF;
+			}
+			
+			.box>span {
+				margin-bottom: 10px;
+			}
+			
+			.mui-card .mui-control-content {
+				padding: 10px;
+			}
+			
+			.mui-control-content {
+				height: 20em;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">信用积分</h1>
+		</header>
+		<div class="mui-content">
+			<div class="box">
+				<span>信用值</span>
+				<span id="score">12.00</span>
+			</div>
+			<div style="padding: 10px 10px;">
+				<div id="segmentedControl" class="mui-segmented-control">
+					<a class="mui-control-item mui-active" href="#item1">奖惩规则</a>
+					<a class="mui-control-item" href="#item2">信用值明细</a>
+				</div>
+			</div>
+			<div>
+				<div id="item1" class="mui-control-content mui-active">
+					<div id="scroll" class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<ul class="mui-table-view">
+								<li class="mui-table-view-cell">
+									跑男一年有12个信用值
+								</li>
+								<li class="mui-table-view-cell">
+									信用值小于0将不能接单
+								</li>
+								<li class="mui-table-view-cell">
+									司机取消订单-2
+								</li>
+								<li class="mui-table-view-cell">
+									其他特殊情况根据实际情况调整
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div id="item2" class="mui-control-content">
+					<ul class="mui-table-view" id="mxBox">
+						<script type="text/html" id="mxBoxData">
+						{{if data.total == 0}}
+						<li class="mui-table-view-cell">
+							暂无明细
+						</li>
+						{{else}}
+						{{each data.data as value}}
+						<li class="mui-table-view-cell">
+							<span>{{value.title}}</span>
+							<span>{{value.score}}</span>
+						</li>
+						{{/each}}
+						{{/if}}
+						</script>
+						<li class="mui-table-view-cell">
+							暂无明细
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/base.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function(){
+				var userinfo = is_login();
+				var mxBox = document.getElementById('mxBox');
+				var score = document.getElementById('score');
+				ajaxGet('express/score_list.html',null,function(res){
+					var datas = {
+						data:res.data.lists
+					};
+					score.innerHTML = res.data.score;
+					mxBox.innerHTML = template('mxBoxData',datas);
+					console.log("信用明细:"+JSON.stringify(res));
+				})
+			})
+		</script>
+	</body>
+
+</html>
